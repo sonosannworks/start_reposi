@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ご相談・お困りごと入力 | 介護×AIサポート</title>
+    <!-- デザインを整えるためのツール（Tailwind CSS）を読み込んでいます -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- ヘッダー部分 -->
+        <div class="bg-blue-600 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold">地域のお悩み相談窓口</h1>
+            <p class="text-blue-100 mt-2">AIと元ケアマネがあなたの困りごとを整理します</p>
+        </div>
+
+        <!-- フォーム本体 -->
+        <form id="consultationForm" class="p-8 space-y-6">
+            <div class="space-y-4">
+                <!-- ニックネーム -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">ニックネーム（仮名でも構いません）</label>
+                    <input type="text" name="nickname" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="例：ひまわりさん">
+                </div>
+
+                <!-- 地域選択 -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">都道府県</label>
+                        <select name="prefecture" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="">選択してください</option>
+                            <optgroup label="北海道・東北">
+                                <option value="北海道">北海道</option><option value="青森県">青森県</option><option value="岩手県">岩手県</option><option value="宮城県">宮城県</option><option value="秋田県">秋田県</option><option value="山形県">山形県</option><option value="福島県">福島県</option>
+                            </optgroup>
+                            <optgroup label="関東">
+                                <option value="茨城県">茨城県</option><option value="栃木県">栃木県</option><option value="群馬県">群馬県</option><option value="埼玉県">埼玉県</option><option value="千葉県">千葉県</option><option value="東京都">東京都</option><option value="神奈川県">神奈川県</option>
+                            </optgroup>
+                            <optgroup label="中部">
+                                <option value="新潟県">新潟県</option><option value="富山県">富山県</option><option value="石川県">石川県</option><option value="福井県">福井県</option><option value="山梨県">山梨県</option><option value="長野県">長野県</option><option value="岐阜県">岐阜県</option><option value="静岡県">静岡県</option><option value="愛知県">愛知県</option>
+                            </optgroup>
+                            <optgroup label="近畿">
+                                <option value="三重県">三重県</option><option value="滋賀県">滋賀県</option><option value="京都府">京都府</option><option value="大阪府">大阪府</option><option value="兵庫県">兵庫県</option><option value="奈良県">奈良県</option><option value="和歌山県">和歌山県</option>
+                            </optgroup>
+                            <optgroup label="中国・四国">
+                                <option value="鳥取県">鳥取県</option><option value="島根県">島根県</option><option value="岡山県">岡山県</option><option value="広島県">広島県</option><option value="山口県">山口県</option><option value="徳島県">徳島県</option><option value="香川県">香川県</option><option value="愛媛県">愛媛県</option><option value="高知県">高知県</option>
+                            </optgroup>
+                            <optgroup label="九州・沖縄">
+                                <option value="福岡県">福岡県</option><option value="佐賀県">佐賀県</option><option value="長崎県">長崎県</option><option value="熊本県">熊本県</option><option value="大分県">大分県</option><option value="宮崎県">宮崎県</option><option value="鹿児島県">鹿児島県</option><option value="沖縄県">沖縄県</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">市区町村</label>
+                        <input type="text" name="city" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="例：小林市">
+                    </div>
+                </div>
+
+                <!-- 相談カテゴリー -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">相談したい内容</label>
+                    <select name="category" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">カテゴリーを選択してください</option>
+                        <option value="認知症">認知症の相談</option>
+                        <option value="通所">デイサービス・通所利用</option>
+                        <option value="入所">老人ホーム・入所施設</option>
+                        <option value="障害福祉">障害福祉サービス</option>
+                        <option value="医療連携">病院・医療サービス</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+
+                <!-- 困りごと詳細 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">具体的なお悩み（自由記述）</label>
+                    <textarea name="content" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none h-32" placeholder="どのようなことでお困りですか？"></textarea>
+                </div>
+            </div>
+
+            <!-- 送信ボタン -->
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95">
+                AI相談の第一歩を踏み出す
+            </button>
+
+            <p class="text-xs text-center text-gray-500 mt-4">
+                ※送信後、自動的にスプレッドシートに記録されます。
+            </p>
+        </form>
+
+        <!-- 完了メッセージ（初期は非表示） -->
+        <div id="successMessage" class="hidden p-8 text-center space-y-4">
+            <div class="text-5xl text-green-500">✓</div>
+            <h2 class="text-2xl font-bold text-gray-800">送信が完了しました！</h2>
+            <p class="text-gray-600">お困りごとを承りました。スプレッドシートをご確認ください。</p>
+            <button onclick="location.reload()" class="text-blue-600 font-semibold underline">もう一度入力する</button>
+        </div>
+    </div>
+
+    <script>
+        // ★ここに作成したGASのウェブアプリURLを貼り付けてください
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxisf6MlpE3_PuM-oVyowPz6QBYDKI4p9tv-jRrT5WtFl4Eid3HvdyASg2bgDXud7kT5w/exec';
+
+        const form = document.getElementById('consultationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            submitBtn.disabled = true;
+            submitBtn.innerText = '送信中...';
+            submitBtn.classList.add('bg-gray-400');
+
+            const formData = new FormData(form);
+            
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                form.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert('送信に失敗しました。');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'AI相談の第一歩を踏み出す';
+                submitBtn.classList.remove('bg-gray-400');
+            });
+        });
+    </script>
+</body>
+</html>
