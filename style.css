@@ -696,3 +696,64 @@ overflow: hidden;
 @media (max-width: 480px) {
   .sns-item { width: 100%; min-width: unset; }
 } 
+/* ===== 介護YouTube再生リストブロック ===== */
+.kaigo-playlist-block {
+  margin: 2rem 0 2.5rem;
+  padding: 1.8rem 2rem;
+  background: #faf8f4;
+  border: 1px solid #e8e0d0;
+  border-left: 3px solid #b4a078;
+  border-radius: 4px;
+}
+.kaigo-playlist-block-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #4a4540;
+  letter-spacing: .1em;
+  margin-bottom: .4rem;
+}
+.kaigo-playlist-block-desc {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .78rem;
+  font-weight: 300;
+  color: #7a7060;
+  letter-spacing: .06em;
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+}
+.kaigo-playlist-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+.kaigo-playlist-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .55rem 1.1rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .76rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  border-radius: 3px;
+  border: 1px solid;
+  text-decoration: none;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.kaigo-playlist-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.kaigo-playlist-btn.btn-jichitai { background:#eef4fb; border-color:#90bce8; color:#1a4a7a; }
+.kaigo-playlist-btn.btn-careman  { background:#fdf6e8; border-color:#d4a840; color:#6a4a08; }
+.kaigo-playlist-btn.btn-tsusho   { background:#edf7f0; border-color:#80c898; color:#1a5a30; }
+.kaigo-playlist-btn.btn-nyukyo   { background:#f5eef8; border-color:#c090d8; color:#5a1a7a; }
+.kaigo-playlist-btn.btn-fukushi  { background:#fef0e8; border-color:#e8a060; color:#7a3a10; }
+.kaigo-playlist-btn.btn-iryo     { background:#fdeaea; border-color:#e89090; color:#7a1a1a; }
+.kaigo-playlist-btn.btn-houmon   { background:#eaf4f8; border-color:#70b8d8; color:#0a3a5a; }
+@media (max-width: 600px) {
+  .kaigo-playlist-block { padding: 1.2rem; }
+  .kaigo-playlist-btn { width: 100%; justify-content: center; }
+}
