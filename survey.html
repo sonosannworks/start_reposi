@@ -368,13 +368,39 @@
                     });
 
                     // 成功時の処理
-                    if (response.ok) {
-                        form.reset();
-                        // 選択されたチェックボックスの見た目もリセットするために、ラジオ/チェックボックスの再描画を促す
-                        const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-                        checkboxes.forEach(cb => cb.checked = false);
+// 成功時の処理
+if (response.ok) {
+    // フォーム全体とタイトル、説明エリアを非表示にする
+    form.style.display = 'none';
+    document.querySelector('h2').textContent = '送信が完了しました';
+    
+    const threadArea = document.querySelector('.thread-content');
+    if(threadArea) threadArea.style.display = 'none';
 
-                        showMessage('アンケートへのご協力ありがとうございました！', 'success');
+    // LINE登録を促すサンクスページを表示
+    showMessage('', 'success');
+    messageArea.innerHTML = `
+        <div style="text-align: center; padding: 30px 10px; background: #fff; border-radius: 12px;">
+            <p style="font-size: 1.25rem; font-weight: bold; color: #388e3c; margin-bottom: 20px;">
+                アンケートへのご協力ありがとうございました！
+            </p>
+            <p style="font-size: 1rem; color: #444; line-height: 1.8; margin-bottom: 30px;">
+                ご回答いただいたお礼に、個別の状況に合わせた<br>
+                <strong>「無料ガイド（A〜D）」</strong>をプレゼント中🎁
+            </p>
+            
+            <a href="https://lin.ee/XfZJj2S" target="_blank" rel="noopener" style="display: inline-block; background-color: #06C755; color: white; text-decoration: none; padding: 16px 32px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(6,199,85,0.3); transition: transform 0.2s;">
+                🟢 LINEで無料ガイドを受け取る
+            </a>
+            
+            <p style="font-size: 0.85rem; color: #888; margin-top: 25px;">
+                ※ボタンを押すとLINEアプリが開きます。<br>
+                登録後、自動送信メッセージに合わせて<br>
+                ご希望のアルファベットを返信してください！
+            </p>
+        </div>
+    `;
+}
                     } else {
                         throw new Error('ネットワークエラーが発生しました。');
                     }
