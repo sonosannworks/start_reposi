@@ -22,7 +22,7 @@
         h2 { text-align: center; font-weight: 500; color: #1a1a2e; margin-top: 0; margin-bottom: 30px; font-size: 1.5rem; }
         .form-group { margin-bottom: 25px; }
         label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; color: #444; }
-        .required { color: var(--error-color); font-size: 0.8em; margin-left: 4px; }
+        .required { color: var(--error-color); font-weight: bold; margin-left: 4px; }
         input[type="text"], select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
         textarea { resize: vertical; min-height: 120px; }
         .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -48,11 +48,11 @@
         </div>
         <form id="surveyForm">
             <div class="form-group">
-                <label for="name">お名前 (ニックネーム可)<span class="required">*</span></label>
+                <label for="name">お名前 (ニックネーム可)<span class="required">【必須】</span></label>
                 <input type="text" id="name" name="name" required placeholder="例: さつき">
             </div>
             <div class="form-group">
-                <label for="age">ご年代<span class="required">*</span></label>
+                <label for="age">ご年代<span class="required">【必須】</span></label>
                 <select id="age" name="age" required>
                     <option value="" disabled selected>選択してください</option>
                     <option value="20代以下">20代以下</option>
@@ -76,7 +76,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="comment">あなたの理想のセカンドライフを教えてください<span class="required">*</span></label>
+                <label for="comment">あなたの理想のセカンドライフを教えてください<span class="required">【必須】</span></label>
                 <textarea id="comment" name="comment" required placeholder="健康で旅行にたくさん行きたい、趣味を充実させたい、など自由にお書きください。"></textarea>
             </div>
             <button type="submit" class="submit-btn" id="submitBtn">送信する</button>
