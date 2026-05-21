@@ -49,26 +49,35 @@
         <form id="surveyForm">
             <div class="form-group">
                 <label for="name">お名前 (ニックネーム可)<span class="required">*</span></label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" required placeholder="例: さつき">
             </div>
             <div class="form-group">
                 <label for="age">ご年代<span class="required">*</span></label>
                 <select id="age" name="age" required>
                     <option value="" disabled selected>選択してください</option>
+                    <option value="20代以下">20代以下</option>
+                    <option value="30代">30代</option>
+                    <option value="40代">40代</option>
                     <option value="50代">50代</option>
                     <option value="60代">60代</option>
+                    <option value="70代">70代</option>
+                    <option value="80代以上">80代以上</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>現在の状況 (複数選択可)</label>
+                <label>現在の状況・気になっていること (複数選択可)</label>
                 <div class="checkbox-group">
-                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="親の物忘れが気になる"><span class="checkbox-text">親の物忘れが気になる</span></label>
-                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="自分の未来のため何ができるのか知りたい"><span class="checkbox-text">自分の未来のため何ができるのか知りたい</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="① 先のことは考えていない"><span class="checkbox-text">① 先のことは考えていない</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="② 今親が介護保険サービスを利用している"><span class="checkbox-text">② 今親が介護保険サービスを利用している</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="③ 親が入院している"><span class="checkbox-text">③ 親が入院している</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="④ 親の介護に不安がある"><span class="checkbox-text">④ 親の介護に不安がある</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="⑤ 親の物忘れが気になる"><span class="checkbox-text">⑤ 親の物忘れが気になる</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="⑥ 自分の未来のため何ができるのか知りたい"><span class="checkbox-text">⑥ 自分の未来のため何ができるのか知りたい</span></label>
                 </div>
             </div>
             <div class="form-group">
-                <label for="comment">理想のセカンドライフを教えてください<span class="required">*</span></label>
-                <textarea id="comment" name="comment" required></textarea>
+                <label for="comment">あなたの理想のセカンドライフを教えてください<span class="required">*</span></label>
+                <textarea id="comment" name="comment" required placeholder="健康で旅行にたくさん行きたい、趣味を充実させたい、など自由にお書きください。"></textarea>
             </div>
             <button type="submit" class="submit-btn" id="submitBtn">送信する</button>
             <div class="loading" id="loadingIndicator"><div class="spinner"></div></div>
@@ -112,8 +121,8 @@
                         messageArea.className = 'success';
                         messageArea.style.display = 'block';
                         messageArea.innerHTML = `
-                            <div style="text-align: center;">
-                                <p>ご協力ありがとうございました！</p>
+                            <div style="text-align: center; padding: 20px;">
+                                <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 20px;">ご協力ありがとうございました！</p>
                                 <a href="https://lin.ee/XfZJj2S" target="_blank" style="display:inline-block; background:#06C755; color:#fff; padding:15px 30px; border-radius:30px; text-decoration:none; font-weight:bold;">🟢 LINEで無料ガイドを受け取る</a>
                             </div>
                         `;
