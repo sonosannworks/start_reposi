@@ -35,22 +35,25 @@
         .spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #messageArea { display: none; margin-top: 20px; padding: 15px; border-radius: 6px; text-align: center; }
-        .success { background-color: #e8f5e9; color: var(--success-color); border: 1px solid #c8e6c9; }
+        .success { background-color: #fff; color: var(--text-color); border: none; }
         .error { background-color: #ffebee; color: var(--error-color); border: 1px solid #ffcdd2; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>アンケートにご協力ください</h2>
-        <div class="thread-content">
+        <h2 id="formTitle">アンケートにご協力ください</h2>
+        
+        <div id="introText" class="thread-content">
             <p>介護保険は、損得勘定で使うものではなく、いざという時に自分や家族の生活を守るための「お守り」です。</p>
             <p>健康で自立した毎日を長く続けることこそが、実は一番の「得」なのかもしれません。<br>あなたの理想のセカンドライフについて、ぜひコメントで教えてください！</p>
         </div>
+
         <form id="surveyForm">
             <div class="form-group">
                 <label for="name">お名前 (ニックネーム可)<span class="required">【必須】</span></label>
                 <input type="text" id="name" name="name" required placeholder="例: さつき">
             </div>
+
             <div class="form-group">
                 <label for="age">ご年代<span class="required">【必須】</span></label>
                 <select id="age" name="age" required>
@@ -64,6 +67,7 @@
                     <option value="80代以上">80代以上</option>
                 </select>
             </div>
+
             <div class="form-group">
                 <label>現在の状況・気になっていること (複数選択可)</label>
                 <div class="checkbox-group">
@@ -75,21 +79,28 @@
                     <label class="checkbox-label"><input type="checkbox" name="concerns" value="⑥ 自分の未来のため何ができるのか知りたい"><span class="checkbox-text">⑥ 自分の未来のため何ができるのか知りたい</span></label>
                 </div>
             </div>
+
             <div class="form-group">
                 <label for="comment">あなたの理想のセカンドライフを教えてください<span class="required">【必須】</span></label>
-                <textarea id="comment" name="comment" required placeholder="健康で旅行にたくさん行きたい、趣味を充実させたい、など自由にお書きください。"></textarea>
+                <textarea id="comment" name="comment" required placeholder="例：健康で旅行にたくさん行きたい、など"></textarea>
             </div>
+
             <button type="submit" class="submit-btn" id="submitBtn">送信する</button>
-            <div class="loading" id="loadingIndicator"><div class="spinner"></div></div>
-            <div id="messageArea"></div>
+            <div class="loading" id="loadingIndicator"><div class="spinner"></div><p>送信中...</p></div>
         </form>
+
+        <div id="messageArea"></div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('surveyForm');
             const submitBtn = document.getElementById('submitBtn');
             const messageArea = document.getElementById('messageArea');
             const loadingIndicator = document.getElementById('loadingIndicator');
+            const formTitle = document.getElementById('formTitle');
+            const introText = document.getElementById('introText');
+
             const GAS_URL = 'https://script.google.com/macros/s/AKfycbwE4ME1TGD87cafgTA9AFKdimc38p0xTDfxGYMmrkBsQ2RCu8X4C_epFeprO5aRFNk/exec';
 
             form.addEventListener('submit', async (e) => {
@@ -116,23 +127,40 @@
 
                     if (response.ok) {
                         form.style.display = 'none';
-                        document.querySelector('h2').textContent = '送信が完了しました';
-                        document.querySelector('.thread-content').style.display = 'none';
+                        introText.style.display = 'none';
+                        formTitle.textContent = '送信が完了しました';
+                        
                         messageArea.className = 'success';
                         messageArea.style.display = 'block';
                         messageArea.innerHTML = `
-                            <div style="text-align: center; padding: 20px;">
-                                <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 20px;">ご協力ありがとうございました！</p>
-                                <a href="https://lin.ee/XfZJj2S" target="_blank" style="display:inline-block; background:#06C755; color:#fff; padding:15px 30px; border-radius:30px; text-decoration:none; font-weight:bold;">🟢 LINEで無料ガイドを受け取る</a>
-                            </div>
-                        `;
+    <div style="text-align: center; padding: 10px;">
+        <p style="font-size: 1.2rem; font-weight: bold; color: #388e3c; margin-bottom: 10px;">アンケートにご回答<br>ありがとうございました！</p>
+        <p style="font-size: 1rem; margin-bottom: 25px;">大切に読ませていただきました。<br>お礼の無料ガイドをお受け取りください。</p>
+        
+        <div style="background: #f0fdf4; padding: 20px; border-radius: 15px; border: 1px solid #cceadd;">
+            <p style="font-weight: bold; margin-bottom: 15px;">🎁 無料ガイドを受け取る手順</p>
+            
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://lin.ee/XfZJj2S" alt="LINE QR Code" style="margin-bottom: 15px; border: 5px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            
+            <p style="font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6;">
+                1. 上のボタンかQRコードから友達追加<br>
+                2. トーク画面で<strong style="color: #d32f2f;">「ガイド」</strong>と送信<br>
+                自動でガイドをお送りします！
+            </p>
+            
+            <a href="https://lin.ee/XfZJj2S" target="_blank" style="display:inline-block; background:#06C755; color:#fff; padding:15px 30px; border-radius:30px; text-decoration:none; font-weight:bold; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(6,199,85,0.3);">🟢 LINEで友だち追加する</a>
+        </div>
+        
+        <p style="margin-top: 25px; font-size: 0.9rem; color: #666;">公式LINEでお待ちしております！</p>
+    </div>
+`;
                     } else { throw new Error(); }
                 } catch (error) {
+                    loadingIndicator.style.display = 'none';
+                    submitBtn.style.display = 'block';
                     messageArea.textContent = '送信に失敗しました。再度お試しください。';
                     messageArea.className = 'error';
                     messageArea.style.display = 'block';
-                    submitBtn.style.display = 'block';
-                    loadingIndicator.style.display = 'none';
                 }
             });
         });
