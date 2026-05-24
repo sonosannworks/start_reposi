@@ -19,6 +19,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
+    /* ===== About レイアウト上書き ===== */
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .about-channels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    .about-channels h3 {
+      grid-column: 1 / -1;
+    }
+    @media (max-width: 560px) {
+      .about-channels {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* ===== Blog 誘導セクション ===== */
     .blog-nav-section {
       background: #f5f0e8;
@@ -103,20 +123,17 @@
 
     /* ===== 介護YouTube再生リストブロック ===== */
     .kaigo-playlist-block {
-      margin: 2rem 0 2.5rem;
-      padding: 1.8rem 2rem;
-      background: #faf8f4;
-      border: 1px solid #e8e0d0;
-      border-left: 3px solid #b4a078;
-      border-radius: 4px;
+      margin: 2.5rem 0 0;
+      padding: 2rem 0 2.5rem;
+      border-top: 1px solid #e8e0d0;
     }
     .kaigo-playlist-block-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      font-weight: 400;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .88rem;
+      font-weight: 500;
       color: #4a4540;
-      letter-spacing: .1em;
-      margin-bottom: .4rem;
+      letter-spacing: .08em;
+      margin-bottom: .5rem;
     }
     .kaigo-playlist-block-desc {
       font-family: 'Noto Sans JP', sans-serif;
@@ -124,8 +141,8 @@
       font-weight: 300;
       color: #7a7060;
       letter-spacing: .06em;
-      line-height: 1.7;
-      margin-bottom: 1.2rem;
+      line-height: 1.8;
+      margin-bottom: 1.4rem;
     }
     .kaigo-playlist-btns {
       display: flex;
@@ -164,79 +181,70 @@
       flex-shrink: 0;
     }
     @media (max-width: 600px) {
-      .kaigo-playlist-block { padding: 1.2rem 1.2rem; }
+      .kaigo-playlist-block { padding: 1.5rem 0; }
       .kaigo-playlist-btn { width: 100%; justify-content: center; }
     }
 
-    /* ===== About YouTube Coming Soon カード ===== */
-    .about-coming-soon-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: .5rem;
-    }
-    .about-coming-card {
-      display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 1rem;
-      padding: 1rem;
-      background: #f8f6f2;
-      border: 1px solid rgba(0,0,0,.07);
-      border-radius: 6px;
-      text-decoration: none;
-      color: inherit;
-      transition: box-shadow .2s;
-    }
-    .about-coming-card:hover {
-      box-shadow: 0 2px 12px rgba(0,0,0,.08);
-    }
-    .about-coming-thumb {
-      width: 80px;
-      height: 58px;
-      background: linear-gradient(135deg,#e8e0d0,#d4c8b0);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .about-coming-label {
-      font-size: .62rem;
-      letter-spacing: .04em;
-      color: #8a7a5a;
-      font-family: 'Noto Sans JP', sans-serif;
-      font-weight: 400;
+    /* ===== About アンケートボタン ===== */
+    .about-survey-wrap {
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e8e0d0;
       text-align: center;
-      line-height: 1.4;
-      padding: 0 4px;
     }
-    .about-coming-body h4 {
+    .about-survey-text {
       font-family: 'Noto Sans JP', sans-serif;
-      font-size: .82rem;
-      font-weight: 500;
-      color: #2d2d2d;
-      margin: 0 0 .3rem;
-    }
-    .about-coming-body p {
-      font-family: 'Noto Sans JP', sans-serif;
-      font-size: .72rem;
+      font-size: .85rem;
       font-weight: 300;
-      color: #7a7570;
-      line-height: 1.6;
-      margin: 0 0 .4rem;
+      color: #4a4540;
+      letter-spacing: .08em;
+      line-height: 2;
+      margin-bottom: 1.4rem;
     }
-    .about-coming-tags {
+    .about-survey-text span {
+      font-size: .78rem;
+      color: #7a7060;
+    }
+    .about-survey-btns {
       display: flex;
       flex-wrap: wrap;
-      gap: .3rem;
+      justify-content: center;
+      gap: .9rem;
     }
-    .about-coming-tags span {
-      font-size: .65rem;
-      padding: .15em .5em;
-      background: #ede8df;
-      color: #6a5a40;
-      border-radius: 2px;
+    .about-survey-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .95rem 2rem;
+      border-radius: 4px;
       font-family: 'Noto Sans JP', sans-serif;
+      font-size: .83rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-decoration: none;
+      transition: background .2s, border-color .2s;
+    }
+    .about-survey-btn.btn-fill {
+      background: #b4a078;
+      color: #fff;
+      border: 1px solid #b4a078;
+    }
+    .about-survey-btn.btn-fill:hover {
+      background: #9a8860;
+      border-color: #9a8860;
+    }
+    .about-survey-btn.btn-outline {
+      background: transparent;
+      color: #4a4540;
+      border: 1px solid #c8bfad;
+    }
+    .about-survey-btn.btn-outline:hover {
+      border-color: #b4a078;
+      color: #1a1916;
+      background: rgba(180,160,120,.05);
+    }
+    @media (max-width: 480px) {
+      .about-survey-btn { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -256,14 +264,13 @@
         <li><a href="#html-works">Web Design</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="blog.html">BLOG</a></li>
-        <li><a href="#service">Service</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </div>
   </nav>
 
   <!-- ヒーロー -->
-  <section class="hero section-light" id="top">
+  <section class="hero" id="top">
     <div class="hero-image-wrap">
       <img src="image/1.png" alt="トップ画像" class="hero-img" id="heroImg">
       <div class="hero-overlay"></div>
@@ -280,99 +287,115 @@
   </section>
 
   <!-- About -->
-  <section class="section section-light" id="about">
+  <section class="section" id="about">
     <div class="container">
       <h2 class="section-title">About</h2>
-
-      <!-- テキスト＋タグ：フル幅 -->
-      <div class="about-text" style="max-width:100%; margin-bottom:2.5rem;">
-        <p class="about-lead">看護師・ケアマネジャーとして30年以上のキャリアを積み、<br>AIとWebデザインの世界へ転身。</p>
-        <p>医療・介護現場での実務経験をベースに、AIツールを駆使したコンテンツ制作とWebデザインを学んでいます。複数のAIを組み合わせた動画制作・画像生成・文書自動化を実践しており、現場目線の課題解決力が強みです。</p>
-        <div class="about-tags">
-          <span>看護師</span>
-          <span>ケアマネジャー</span>
-          <span>AI活用</span>
-          <span>YouTube運営</span>
-          <span>Webデザイン学習中</span>
-          <span>フリーランス</span>
+      <div class="about-grid">
+        <div class="about-text">
+          <p class="about-lead">看護師・ケアマネジャーとして30年以上のキャリアを積み、<br>AIとWebデザインの世界へ転身。</p>
+          <p>医療・介護現場での実務経験をベースに、AIツールを駆使したコンテンツ制作とWebデザインを学んでいます。複数のAIを組み合わせた動画制作・画像生成・文書自動化を実践しており、現場目線の課題解決力が強みです。</p>
+          <div class="about-tags">
+            <span>看護師</span>
+            <span>ケアマネジャー</span>
+            <span>AI活用</span>
+            <span>YouTube運営</span>
+            <span>Webデザイン学習中</span>
+            <span>フリーランス</span>
+          </div>
+        </div>
+        <div class="about-channels">
+          <h3>YouTube チャンネル</h3>
+          <a class="channel-card" href="https://www.youtube.com/@vu24kpye/playlists" target="_blank" rel="noopener">
+            <div class="channel-icon"><img src="./image/satsuki.jpg" alt="ナース・ケアマネ さつき">
+            </div>
+            <div>
+              <p class="channel-name">ナース・ケアマネ さつき</p>
+              <p class="channel-desc">医療・介護の現場知識を発信</p>
+            </div>
+          </a>
+          <a class="channel-card" href="https://www.youtube.com/@AIpicturebook-oc4fl/playlists" target="_blank" rel="noopener">
+            <div class="channel-icon"> <img src="./image/kiron.jpg" alt="AI picture book">
+            </div>
+            <div>
+              <p class="channel-name">AI picture book</p>
+              <p class="channel-desc">AIで作る絵本・動画コンテンツ</p>
+            </div>
+          </a>
         </div>
       </div>
 
-      <!-- 再生リストブロック：フル幅 -->
-      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400; color:#1a1a2e; letter-spacing:.1em; margin-bottom:1rem;">YouTube 動画（準備中）</h3>
-      <div class="kaigo-playlist-block" style="margin-top:0; margin-bottom:2rem;">
+      <!-- ★ 介護保険最新情報 再生リストブロック ★ -->
+      <div class="kaigo-playlist-block">
         <p class="kaigo-playlist-block-title">📋 介護保険最新情報 — テーマ別再生リスト</p>
         <p class="kaigo-playlist-block-desc">
           厚生労働省から発出される「介護保険最新情報」を対象者別に分類。<br>
           自治体・ケアマネ・通所介護・入居施設・福祉用具・医療介護連携・訪問看護の7テーマで発信しています。
         </p>
-        <a class="kaigo-playlist-btn btn-survey" href="survey.html" style="margin-bottom: 12px; display:inline-flex; background-color: #b4a078; color: #fff; border-color: #b4a078;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; flex-shrink:0;">
-            <path d="M9 11l3 3L22 4m-9 12H4a2 2 0 01-2-2V4a2 2 0 012-2h16a2 2 0 012 2v8a2 2 0 01-2 2"></path>
-          </svg>
-          まずはこちら！アンケートにご協力ください
-        </a>
         <div class="kaigo-playlist-btns">
-          <a class="kaigo-playlist-btn btn-jichitai" href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIUF3NUaS9Jtvt4L3Q_DP7aD" target="_blank" rel="noopener">
+          <a class="kaigo-playlist-btn btn-jichitai"
+             href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIUF3NUaS9Jtvt4L3Q_DP7aD"
+             target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             自治体向け
           </a>
-          <a class="kaigo-playlist-btn btn-careman" href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIWthjV5rmbsWvQMBDXr-sr0" target="_blank" rel="noopener">
+          <a class="kaigo-playlist-btn btn-careman"
+             href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIWthjV5rmbsWvQMBDXr-sr0"
+             target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             ケアマネ向け
           </a>
-          <a class="kaigo-playlist-btn btn-tsusho" href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIVKhTE8ODSeUqoDvAcrHnG2" target="_blank" rel="noopener">
+          <a class="kaigo-playlist-btn btn-tsusho"
+             href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIVKhTE8ODSeUqoDvAcrHnG2"
+             target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             通所介護向け
           </a>
-          <a class="kaigo-playlist-btn btn-nyukyo" href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIU7QloygjYfcKYjhX7QK9qZ" target="_blank" rel="noopener">
+          <a class="kaigo-playlist-btn btn-nyukyo"
+             href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIU7QloygjYfcKYjhX7QK9qZ"
+             target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
             入居施設向け
           </a>
-          <a class="kaigo-playlist-btn btn-fukushi" href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIXcpHjrIbV1M0GPDyy_St8w" target="_blank" rel="noopener">
+          <a class="kaigo-playlist-btn btn-fukushi"
+             href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIXcpHjrIbV1M0GPDyy_St8w"
+             target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             福祉用具向け
           </a>
-          <a class="kaigo-playlist-btn btn-iryo" href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIW4FYDup20iadTxcPwkQgI3" target="_blank" rel="noopener">
+          <a class="kaigo-playlist-btn btn-iryo"
+             href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIW4FYDup20iadTxcPwkQgI3"
+             target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
             医療介護連携
           </a>
-          <a class="kaigo-playlist-btn btn-houmon" href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIXwGPFskmzga8RcA2sNmLFv" target="_blank" rel="noopener">
+          <a class="kaigo-playlist-btn btn-houmon"
+             href="https://www.youtube.com/playlist?list=PLDEZhdGz5MIXwGPFskmzga8RcA2sNmLFv"
+             target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
             訪問看護向け
           </a>
         </div>
       </div>
+      <!-- ★ /介護保険最新情報 再生リストブロック ★ -->
 
-      <!-- Coming Soonカード：web-gridで3列 -->
-      <div class="web-grid">
-        <a class="web-card" href="https://www.youtube.com/@vu24kpye/playlists" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-          <div class="web-card-thumb"><span class="web-card-label">🔜 Coming Soon</span></div>
-          <div class="web-card-body">
-            <h3>介護認定について</h3>
-            <p>介護認定の仕組みや申請方法をわかりやすく解説。YouTube動画で公開予定。</p>
-            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
-            <span class="web-card-link">チャンネルを見る →</span>
-          </div>
-        </a>
-        <a class="web-card" href="https://www.youtube.com/@vu24kpye/playlists" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-          <div class="web-card-thumb"><span class="web-card-label">🔜 Coming Soon</span></div>
-          <div class="web-card-body">
-            <h3>認知症の分類について</h3>
-            <p>アルツハイマー型・レビー小体型など認知症の種類と特徴を解説予定。</p>
-            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
-            <span class="web-card-link">チャンネルを見る →</span>
-          </div>
-        </a>
-        <a class="web-card" href="https://www.youtube.com/@vu24kpye/playlists" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-          <div class="web-card-thumb"><span class="web-card-label">🔜 Coming Soon</span></div>
-          <div class="web-card-body">
-            <h3>介護サービスについて</h3>
-            <p>訪問介護・デイサービスなど介護サービスの種類と使い方を解説予定。</p>
-            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
-            <span class="web-card-link">チャンネルを見る →</span>
-          </div>
-        </a>
+      <!-- ★ アンケートボタン ★ -->
+      <div class="about-survey-wrap">
+        <p class="about-survey-text">ご縁のある方へ、無料で資料をお届けしています🌿<br><span>介護・AI・Web — 気になるテーマの資料を受け取ってください</span></p>
+        <div class="about-survey-btns">
+          <a class="about-survey-btn btn-fill" href="thanks.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" stroke-width="0" fill="currentColor"/>
+              <path d="M20 12l-8 8-4-4 1.41-1.41L12 17.17l6.59-6.59L20 12z"/>
+            </svg>
+            無料資料を受け取る
+          </a>
+          <a class="about-survey-btn btn-outline" href="GOOGLE_FORM_URL" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M9 11l3 3L22 4m-9 12H4a2 2 0 01-2-2V4a2 2 0 012-2h16a2 2 0 012 2v8a2 2 0 01-2 2"/>
+            </svg>
+            アンケートに答える
+          </a>
+        </div>
       </div>
 
     </div>
@@ -384,7 +407,9 @@
       <h2 class="section-title">AI Image Works</h2>
       <p class="section-sub">Google Gemini / Nanobanana Pro を使用したAI画像制作</p>
       <div class="slideshow" id="aiSlideshow">
-        <div class="slides-wrap" id="aiSlidesWrap"><!-- JS で生成 --></div>
+        <div class="slides-wrap" id="aiSlidesWrap">
+          <!-- JS で生成 -->
+        </div>
         <button class="slide-btn prev" id="aiPrev" aria-label="前へ">&#8592;</button>
         <button class="slide-btn next" id="aiNext" aria-label="次へ">&#8594;</button>
         <div class="slide-dots" id="aiDots"></div>
@@ -399,7 +424,9 @@
       <h2 class="section-title">Competition Works</h2>
       <p class="section-sub">コンペへの挑戦作品</p>
       <div class="slideshow" id="workSlideshow">
-        <div class="slides-wrap" id="workSlidesWrap"><!-- JS で生成 --></div>
+        <div class="slides-wrap" id="workSlidesWrap">
+          <!-- JS で生成 -->
+        </div>
         <button class="slide-btn prev" id="workPrev" aria-label="前へ">&#8592;</button>
         <button class="slide-btn next" id="workNext" aria-label="次へ">&#8594;</button>
         <div class="slide-dots" id="workDots"></div>
@@ -414,11 +441,57 @@
       <h2 class="section-title">Web Design Works</h2>
       <p class="section-sub">HTML / CSS / JavaScript でコーディングした制作物</p>
 
+      <!-- カテゴリ①：医療・介護 × Web制作 -->
+      <h3 class="works-category-title">🏥 医療・介護 × Web制作</h3>
+
+      <div class="web-grid">
+
+        <div class="web-card">
+          <div class="web-card-thumb">
+            <span class="web-card-label">🔜 Coming Soon</span>
+          </div>
+          <div class="web-card-body">
+            <h3>介護認定について</h3>
+            <p>介護認定の仕組みや申請方法をわかりやすく解説。YouTube動画で公開予定。</p>
+            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
+            <a href="https://www.youtube.com/@vu24kpye/playlists" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
+          </div>
+        </div>
+
+        <div class="web-card">
+          <div class="web-card-thumb">
+            <span class="web-card-label">🔜 Coming Soon</span>
+          </div>
+          <div class="web-card-body">
+            <h3>認知症の分類について</h3>
+            <p>アルツハイマー型・レビー小体型など認知症の種類と特徴を解説予定。</p>
+            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
+            <a href="https://www.youtube.com/@vu24kpye/playlists" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
+          </div>
+        </div>
+
+        <div class="web-card">
+          <div class="web-card-thumb">
+            <span class="web-card-label">🔜 Coming Soon</span>
+          </div>
+          <div class="web-card-body">
+            <h3>介護サービスについて</h3>
+            <p>訪問介護・デイサービスなど介護サービスの種類と使い方を解説予定。</p>
+            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
+            <a href="https://www.youtube.com/@vu24kpye/playlists" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
+          </div>
+        </div>
+
+      </div>
+
       <!-- カテゴリ②：Web制作 -->
       <h3 class="works-category-title">💻 Web制作</h3>
       <div class="web-grid">
+
         <div class="web-card">
-          <div class="web-card-thumb"><span class="web-card-label">Claudeで初ポートフォリオ作成</span></div>
+          <div class="web-card-thumb">
+            <span class="web-card-label">Claudeで初ポートフォリオ作成</span>
+          </div>
           <div class="web-card-body">
             <h3>ポートフォリオサイト</h3>
             <p>自己紹介・実績をまとめたPDFファイルを基にClaudeに特に細かな指示をせずつくらせてみた。</p>
@@ -426,8 +499,11 @@
             <a href="https://kobayashi4556.github.io/my-portfolio/portfolio.html" class="web-card-link" target="_blank" rel="noopener">GitHub Pages で見る →</a>
           </div>
         </div>
+
         <div class="web-card">
-          <div class="web-card-thumb web-card-thumb--2"><span class="web-card-label">とあるテスト案件</span></div>
+          <div class="web-card-thumb web-card-thumb--2">
+            <span class="web-card-label">とあるテスト案件</span>
+          </div>
           <div class="web-card-body">
             <h3>レスポンシブ デザイン</h3>
             <p>本来ならFigmaでのレスポンシブ デザインをClaudeで先にデザインさせたSP版。</p>
@@ -435,8 +511,11 @@
             <a href="https://kobayashi4556.github.io/my-portfolio/sonosann_scheduled_sp.html" class="web-card-link" target="_blank" rel="noopener">GitHub で見る →</a>
           </div>
         </div>
+
         <div class="web-card">
-          <div class="web-card-thumb web-card-thumb--3"><span class="web-card-label">とあるテスト案件２</span></div>
+          <div class="web-card-thumb web-card-thumb--3">
+            <span class="web-card-label">とあるテスト案件２</span>
+          </div>
           <div class="web-card-body">
             <h3>レスポンシブ デザイン</h3>
             <p>本来ならFigmaでのレスポンシブ デザイン・テーマはメール管理のサイト PC版。</p>
@@ -446,11 +525,13 @@
             <a href="https://kobayashi4556.github.io/my-portfolio/Figma.png" class="web-card-link" target="_blank" rel="noopener">FigmaのデザインカンプをGitHubで見る →</a>
           </div>
         </div>
+
       </div>
 
       <!-- カテゴリ③：AI活用 -->
       <h3 class="works-category-title">🤖 AI活用</h3>
       <div class="web-grid">
+
         <div class="web-card">
           <div class="web-card-thumb" style="background-image: url('https://img.youtube.com/vi/pYX-cP1Mka0/maxresdefault.jpg'); background-size: cover; background-position: center;">
             <span class="web-card-label">NotebookLM活用</span>
@@ -462,6 +543,7 @@
             <a href="https://youtu.be/pYX-cP1Mka0" class="web-card-link" target="_blank" rel="noopener">YouTubeで見る →</a>
           </div>
         </div>
+
         <div class="web-card">
           <div class="web-card-thumb" style="background-image: url('https://img.youtube.com/vi/-gRTIvm8YuE/maxresdefault.jpg'); background-size: cover; background-position: center;">
             <span class="web-card-label">AI業務効率化</span>
@@ -473,6 +555,7 @@
             <a href="https://youtu.be/-gRTIvm8YuE" class="web-card-link" target="_blank" rel="noopener">YouTubeで見る →</a>
           </div>
         </div>
+
         <div class="web-card">
           <div class="web-card-thumb" style="background-image: url('https://img.youtube.com/vi/Ff3GQbPXL30/maxresdefault.jpg'); background-size: cover; background-position: center;">
             <span class="web-card-label">ポートフォリオ紹介動画</span>
@@ -484,6 +567,7 @@
             <a href="https://youtu.be/Ff3GQbPXL30" class="web-card-link" target="_blank" rel="noopener">YouTubeで見る →</a>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -496,13 +580,13 @@
         <div class="skill-group">
           <h3>AI ツール</h3>
           <ul>
-            <li>Google Gemini</li>
-            <li>Nanobanana Pro</li>
-            <li>Google AI Studio</li>
-            <li>Google NotebookLM</li>
-            <li>Veo</li>
-            <li>SunoAI</li>
-            <li>Claude/Claude code</li>
+          <li>Google Gemini</li>
+          <li>Nanobanana Pro</li>
+          <li>Google AI Studio</li>
+          <li>Google NotebookLM</li>
+          <li>Veo </li>
+          <li>SunoAI</li>
+          <li>Claude/Claude code</li>
           </ul>
         </div>
         <div class="skill-group">
@@ -540,7 +624,7 @@
 
   <div class="divider"></div>
 
-  <!-- Blog 誘導セクション -->
+  <!-- ===== Blog 誘導セクション ===== -->
   <section id="blog" class="blog-nav-section">
     <span class="blog-nav-label">sonosann's journal</span>
     <h2 class="blog-nav-title">Blog</h2>
@@ -558,214 +642,75 @@
     <a href="blog.html" class="blog-nav-all">すべての記事を読む →</a>
   </section>
 
-  <!-- Service & Payment（Stripe） -->
-  <section class="section stripe-section" id="service">
-    <div class="container">
-
-      <span class="stripe-section-label">Service & Contact</span>
-      <h2 class="stripe-section-title">Service &amp; Payment</h2>
-      <p class="stripe-section-desc">
-        医療・介護 × AI・Web制作のサポートを提供しています。<br>
-        まずはLINEお友達登録またはお問い合わせフォームからお気軽にどうぞ。
-      </p>
-
-      <!-- LINEお友達登録 -->
-      <div class="line-cta">
-        <p class="line-cta-label">まずはこちらから</p>
-        <a href="https://lin.ee/XfZJj2S" target="_blank" rel="noopener" class="line-add-btn">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 2C6.48 2 2 6.02 2 11c0 3.54 2.04 6.64 5.09 8.38-.18.63-.65 2.28-.74 2.64-.12.44.16.44.34.32.14-.09 2.28-1.5 3.2-2.11.67.09 1.37.14 2.11.14 5.52 0 10-4.02 10-9C22 6.02 17.52 2 12 2zm5.12 11.86H9.66c-.31 0-.57-.25-.57-.57v-4.9c0-.31.25-.57.57-.57s.57.25.57.57v4.33h4.89c.31 0 .57.25.57.57s-.25.57-.57.57zm1.43-2.86c0 .31-.25.57-.57.57s-.57-.25-.57-.57V8.43c0-.31.25-.57.57-.57s.57.25.57.57v2.57zm-8.57 0c0 .31-.25.57-.57.57s-.57-.25-.57-.57V8.43c0-.31.25-.57.57-.57s.57.25.57.57v2.57zm3.43 0c0 .31-.25.57-.57.57s-.57-.25-.57-.57V8.43c0-.31.25-.57.57-.57s.57.25.57.57v2.57z"/>
-          </svg>
-          LINEでお友達登録する
-        </a>
-        <p class="line-cta-note">ID: @319emxxq ／ ご相談・お問い合わせはLINEが一番早く対応できます</p>
-      </div>
-
-      <div class="stripe-divider"></div>
-
-      <!-- サービス内容 -->
-      <div class="service-categories">
-
-        <div class="service-cat-card">
-          <div class="service-cat-icon">🏥</div>
-          <h3 class="service-cat-title">医療・介護サポート</h3>
-          <ul class="service-cat-list">
-            <li>介護保険・制度の情報提供</li>
-            <li>AI活用による業務効率化支援</li>
-            <li>ケアマネ向けPDF教材 ＋ LINEサポート</li>
-          </ul>
-        </div>
-
-        <div class="service-cat-card">
-          <div class="service-cat-icon">💻</div>
-          <h3 class="service-cat-title">Web制作・デザイン</h3>
-          <ul class="service-cat-list">
-            <li>ポートフォリオ・サイト制作</li>
-            <li>LP・ランディングページ制作</li>
-            <li>HTML/CSS コーディング</li>
-          </ul>
-        </div>
-
-        <div class="service-cat-card">
-          <div class="service-cat-icon">🎬</div>
-          <h3 class="service-cat-title">動画・AI制作</h3>
-          <ul class="service-cat-list">
-            <li>YouTube動画企画・編集</li>
-            <li>AI画像・動画コンテンツ制作</li>
-            <li>ナレーション動画（Google AI Studio）</li>
-          </ul>
-        </div>
-
-        <div class="service-cat-card">
-          <div class="service-cat-icon">📄</div>
-          <h3 class="service-cat-title">PDF教材 ＋ 伴走サポート</h3>
-          <ul class="service-cat-list">
-            <li>作業手順PDFガイド</li>
-            <li>LINEによる個別伴走サポート</li>
-            <li>Googleアナリティクス・LINE公式設定等</li>
-          </ul>
-        </div>
-
-      </div>
-
-      <div class="stripe-divider"></div>
-
-      <!-- 料金カード -->
-      <div class="stripe-plans">
-
-        <!-- プラン①：単品 Coming Soon -->
-        <div class="stripe-plan-card coming-soon-card">
-          <div class="coming-soon-overlay">
-            <span class="coming-soon-text">Coming Soon</span>
-            <p class="coming-soon-sub">価格・内容を準備中です</p>
-          </div>
-          <p class="stripe-plan-name">Light</p>
-          <p class="stripe-plan-price">¥ —<span> / 単品</span></p>
-          <p class="stripe-plan-note">PDF教材 1本</p>
-          <ul class="stripe-plan-features">
-            <li>PDF教材 1本（即時ダウンロード）</li>
-            <li>GoogleアナリティクスまたはLINE公式設定ガイド等</li>
-          </ul>
-          <span class="stripe-btn disabled">準備中</span>
-        </div>
-
-        <!-- プラン②：セット Coming Soon -->
-        <div class="stripe-plan-card featured coming-soon-card">
-          <span class="stripe-plan-badge">Recommended</span>
-          <div class="coming-soon-overlay">
-            <span class="coming-soon-text">Coming Soon</span>
-            <p class="coming-soon-sub">価格・内容を準備中です</p>
-          </div>
-          <p class="stripe-plan-name">Set</p>
-          <p class="stripe-plan-price">¥ —<span> / セット</span></p>
-          <p class="stripe-plan-note">PDF教材 複数本</p>
-          <ul class="stripe-plan-features">
-            <li>PDF教材まとめて（即時ダウンロード）</li>
-            <li>LINEサポート付きプランも検討中</li>
-          </ul>
-          <span class="stripe-btn disabled">準備中</span>
-        </div>
-
-        <!-- プラン③：相談・フォーム -->
-        <div class="stripe-plan-card">
-          <p class="stripe-plan-name">Contact</p>
-          <p class="stripe-plan-price" style="font-size:1.5rem; padding-top:.4rem;">まずご相談を</p>
-          <p class="stripe-plan-note">お問い合わせ・ご依頼</p>
-          <ul class="stripe-plan-features">
-            <li>サイト制作・動画制作のご依頼</li>
-            <li>AI活用・業務効率化のご相談</li>
-            <li>LINEまたはフォームよりどうぞ</li>
-          </ul>
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform?usp=header"
-             class="stripe-btn primary" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            お問い合わせフォームへ
-          </a>
-        </div>
-
-      </div>
-
-      <p class="stripe-coming">
-        ※ PDF教材・Stripeオンライン決済は準備中です。公開次第LINEでもお知らせします。
-      </p>
-
-    </div>
-  </section>
-
   <!-- Contact -->
-  <section class="section section-light" id="contact">
-    <div class="container contact-container">
-      <h2 class="section-title">Contact</h2>
-      <p class="contact-desc">お仕事のご依頼・ご相談はクラウドワークスまたはCoconalaからお気軽にどうぞ。</p>
-      <div class="contact-links">
-        <a href="https://crowdworks.jp/public/employees/6735369" class="contact-btn" target="_blank" rel="noopener">CrowdWorks プロフィール</a>
-        <a href="https://coconala.com/users/5975070" class="contact-btn contact-btn--outline" target="_blank" rel="noopener">Coconala プロフィール&ブログ</a>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform?usp=header" target="_blank" class="contact-btn">お問い合わせフォーム</a>
-      </div>
+<section class="section section-light" id="contact">
+  <div class="container contact-container">
+    <h2 class="section-title">Contact</h2>
+    <p class="contact-desc">お仕事のご依頼・ご相談はクラウドワークスまたはCoconalaからお気軽にどうぞ。</p>
+    <div class="contact-links">
+      <a href="https://crowdworks.jp/public/employees/6735369" class="contact-btn" target="_blank" rel="noopener">CrowdWorks プロフィール</a>
+      <a href="https://coconala.com/users/5975070" class="contact-btn contact-btn--outline" target="_blank" rel="noopener">Coconala プロフィール&ブログ</a>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSe-ti51VsWhZ0snXnBZjGj1FYXZxXb0-5sLWVXTdL4TA6X5-w/viewform?usp=header" target="_blank" class="contact-btn">お問い合わせフォーム</a>
+    </div>
 
-      <!-- SNS リンク -->
-      <div class="sns-links">
-        <p class="sns-label">SNS &amp; Channel</p>
-        <div class="sns-grid">
+    <!-- SNS リンク -->
+    <div class="sns-links">
+      <p class="sns-label">SNS &amp; Channel</p>
+      <div class="sns-grid">
 
-          <a href="https://x.com/satsuki_nscare" class="sns-item" target="_blank" rel="noopener">
-            <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-            <span class="sns-text">
-              <span class="sns-name">X（Twitter）</span>
-              <span class="sns-handle">@satsuki_nscare</span>
-            </span>
-          </a>
+        <a href="https://x.com/satsuki_nscare" class="sns-item" target="_blank" rel="noopener">
+          <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+          <span class="sns-text">
+            <span class="sns-name">X（Twitter）</span>
+            <span class="sns-handle">@satsuki_nscare</span>
+          </span>
+        </a>
+        <a href="https://www.instagram.com/caremanesonosann/" class="sns-item" target="_blank" rel="noopener">
+          <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+          </svg>
+          <span class="sns-text">
+            <span class="sns-name">Instagram</span>
+            <span class="sns-handle">@caremanesonosann</span>
+          </span>
+        </a>
+        <a href="https://www.threads.com/@caremanesonosann" class="sns-item" target="_blank" rel="noopener">
+          <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.583-1.303-.881-2.348-.89h-.048c-.68 0-1.909.189-2.436 1.572l-1.97-.696C8.166 3.89 9.908 3.23 12.019 3.21c1.65.016 2.963.496 3.9 1.426 1.211 1.202 1.548 2.96 1.496 4.842a8.417 8.417 0 0 1 1.315.834c1.098.851 1.821 1.999 2.094 3.32.559 2.683-.165 5.715-3.509 7.714-1.621.978-3.47 1.622-5.129 1.654z"/>
+          </svg>
+          <span class="sns-text">
+            <span class="sns-name">Threads</span>
+            <span class="sns-handle">@caremanesonosann</span>
+          </span>
+        </a>
+        
+        <a href="https://www.youtube.com/@vu24kpye/playlists" class="sns-item" target="_blank" rel="noopener">
+          <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span class="sns-text">
+            <span class="sns-name">YouTube</span>
+            <span class="sns-handle">ナース・ケアマネ さつき</span>
+          </span>
+        </a>
 
-          <a href="https://www.instagram.com/caremanesonosann/" class="sns-item" target="_blank" rel="noopener">
-            <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
-            </svg>
-            <span class="sns-text">
-              <span class="sns-name">Instagram</span>
-              <span class="sns-handle">@caremanesonosann</span>
-            </span>
-          </a>
+        <a href="https://www.youtube.com/@AIpicturebook-oc4fl" class="sns-item" target="_blank" rel="noopener">
+          <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span class="sns-text">
+            <span class="sns-name">YouTube</span>
+            <span class="sns-handle">AI picture book</span>
+          </span>
+        </a>
 
-          <a href="https://www.threads.com/@caremanesonosann" class="sns-item" target="_blank" rel="noopener">
-            <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.583-1.303-.881-2.348-.89h-.048c-.68 0-1.909.189-2.436 1.572l-1.97-.696C8.166 3.89 9.908 3.23 12.019 3.21c1.65.016 2.963.496 3.9 1.426 1.211 1.202 1.548 2.96 1.496 4.842a8.417 8.417 0 0 1 1.315.834c1.098.851 1.821 1.999 2.094 3.32.559 2.683-.165 5.715-3.509 7.714-1.621.978-3.47 1.622-5.129 1.654z"/>
-            </svg>
-            <span class="sns-text">
-              <span class="sns-name">Threads</span>
-              <span class="sns-handle">@caremanesonosann</span>
-            </span>
-          </a>
-
-          <a href="https://www.youtube.com/@vu24kpye/playlists" class="sns-item" target="_blank" rel="noopener">
-            <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            <span class="sns-text">
-              <span class="sns-name">YouTube</span>
-              <span class="sns-handle">ナース・ケアマネ さつき</span>
-            </span>
-          </a>
-
-          <a href="https://www.youtube.com/@AIpicturebook-oc4fl" class="sns-item" target="_blank" rel="noopener">
-            <svg class="sns-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            <span class="sns-text">
-              <span class="sns-name">YouTube</span>
-              <span class="sns-handle">AI picture book</span>
-            </span>
-          </a>
-
-        </div>
       </div>
     </div>
-  </section>
-
-  <footer class="footer">
+  </div>
+</section>
+<footer class="footer">
     <p>© 2026 sonosann. All rights reserved.</p>
   </footer>
 
