@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ありがとうございます | sonosann</title>
+  <meta name="description" content="アンケートへのご回答ありがとうございます。無料資料をプレゼント中です。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --off-white: #f9f8f6;
+      --light: #f2f0ec;
+      --mid: #e0ddd8;
+      --gray: #9a9690;
+      --dark-gray: #4a4845;
+      --black: #1a1916;
+      --accent: #c9a84c;
+      --accent-light: #e8d49a;
+      --font-en: 'Cormorant Garamond', Georgia, serif;
+      --font-jp: 'Noto Sans JP', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-jp);
+      font-weight: 300;
+      color: var(--black);
+      background: var(--off-white);
+      line-height: 1.8;
+      font-size: 15px;
+      min-height: 100vh;
+    }
+
+    /* ===== ヘッダー ===== */
+    .site-header {
+      background: rgba(255,255,255,0.95);
+      border-bottom: 1px solid var(--mid);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+    .site-header a {
+      font-family: var(--font-en);
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    /* ===== ヒーロー ===== */
+    .hero {
+      text-align: center;
+      padding: 5rem 1.5rem 3.5rem;
+    }
+    .hero-label {
+      font-family: var(--font-en);
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: var(--font-en);
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 300;
+      color: var(--black);
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+    .hero-line {
+      width: 40px;
+      height: 1px;
+      background: var(--accent);
+      margin: 0 auto 1.8rem;
+      opacity: 0.7;
+    }
+    .hero-text {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--dark-gray);
+      letter-spacing: 0.06em;
+      line-height: 2;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ===== セクション ===== */
+    .section-label {
+      font-family: var(--font-en);
+      font-size: 0.68rem;
+      letter-spacing: 0.4em;
+      color: var(--accent);
+      text-transform: uppercase;
+      text-align: center;
+      display: block;
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: var(--font-en);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 300;
+      color: var(--black);
+      letter-spacing: 0.08em;
+      text-align: center;
+      margin-bottom: 0.6rem;
+    }
+    .section-desc {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--gray);
+      text-align: center;
+      letter-spacing: 0.06em;
+      line-height: 1.9;
+      margin-bottom: 3rem;
+    }
+
+    /* ===== カードグリッド ===== */
+    .cards-section {
+      padding: 4rem 1.5rem;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 2rem;
+    }
+
+    /* ===== カード ===== */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--mid);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      position: relative;
+    }
+    .card:hover {
+      box-shadow: 0 8px 40px rgba(0,0,0,0.09);
+      transform: translateY(-3px);
+    }
+
+    /* カードカラーライン（上部のジャンルカラー） */
+    .card::before {
+      content: '';
+      display: block;
+      height: 3px;
+      background: var(--card-color, var(--accent));
+    }
+    .card-kaigo { --card-color: #8aaa80; }
+    .card-ai    { --card-color: #c9a84c; }
+    .card-web   { --card-color: #8098b8; }
+
+    .card-body {
+      padding: 2rem 1.8rem 1.6rem;
+    }
+    .card-genre {
+      font-family: var(--font-en);
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--card-color, var(--accent));
+      display: block;
+      margin-bottom: 0.9rem;
+    }
+    .card-title {
+      font-family: var(--font-en);
+      font-size: 1.35rem;
+      font-weight: 300;
+      color: var(--black);
+      letter-spacing: 0.06em;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+    .card-subtitle {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--dark-gray);
+      letter-spacing: 0.04em;
+      margin-bottom: 1.2rem;
+    }
+    .card-divider {
+      width: 28px;
+      height: 1px;
+      background: var(--mid);
+      margin-bottom: 1.2rem;
+    }
+    .card-desc {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--dark-gray);
+      letter-spacing: 0.04em;
+      line-height: 1.9;
+      margin-bottom: 1.6rem;
+    }
+
+    /* QRコードエリア */
+    .card-qr-area {
+      background: var(--off-white);
+      border: 1px solid var(--mid);
+      border-radius: 2px;
+      padding: 1.4rem;
+      text-align: center;
+      margin-bottom: 1.4rem;
+    }
+    .card-qr-placeholder {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 0.8rem;
+      background: var(--light);
+      border: 1px dashed var(--mid);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* QRコード画像を入れる場合はここを差し替え */
+    .card-qr-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .card-qr-placeholder svg {
+      opacity: 0.3;
+    }
+    .card-qr-note {
+      font-size: 0.72rem;
+      color: var(--gray);
+      letter-spacing: 0.06em;
+      line-height: 1.7;
+    }
+
+    /* さりげないLINEボタン（オーバーレイ風） */
+    .card-line-link {
+      display: block;
+      text-align: center;
+      padding: 0.7rem 1rem;
+      border: 1px solid var(--mid);
+      border-radius: 2px;
+      font-family: var(--font-jp);
+      font-size: 0.76rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--dark-gray);
+      text-decoration: none;
+      background: transparent;
+      transition: border-color 0.25s, color 0.25s, background 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-line-link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--card-color, var(--accent));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .card-line-link:hover::before { opacity: 0.07; }
+    .card-line-link:hover {
+      border-color: var(--card-color, var(--accent));
+      color: var(--black);
+    }
+    .card-line-link span {
+      position: relative;
+      z-index: 1;
+    }
+    /* LINE色のドット */
+    .card-line-link .line-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--card-color, var(--accent));
+      margin-right: 6px;
+      vertical-align: middle;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== ポートフォリオへ戻るリンク ===== */
+    .back-section {
+      text-align: center;
+      padding: 2rem 1.5rem 5rem;
+    }
+    .back-link {
+      font-family: var(--font-en);
+      font-size: 0.82rem;
+      letter-spacing: 0.2em;
+      color: var(--gray);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.25s;
+    }
+    .back-link:hover { color: var(--black); }
+    .back-link::before { content: '←'; }
+
+    /* ===== フッター ===== */
+    .site-footer {
+      border-top: 1px solid var(--mid);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .site-footer p {
+      font-family: var(--font-en);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--gray);
+    }
+
+    /* ===== アニメーション ===== */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.7s ease forwards;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.22s; }
+    .delay-3 { animation-delay: 0.34s; }
+    .delay-4 { animation-delay: 0.46s; }
+    .delay-5 { animation-delay: 0.58s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 3.5rem 1.2rem 2.5rem; }
+      .cards-section { padding: 2.5rem 1.2rem; }
+      .card-body { padding: 1.6rem 1.4rem 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <a href="./index.html">Nurse Care Manager Web Designer sonosann</a>
+  </header>
+
+  <!-- ヒーロー -->
+  <section class="hero">
+    <span class="hero-label fade-up">Thank you</span>
+    <h1 class="hero-title fade-up delay-1">ご回答ありがとうございます</h1>
+    <div class="hero-line fade-up delay-2"></div>
+    <p class="hero-text fade-up delay-3">
+      あなたの声、しっかり受け取りました。<br>
+      介護・AI・Webそれぞれのジャンルで<br>
+      無料資料を準備しています。<br>
+      気になるものをLINEで受け取ってください🌿
+    </p>
+  </section>
+
+  <!-- カードセクション -->
+  <section class="cards-section">
+    <span class="section-label fade-up delay-3">Free Gift</span>
+    <h2 class="section-title fade-up delay-4">無料資料をお届けします</h2>
+    <p class="section-desc fade-up delay-5">
+      LINEを友達追加いただくと、自動でお届けします
+    </p>
+
+    <div class="cards-grid">
+
+      <!-- 介護カード -->
+      <div class="card card-kaigo fade-up delay-3">
+        <div class="card-body">
+          <span class="card-genre">Nursing Care</span>
+          <h3 class="card-title">介護お助け<br>ガイドブック</h3>
+          <p class="card-subtitle">家族介護者・支援職の方へ</p>
+          <div class="card-divider"></div>
+          <p class="card-desc">
+            「どこに相談すればいい？」<br>
+            「サービスって何があるの？」<br>
+            ケアマネジャーとして30年以上<br>
+            現場で向き合ってきた経験をもとに<br>
+            わかりやすくまとめた一冊です。
+          </p>
+
+          <!-- QRコード -->
+          <div class="card-qr-area">
+            <div class="card-qr-placeholder" style="background:transparent;border:none;width:auto;height:auto;max-width:100%;">
+              <img src="image/kaigo-guide.jpg" alt="介護お助けガイドブック案内" style="width:100%;height:auto;object-fit:contain;border-radius:2px;">
+            </div>
+            <p class="card-qr-note">
+              QRコードを読み取って<br>LINE友達追加 → 資料が届きます
+            </p>
+          </div>
+
+          <!-- さりげないLINEボタン -->
+          <a class="card-line-link" href="https://lin.ee/XfZJj2S" target="_blank" rel="noopener">
+            <span class="line-dot"></span>
+            <span>LINEで受け取る</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- AI活用カード（Coming Soon） -->
+      <div class="card card-ai fade-up delay-4" style="opacity:0.28;pointer-events:none;filter:grayscale(0.6);">
+        <div class="card-body" style="position:relative;">
+          <div style="position:absolute;top:0;right:0;background:#e8e0d0;color:#7a7060;font-family:'Noto Sans JP',sans-serif;font-size:0.65rem;font-weight:500;letter-spacing:0.15em;padding:0.3rem 0.75rem;border-radius:0 0 0 4px;">COMING SOON</div>
+          <span class="card-genre">AI Guide</span>
+          <h3 class="card-title">日常・仕事の<br>AI活用ガイド</h3>
+          <p class="card-subtitle">AIを使い始めたい方へ</p>
+          <div class="card-divider"></div>
+          <p class="card-desc">
+            「AIって難しそう…」<br>
+            そんな方でも今日から使える<br>
+            日常・介護・仕事場面での<br>
+            AI活用事例を厳選してまとめました。<br>
+            難しい知識は一切不要です。
+          </p>
+
+          <div class="card-qr-area">
+            <div class="card-qr-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9a9690" stroke-width="1.5">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <path d="M14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/>
+              </svg>
+            </div>
+            <p class="card-qr-note">準備中です。しばらくお待ちください。</p>
+          </div>
+
+          <div class="card-line-link" style="cursor:default;color:#b0a898;border-color:#e0d8cc;">
+            <span class="line-dot" style="background:#c0b8a8;"></span>
+            <span>準備中</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Web制作カード（Coming Soon） -->
+      <div class="card card-web fade-up delay-5" style="opacity:0.28;pointer-events:none;filter:grayscale(0.6);">
+        <div class="card-body" style="position:relative;">
+          <div style="position:absolute;top:0;right:0;background:#e8e0d0;color:#7a7060;font-family:'Noto Sans JP',sans-serif;font-size:0.65rem;font-weight:500;letter-spacing:0.15em;padding:0.3rem 0.75rem;border-radius:0 0 0 4px;">COMING SOON</div>
+          <span class="card-genre">Web Design</span>
+          <h3 class="card-title">ホームページ・SNS<br>はじめの一歩ガイド</h3>
+          <p class="card-subtitle">発信を始めたい方へ</p>
+          <div class="card-divider"></div>
+          <p class="card-desc">
+            「ホームページって高いの？」<br>
+            「SNSってどれから始めれば？」<br>
+            Web制作・デザインの視点から<br>
+            発信を始めるための基礎知識を<br>
+            わかりやすく解説します。
+          </p>
+
+          <div class="card-qr-area">
+            <div class="card-qr-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9a9690" stroke-width="1.5">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <path d="M14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/>
+              </svg>
+            </div>
+            <p class="card-qr-note">準備中です。しばらくお待ちください。</p>
+          </div>
+
+          <div class="card-line-link" style="cursor:default;color:#b0a898;border-color:#e0d8cc;">
+            <span class="line-dot" style="background:#c0b8a8;"></span>
+            <span>準備中</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ポートフォリオへ戻る -->
+  <div class="back-section">
+    <a class="back-link" href="./index.html">ポートフォリオサイトに戻る</a>
+  </div>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <p>© 2025 sonosann Web &amp; AI Support</p>
+  </footer>
+
+</body>
+</html>
