@@ -342,6 +342,158 @@
       .cards-section { padding: 2.5rem 1.2rem; }
       .card-body { padding: 1.6rem 1.4rem 1.3rem; }
     }
+    /* ===== 価格セクション ===== */
+    .pricing-section {
+      padding: 4rem 1.5rem 5rem;
+      max-width: 1040px;
+      margin: 0 auto;
+      border-top: 1px solid var(--mid);
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 0;
+    }
+    .pricing-card {
+      background: var(--white);
+      border: 1px solid var(--mid);
+      border-radius: 4px;
+      padding: 2rem 1.8rem 1.8rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .pricing-set {
+      border-color: #b4a078;
+      box-shadow: 0 4px 24px rgba(180,160,120,.12);
+    }
+    .pricing-badge {
+      display: inline-block;
+      font-family: var(--font-jp);
+      font-size: .65rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      color: #7a7060;
+      background: #f0ece4;
+      padding: .25rem .7rem;
+      border-radius: 2px;
+      margin-bottom: .9rem;
+    }
+    .pricing-badge-accent {
+      color: #6a4a08;
+      background: #fdf0d0;
+    }
+    .pricing-genre {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .65rem;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: #b4a078;
+      margin-bottom: .6rem;
+    }
+    .pricing-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 300;
+      color: var(--black);
+      letter-spacing: .05em;
+      line-height: 1.4;
+      margin-bottom: .6rem;
+    }
+    .pricing-divider {
+      width: 28px;
+      height: 1px;
+      background: var(--mid);
+      margin-bottom: 1rem;
+    }
+    .pricing-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--black);
+      letter-spacing: .03em;
+      margin-bottom: 1.2rem;
+    }
+    .pricing-price span {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .72rem;
+      font-weight: 300;
+      color: #7a7060;
+      margin-left: .4rem;
+    }
+    .pricing-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.6rem;
+      flex: 1;
+    }
+    .pricing-features li {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .78rem;
+      font-weight: 300;
+      color: #4a4540;
+      letter-spacing: .04em;
+      line-height: 1.8;
+      padding-left: 1rem;
+      position: relative;
+    }
+    .pricing-features li::before {
+      content: '·';
+      position: absolute;
+      left: 0;
+      color: #b4a078;
+      font-size: 1.2rem;
+      line-height: 1.4;
+    }
+    .pricing-btn {
+      display: block;
+      text-align: center;
+      padding: .9rem 1rem;
+      border-radius: 3px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .8rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-decoration: none;
+      transition: background .2s, border-color .2s;
+      margin-bottom: .6rem;
+    }
+    .pricing-btn-fill {
+      background: #b4a078;
+      color: #fff;
+      border: 1px solid #b4a078;
+    }
+    .pricing-btn-fill:hover {
+      background: #9a8860;
+      border-color: #9a8860;
+    }
+    .pricing-btn-line {
+      background: transparent;
+      color: #4a4540;
+      border: 1px solid #c8bfad;
+    }
+    .pricing-btn-line:hover {
+      border-color: #b4a078;
+      color: var(--black);
+    }
+    .pricing-inquiry {
+      display: block;
+      text-align: center;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .72rem;
+      font-weight: 300;
+      color: #9a9690;
+      letter-spacing: .08em;
+      text-decoration: none;
+      padding: .4rem;
+      transition: color .2s;
+    }
+    .pricing-inquiry:hover { color: #4a4540; }
+    @media (max-width: 640px) {
+      .pricing-section { padding: 3rem 1.2rem 4rem; }
+      .pricing-btn { font-size: .78rem; }
+    }
   </style>
 </head>
 <body>
@@ -473,6 +625,73 @@
             <span>準備中</span>
           </div>
         </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 価格セクション -->
+  <section class="pricing-section">
+    <span class="section-label">Pricing</span>
+    <h2 class="section-title">ガイドブックを手に入れる</h2>
+    <p class="section-desc">無料資料を読んで、もっと知りたくなった方へ</p>
+
+    <div class="pricing-grid">
+
+      <!-- 無料カード -->
+      <div class="pricing-card pricing-free">
+        <div class="pricing-badge">無料</div>
+        <p class="pricing-genre">Free</p>
+        <h3 class="pricing-title">入院・退院を機に<br>介護が始まる方へ</h3>
+        <div class="pricing-divider"></div>
+        <p class="pricing-price">¥0<span>（LINE登録で受け取る）</span></p>
+        <ul class="pricing-features">
+          <li>退院後の介護の流れがわかる</li>
+          <li>ケアマネへの相談方法</li>
+          <li>使えるサービスの種類</li>
+        </ul>
+        <a class="pricing-btn pricing-btn-line" href="https://lin.ee/XfZJj2S" target="_blank" rel="noopener">
+          LINEで無料受け取り
+        </a>
+      </div>
+
+      <!-- セットカード -->
+      <div class="pricing-card pricing-set">
+        <div class="pricing-badge pricing-badge-accent">おすすめ</div>
+        <p class="pricing-genre">Set</p>
+        <h3 class="pricing-title">介護お助け<br>ガイドブック 4冊セット</h3>
+        <div class="pricing-divider"></div>
+        <p class="pricing-price">¥100<span>（買い切り）</span></p>
+        <ul class="pricing-features">
+          <li>入院・退院 / 在宅介護の限界</li>
+          <li>施設費用 / 家族の役割分担</li>
+          <li>4つの場面をまるごとカバー</li>
+          <li>PDF形式ですぐ読める</li>
+        </ul>
+        <a class="pricing-btn pricing-btn-fill" href="https://buy.stripe.com/aFaeVdeGA2jgfPe1Yg7bW00" target="_blank" rel="noopener">
+          カードで購入する ¥100
+        </a>
+      </div>
+
+      <!-- 伴走支援カード -->
+      <div class="pricing-card pricing-support">
+        <div class="pricing-badge">サポート付き</div>
+        <p class="pricing-genre">Support</p>
+        <h3 class="pricing-title">介護お助けガイドブック<br>伴走支援付き</h3>
+        <div class="pricing-divider"></div>
+        <p class="pricing-price">¥1,000<span>（買い切り）</span></p>
+        <ul class="pricing-features">
+          <li>4冊セット込み</li>
+          <li>個別LINEで相談できる</li>
+          <li>ケアマネ歴30年のアドバイス</li>
+          <li>あなたの状況に合わせた対応</li>
+        </ul>
+        <a class="pricing-btn pricing-btn-fill" href="https://buy.stripe.com/00w6oHaqkga61Yo32k7bW01" target="_blank" rel="noopener">
+          カードで購入する ¥1,000
+        </a>
+        <a class="pricing-inquiry" href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform?usp=dialog" target="_blank" rel="noopener">
+          まずお問い合わせする
+        </a>
       </div>
 
     </div>
