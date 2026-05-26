@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ありがとうございます | sonosann</title>
-  <meta name="description" content="アンケートへのご回答ありがとうございます。無料資料をプレゼント中です。">
+  <meta name="description" content="ポートフォリオをご覧いただきありがとうございます。無料資料をプレゼント中です。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
@@ -92,7 +92,23 @@
       letter-spacing: 0.06em;
       line-height: 2;
       max-width: 520px;
-      margin: 0 auto;
+      margin: 0 auto 1.6rem;
+    }
+    .hero-inquiry {
+      display: inline-block;
+      font-family: var(--font-jp);
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--gray);
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      border-bottom: 1px solid var(--mid);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .hero-inquiry:hover {
+      color: var(--black);
+      border-color: var(--accent);
     }
 
     /* ===== セクション ===== */
@@ -150,8 +166,6 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.09);
       transform: translateY(-3px);
     }
-
-    /* カードカラーライン（上部のジャンルカラー） */
     .card::before {
       content: '';
       display: block;
@@ -204,8 +218,6 @@
       line-height: 1.9;
       margin-bottom: 1.6rem;
     }
-
-    /* QRコードエリア */
     .card-qr-area {
       background: var(--off-white);
       border: 1px solid var(--mid);
@@ -225,23 +237,18 @@
       align-items: center;
       justify-content: center;
     }
-    /* QRコード画像を入れる場合はここを差し替え */
     .card-qr-placeholder img {
       width: 100%;
       height: 100%;
       object-fit: contain;
     }
-    .card-qr-placeholder svg {
-      opacity: 0.3;
-    }
+    .card-qr-placeholder svg { opacity: 0.3; }
     .card-qr-note {
       font-size: 0.72rem;
       color: var(--gray);
       letter-spacing: 0.06em;
       line-height: 1.7;
     }
-
-    /* さりげないLINEボタン（オーバーレイ風） */
     .card-line-link {
       display: block;
       text-align: center;
@@ -272,11 +279,7 @@
       border-color: var(--card-color, var(--accent));
       color: var(--black);
     }
-    .card-line-link span {
-      position: relative;
-      z-index: 1;
-    }
-    /* LINE色のドット */
+    .card-line-link span { position: relative; z-index: 1; }
     .card-line-link .line-dot {
       display: inline-block;
       width: 6px;
@@ -342,6 +345,7 @@
       .cards-section { padding: 2.5rem 1.2rem; }
       .card-body { padding: 1.6rem 1.4rem 1.3rem; }
     }
+
     /* ===== 価格セクション ===== */
     .pricing-section {
       padding: 4rem 1.5rem 5rem;
@@ -464,19 +468,13 @@
       color: #fff;
       border: 1px solid #b4a078;
     }
-    .pricing-btn-fill:hover {
-      background: #9a8860;
-      border-color: #9a8860;
-    }
+    .pricing-btn-fill:hover { background: #9a8860; border-color: #9a8860; }
     .pricing-btn-line {
       background: transparent;
       color: #4a4540;
       border: 1px solid #c8bfad;
     }
-    .pricing-btn-line:hover {
-      border-color: #b4a078;
-      color: var(--black);
-    }
+    .pricing-btn-line:hover { border-color: #b4a078; color: var(--black); }
     .pricing-inquiry {
       display: block;
       text-align: center;
@@ -500,20 +498,24 @@
 
   <!-- ヘッダー -->
   <header class="site-header">
-    <a href="./index.html">Nurse Care Manager Web Designer sonosann</a>
+    <a href="./index.html">sonosann</a>
   </header>
 
   <!-- ヒーロー -->
   <section class="hero">
     <span class="hero-label fade-up">Thank you</span>
-    <h1 class="hero-title fade-up delay-1">ご回答ありがとうございます</h1>
+    <h1 class="hero-title fade-up delay-1">ポートフォリオをご覧いただき<br>ありがとうございます</h1>
     <div class="hero-line fade-up delay-2"></div>
     <p class="hero-text fade-up delay-3">
-      あなたの声、しっかり受け取りました。<br>
-      介護・AI・Webそれぞれのジャンルで<br>
-      無料資料を準備しています。<br>
-      気になるものをLINEで受け取ってください🌿
+      訪問いただけたこと、とても嬉しいです。🌿<br>
+      介護・AI・Webの無料資料を下記よりお受け取りください。<br>
+      受け取りには LINE お友達登録が必要です。
     </p>
+    <a class="hero-inquiry fade-up delay-4"
+       href="https://docs.google.com/forms/d/e/1FAIpQLSe-ti51VsWhZ0snXnBZjGj1FYXZxXb0-5sLWVXTdL4TA6X5-w/viewform?usp=header"
+       target="_blank" rel="noopener">
+      ご感想・ご意見はお問い合わせフォームからお気軽にどうぞ
+    </a>
   </section>
 
   <!-- カードセクション -->
@@ -540,8 +542,6 @@
             現場で向き合ってきた経験をもとに<br>
             わかりやすくまとめた一冊です。
           </p>
-
-          <!-- QRコード -->
           <div class="card-qr-area">
             <div class="card-qr-placeholder" style="background:transparent;border:none;width:auto;height:auto;max-width:100%;">
               <img src="image/kaigo-guide.jpg" alt="介護お助けガイドブック案内" style="width:100%;height:auto;object-fit:contain;border-radius:2px;">
@@ -550,8 +550,6 @@
               QRコードを読み取って<br>LINE友達追加 → 資料が届きます
             </p>
           </div>
-
-          <!-- さりげないLINEボタン -->
           <a class="card-line-link" href="https://lin.ee/XfZJj2S" target="_blank" rel="noopener">
             <span class="line-dot"></span>
             <span>LINEで受け取る</span>
@@ -574,7 +572,6 @@
             AI活用事例を厳選してまとめました。<br>
             難しい知識は一切不要です。
           </p>
-
           <div class="card-qr-area">
             <div class="card-qr-placeholder">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9a9690" stroke-width="1.5">
@@ -585,7 +582,6 @@
             </div>
             <p class="card-qr-note">準備中です。しばらくお待ちください。</p>
           </div>
-
           <div class="card-line-link" style="cursor:default;color:#b0a898;border-color:#e0d8cc;">
             <span class="line-dot" style="background:#c0b8a8;"></span>
             <span>準備中</span>
@@ -608,7 +604,6 @@
             発信を始めるための基礎知識を<br>
             わかりやすく解説します。
           </p>
-
           <div class="card-qr-area">
             <div class="card-qr-placeholder">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9a9690" stroke-width="1.5">
@@ -619,7 +614,6 @@
             </div>
             <p class="card-qr-note">準備中です。しばらくお待ちください。</p>
           </div>
-
           <div class="card-line-link" style="cursor:default;color:#b0a898;border-color:#e0d8cc;">
             <span class="line-dot" style="background:#c0b8a8;"></span>
             <span>準備中</span>
@@ -638,7 +632,6 @@
 
     <div class="pricing-grid">
 
-      <!-- 無料カード -->
       <div class="pricing-card pricing-free">
         <div class="pricing-badge">無料</div>
         <p class="pricing-genre">Free</p>
@@ -655,7 +648,6 @@
         </a>
       </div>
 
-      <!-- セットカード -->
       <div class="pricing-card pricing-set">
         <div class="pricing-badge pricing-badge-accent">おすすめ</div>
         <p class="pricing-genre">Set</p>
@@ -673,7 +665,6 @@
         </a>
       </div>
 
-      <!-- 伴走支援カード -->
       <div class="pricing-card pricing-support">
         <div class="pricing-badge">サポート付き</div>
         <p class="pricing-genre">Support</p>
@@ -704,7 +695,7 @@
 
   <!-- フッター -->
   <footer class="site-footer">
-    <p>© 2025 sonosann Web &amp; AI Support</p>
+    <p>© 2026 sonosann Web &amp; AI Support</p>
   </footer>
 
 </body>
