@@ -439,23 +439,63 @@
       </div>
 
       <!-- アンケートボタン -->
+      <!--
+==============================================================
+  📌 index.html の About セクション
+  既存の .about-survey-wrap ブロックをこれで丸ごと差し替え
+==============================================================
+-->
+
+      <!-- ★ アンケートボタン（3つ） ★ -->
       <div class="about-survey-wrap">
         <p class="about-survey-text">ご縁のある方へ、無料で資料をお届けしています🌿<br><span>介護・AI・Web — 気になるテーマの資料を受け取ってください</span></p>
         <div class="about-survey-btns">
+          <!-- 無料資料を受け取る -->
           <a class="about-survey-btn btn-fill" href="thanks.html">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="M20 12l-8 8-4-4 1.41-1.41L12 17.17l6.59-6.59L20 12z"/>
             </svg>
             無料資料を受け取る
           </a>
-          <a class="about-survey-btn btn-outline" href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform?usp=dialog" target="_blank" rel="noopener">
+          <!-- アンケートに答える -->
+          <a class="about-survey-btn btn-outline" href="https://docs.google.com/forms/d/e/1FAIpQLSdH285sttEO2oeXLtEc3-gz1-lQ_q5k4rbHa8gD-J-Ucy0bGQ/viewform?usp=publish-editor" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="M9 11l3 3L22 4m-9 12H4a2 2 0 01-2-2V4a2 2 0 012-2h16a2 2 0 012 2v8a2 2 0 01-2 2"/>
             </svg>
             アンケートに答える
           </a>
+          <!-- お問い合わせフォーム -->
+          <a class="about-survey-btn btn-outline" href="https://docs.google.com/forms/d/e/1FAIpQLSe-ti51VsWhZ0snXnBZjGj1FYXZxXb0-5sLWVXTdL4TA6X5-w/viewform?usp=header" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            お問い合わせフォーム
+          </a>
         </div>
       </div>
+      <!-- ★ /アンケートボタン ★ -->
+
+
+<!--
+==============================================================
+  📌 CSSも index.html の <style> ブロック末尾に追記
+  （既存の .about-survey-btn があれば不要、なければ追加）
+  3つ並べるために max-width だけ追記してください
+==============================================================
+-->
+<style>
+/* ボタン3つ対応：折り返しを自然にする */
+.about-survey-btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .9rem;
+}
+@media (max-width: 560px) {
+  .about-survey-btn { width: 100%; justify-content: center; }
+}
+</style>
 
     </div>
   </section>
