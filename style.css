@@ -112,41 +112,42 @@ ul { list-style: none; }
 =========================== */
 .hero {
   position: relative;
-  height: 100vh;
-  min-height: 560px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding-top: 60px; /* ナビ分 */
   overflow: hidden;
+  background: var(--light);
 }
+
 .hero-image-wrap {
-  position: absolute;
-  inset: 0;
+  max-width: 1060px; /* containerと同じ幅 */
+  margin: 0 auto;
+  position: relative;
 }
+
 .hero-img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center 60%;
+  width: 100%;
+  height: auto; /* 縦横比そのまま */
+  display: block;
   transform: scale(1.04);
   animation: heroZoom 8s ease-out forwards;
 }
+
 @keyframes heroZoom {
   to { transform: scale(1); }
 }
- 
+
 .hero-content {
   position: relative;
   z-index: 2;
   text-align: center;
   padding: 0 24px;
 }
- 
+
 .hero-sub,
 .hero-desc,
 .hero-btn {
   display: none;
 }
- 
+
 .hero-title {
   font-family: var(--font-en);
   font-size: clamp(3rem, 8vw, 5.5rem);
@@ -156,7 +157,7 @@ ul { list-style: none; }
   color: var(--black);
   margin-bottom: 0;
 }
- 
+
 .hero-scroll {
   position: absolute;
   bottom: 32px;
@@ -173,11 +174,19 @@ ul { list-style: none; }
   animation: scrollLine 1.8s ease-in-out infinite;
 }
 @keyframes scrollLine {
-  0% { opacity: 0; transform: scaleY(0); transform-origin: top; }
-  50% { opacity: 1; transform: scaleY(1); }
+  0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
+  50%  { opacity: 1; transform: scaleY(1); }
   100% { opacity: 0; transform: scaleY(1); }
 }
- 
+
+/* Hero レスポンシブ */
+@media (max-width: 768px) {
+  .hero-image-wrap { max-width: 100%; }
+}
+
+/* ===========================
+   Fade Up Animation
+=========================== */
 .fade-up {
   opacity: 0;
   transform: translateY(24px);
@@ -370,7 +379,9 @@ ul { list-style: none; }
 @media (max-width: 960px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .blog-grid { grid-template-columns: 1fr; } .blog-tabs { gap: 0.4rem; } .blog-tab { font-size: 0.78rem; padding: 0.4rem 0.9rem; } }
 
-/* ===== SNS Links ===== */
+/* ===========================
+   SNS Links
+=========================== */
 .sns-links { margin-top: 2.5rem; text-align: center; }
 .sns-label { font-family: 'Cormorant Garamond', serif; font-size: .75rem; letter-spacing: .35em; color: #b4a078; text-transform: uppercase; margin-bottom: 1.25rem; }
 .sns-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; max-width: 680px; margin: 0 auto; }
@@ -382,7 +393,9 @@ ul { list-style: none; }
 .sns-handle { font-family: 'Noto Sans JP', sans-serif; font-size: .72rem; font-weight: 300; color: #7a7060; margin-top: .1rem; }
 @media (max-width: 480px) { .sns-item { width: 100%; min-width: unset; } }
 
-/* ===== Stripe セクション ===== */
+/* ===========================
+   Stripe セクション
+=========================== */
 .stripe-section { background: #faf8f4; padding: 5rem 1.5rem; text-align: center; border-top: 1px solid #e8e0d0; }
 .stripe-section-label { font-family: 'Cormorant Garamond', serif; font-size: .75rem; letter-spacing: .35em; color: #b4a078; text-transform: uppercase; display: block; margin-bottom: 1rem; }
 .stripe-section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 300; color: #1a1a2e; letter-spacing: .1em; margin-bottom: .75rem; }
@@ -408,142 +421,32 @@ ul { list-style: none; }
 .stripe-trust-badge-text { font-family: 'Noto Sans JP', sans-serif; font-size: .75rem; font-weight: 300; color: #7a7060; letter-spacing: .06em; }
 .stripe-coming { font-family: 'Noto Sans JP', sans-serif; font-size: .72rem; font-weight: 300; color: #9a9080; letter-spacing: .06em; margin-top: 1.5rem; line-height: 1.9; }
 @media (max-width: 600px) { .stripe-plans { grid-template-columns: 1fr; } }
-/* ===== LINE CTA ===== */
-.line-cta {
-  margin: 0 auto 2rem;
-  text-align: center;
-}
-.line-cta-label {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: .75rem;
-  font-weight: 300;
-  letter-spacing: .2em;
-  color: #9a9080;
-  text-transform: uppercase;
-  margin-bottom: .75rem;
-}
-.line-add-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: #06C755;
-  color: #fff;
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: .9rem;
-  font-weight: 500;
-  letter-spacing: .06em;
-  padding: .9rem 2.2rem;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: background .2s, transform .2s;
-  margin-bottom: .75rem;
-}
-.line-add-btn:hover {
-  background: #05b34c;
-  transform: translateY(-1px);
-}
-.line-cta-note {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: .72rem;
-  font-weight: 300;
-  color: #9a9080;
-  letter-spacing: .04em;
-}
 
-/* ===== サービスカテゴリ ===== */
-.service-categories {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.25rem;
-  max-width: 900px;
-  margin: 0 auto 2.5rem;
-  text-align: left;
-}
-.service-cat-card {
-  background: #fff;
-  border: 1px solid #e0d8cc;
-  border-radius: 6px;
-  padding: 1.5rem 1.4rem;
-}
-.service-cat-icon {
-  font-size: 1.6rem;
-  margin-bottom: .6rem;
-}
-.service-cat-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #1a1a2e;
-  letter-spacing: .06em;
-  margin-bottom: .75rem;
-  padding-bottom: .5rem;
-  border-bottom: 1px solid #e8e0d0;
-}
-.service-cat-list {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: .76rem;
-  font-weight: 300;
-  color: #4a4540;
-  line-height: 2;
-  list-style: none;
-  padding: 0;
-}
-.service-cat-list li::before {
-  content: "— ";
-  color: #b4a078;
-}
+/* ===========================
+   LINE CTA
+=========================== */
+.line-cta { margin: 0 auto 2rem; text-align: center; }
+.line-cta-label { font-family: 'Noto Sans JP', sans-serif; font-size: .75rem; font-weight: 300; letter-spacing: .2em; color: #9a9080; text-transform: uppercase; margin-bottom: .75rem; }
+.line-add-btn { display: inline-flex; align-items: center; gap: 10px; background: #06C755; color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: .9rem; font-weight: 500; letter-spacing: .06em; padding: .9rem 2.2rem; border-radius: 4px; text-decoration: none; transition: background .2s, transform .2s; margin-bottom: .75rem; }
+.line-add-btn:hover { background: #05b34c; transform: translateY(-1px); }
+.line-cta-note { font-family: 'Noto Sans JP', sans-serif; font-size: .72rem; font-weight: 300; color: #9a9080; letter-spacing: .04em; }
 
-/* ===== Coming Soon カード ===== */
-.coming-soon-card {
-  position: relative;
-  overflow: hidden;
-}
-.coming-soon-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(250,248,244,.88);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  border-radius: 6px;
-}
-.coming-soon-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem;
-  font-weight: 300;
-  color: #b4a078;
-  letter-spacing: .2em;
-}
-.coming-soon-sub {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: .72rem;
-  font-weight: 300;
-  color: #9a9080;
-  letter-spacing: .06em;
-  margin-top: .3rem;
-}
-.stripe-btn.disabled {
-  opacity: .4;
-  cursor: not-allowed;
-  pointer-events: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: .85rem 1.2rem;
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: .8rem;
-  font-weight: 500;
-  letter-spacing: .06em;
-  border-radius: 4px;
-  border: 1px solid #c0bab0;
-  color: #4a4540;
-  background: #f5f0e8;
-  margin-top: auto;
-}
+/* ===========================
+   サービスカテゴリ
+=========================== */
+.service-categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; max-width: 900px; margin: 0 auto 2.5rem; text-align: left; }
+.service-cat-card { background: #fff; border: 1px solid #e0d8cc; border-radius: 6px; padding: 1.5rem 1.4rem; }
+.service-cat-icon { font-size: 1.6rem; margin-bottom: .6rem; }
+.service-cat-title { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 400; color: #1a1a2e; letter-spacing: .06em; margin-bottom: .75rem; padding-bottom: .5rem; border-bottom: 1px solid #e8e0d0; }
+.service-cat-list { font-family: 'Noto Sans JP', sans-serif; font-size: .76rem; font-weight: 300; color: #4a4540; line-height: 2; list-style: none; padding: 0; }
+.service-cat-list li::before { content: "— "; color: #b4a078; }
+@media (max-width: 600px) { .service-categories { grid-template-columns: 1fr; } }
 
-@media (max-width: 600px) {
-  .service-categories { grid-template-columns: 1fr; }
-}
+/* ===========================
+   Coming Soon カード
+=========================== */
+.coming-soon-card { position: relative; overflow: hidden; }
+.coming-soon-overlay { position: absolute; inset: 0; background: rgba(250,248,244,.88); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; border-radius: 6px; }
+.coming-soon-text { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; color: #b4a078; letter-spacing: .2em; }
+.coming-soon-sub { font-family: 'Noto Sans JP', sans-serif; font-size: .72rem; font-weight: 300; color: #9a9080; letter-spacing: .06em; margin-top: .3rem; }
+.stripe-btn.disabled { opacity: .4; cursor: not-allowed; pointer-events: none; display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: .85rem 1.2rem; font-family: 'Noto Sans JP', sans-serif; font-size: .8rem; font-weight: 500; letter-spacing: .06em; border-radius: 4px; border: 1px solid #c0bab0; color: #4a4540; background: #f5f0e8; margin-top: auto; }
