@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    /* =====https://www.youtube.com/@nscaremanesatsukit レイアウト上書き ===== */
+    /* ===== About レイアウト上書き ===== */
     .about-grid {
       grid-template-columns: 1fr;
       gap: 2.5rem;
@@ -185,7 +185,7 @@
       .kaigo-playlist-btn { width: 100%; justify-content: center; }
     }
 
-    /* =====https://www.youtube.com/@nscaremanesatsukit アンケートボタン ===== */
+    /* ===== About アンケートボタン ===== */
     .about-survey-wrap {
       margin-top: 2.5rem;
       padding-top: 2rem;
@@ -243,7 +243,7 @@
       color: #1a1916;
       background: rgba(180,160,120,.05);
     }
-    @media (max-width: 480px) {
+    @media (max-width: 560px) {
       .about-survey-btn { width: 100%; justify-content: center; }
     }
 
@@ -320,7 +320,6 @@
       .monitor-entry-btn { width: 100%; justify-content: center; }
       .monitor-entry-wrap { padding: 1.3rem 1rem; }
     }
-    /* ===== /モニター募集エントリーボタン ===== */
   </style>
 </head>
 <body>
@@ -361,7 +360,7 @@
     </div>
   </section>
 
-  <!--https://www.youtube.com/@nscaremanesatsukit -->
+  <!-- About -->
   <section class="section" id="about">
     <div class="container">
       <h2 class="section-title">About</h2>
@@ -389,7 +388,7 @@
             </div>
           </a>
           <a class="channel-card" href="https://www.youtube.com/@AIpicturebook-oc4fl/playlists" target="_blank" rel="noopener">
-            <div class="channel-icon"> <img src="./image/kiron.png" alt="AI picture book" style="width:100%;height:100%;object-fit:cover;object-position:center;border-radius:50%;">
+            <div class="channel-icon"><img src="./image/kiron.png" alt="AI picture book" style="width:100%;height:100%;object-fit:cover;object-position:center;border-radius:50%;">
             </div>
             <div>
               <p class="channel-name">AI picture book</p>
@@ -438,34 +437,23 @@
         </div>
       </div>
 
-      <!-- アンケートボタン -->
-      <!--
-==============================================================
-  📌 index.html の About セクション
-  既存の .about-survey-wrap ブロックをこれで丸ごと差し替え
-==============================================================
--->
-
       <!-- ★ アンケートボタン（3つ） ★ -->
       <div class="about-survey-wrap">
         <p class="about-survey-text">ご縁のある方へ、無料で資料をお届けしています🌿<br><span>介護・AI・Web — 気になるテーマの資料を受け取ってください</span></p>
         <div class="about-survey-btns">
-          <!-- 無料資料を受け取る -->
           <a class="about-survey-btn btn-fill" href="thanks.html">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="M20 12l-8 8-4-4 1.41-1.41L12 17.17l6.59-6.59L20 12z"/>
             </svg>
             無料資料を受け取る
           </a>
-          <!-- アンケートに答える -->
           <a class="about-survey-btn btn-outline" href="https://docs.google.com/forms/d/e/1FAIpQLSdH285sttEO2oeXLtEc3-gz1-lQ_q5k4rbHa8gD-J-Ucy0bGQ/viewform?usp=publish-editor" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="M9 11l3 3L22 4m-9 12H4a2 2 0 01-2-2V4a2 2 0 012-2h16a2 2 0 012 2v8a2 2 0 01-2 2"/>
             </svg>
             アンケートに答える
           </a>
-          <!-- お問い合わせフォーム -->
-          <a class="about-survey-btn btn-outline" href="https://docs.google.com/forms/d/e/1FAIpQLSe-ti51VsWhZ0snXnBZjGj1FYXZxXb0-5sLWVXTdL4TA6X5-w/viewform?usp=header" target="_blank" rel="noopener">
+          <a class="about-survey-btn btn-outline" href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform?usp=header" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
               <polyline points="22,6 12,13 2,6"/>
@@ -474,28 +462,6 @@
           </a>
         </div>
       </div>
-      <!-- ★ /アンケートボタン ★ -->
-
-
-<!--
-==============================================================
-  📌 CSSも index.html の <style> ブロック末尾に追記
-  （既存の .about-survey-btn があれば不要、なければ追加）
-  3つ並べるために max-width だけ追記してください
-==============================================================
--->
-<style>
-/* ボタン3つ対応：折り返しを自然にする */
-.about-survey-btns {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: .9rem;
-}
-@media (max-width: 560px) {
-  .about-survey-btn { width: 100%; justify-content: center; }
-}
-</style>
 
     </div>
   </section>
@@ -727,7 +693,7 @@
       <h2 class="section-title">Contact</h2>
       <p class="contact-desc">お仕事のご依頼・ご相談はクラウドワークスまたはCoconalaからお気軽にどうぞ。</p>
 
-      <!-- ★ 無料モニター募集ボタン ★ -->
+      <!-- 無料モニター募集ボタン -->
       <div class="monitor-entry-wrap">
         <p class="monitor-entry-label">
           <span class="monitor-entry-badge">🎉 期間限定</span>
@@ -745,12 +711,11 @@
         </a>
         <p class="monitor-entry-note">締切：6月5日（金）17:00／完成予定：6月末</p>
       </div>
-      <!-- ★ /無料モニター募集ボタン ★ -->
 
       <div class="contact-links">
         <a href="https://crowdworks.jp/public/employees/6735369" class="contact-btn" target="_blank" rel="noopener">CrowdWorks プロフィール</a>
         <a href="https://coconala.com/users/5975070" class="contact-btn contact-btn--outline" target="_blank" rel="noopener">Coconala プロフィール&amp;ブログ</a>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe-ti51VsWhZ0snXnBZjGj1FYXZxXb0-5sLWVXTdL4TA6X5-w/viewform?usp=header" target="_blank" class="contact-btn">お問い合わせフォーム</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform?usp=header" target="_blank" class="contact-btn">お問い合わせフォーム</a>
       </div>
 
       <!-- SNS リンク -->
