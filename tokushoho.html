@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>特定商取引法に基づく表記 | sonosann Web&AIサポート</title>
+  <meta name="description" content="sonosann Web&AIサポートの特定商取引法に基づく表記ページです。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:      #b4a078;
+      --gold-deep: #9a8860;
+      --ink:       #1a1a2e;
+      --text:      #3a3530;
+      --muted:     #7a7060;
+      --bg:        #fdfaf5;
+      --bg-warm:   #f5f0e8;
+      --border:    #e8e0d0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.8;
+    }
+
+    /* ── ナビ ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(253,250,245,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: .9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 300;
+      letter-spacing: .2em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-back {
+      font-size: .78rem;
+      font-weight: 400;
+      letter-spacing: .1em;
+      color: var(--gold);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      transition: opacity .2s;
+    }
+    .nav-back:hover { opacity: .7; }
+
+    /* ── ヘッダー ── */
+    .page-header {
+      background: var(--bg-warm);
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .page-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .72rem;
+      letter-spacing: .45em;
+      color: var(--gold);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 1rem;
+    }
+    .page-title {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: .08em;
+      margin-bottom: .75rem;
+    }
+    .page-date {
+      font-size: .75rem;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+
+    /* ── コンテンツ ── */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem 5rem;
+    }
+
+    .intro-note {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 6px 6px 0;
+      padding: 1.2rem 1.5rem;
+      font-size: .83rem;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.9;
+      letter-spacing: .06em;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── テーブル ── */
+    .tokusho-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .85rem;
+      letter-spacing: .05em;
+    }
+    .tokusho-table tr {
+      border-bottom: 1px solid var(--border);
+    }
+    .tokusho-table tr:first-child {
+      border-top: 1px solid var(--border);
+    }
+    .tokusho-table th {
+      width: 34%;
+      padding: 1.1rem 1rem 1.1rem 0;
+      font-weight: 500;
+      color: var(--ink);
+      vertical-align: top;
+      white-space: nowrap;
+      font-size: .82rem;
+      letter-spacing: .06em;
+    }
+    .tokusho-table td {
+      padding: 1.1rem 0 1.1rem 1rem;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.9;
+      vertical-align: top;
+    }
+    .tokusho-table td a {
+      color: var(--gold-deep);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .tokusho-table td a:hover { opacity: .8; }
+
+    .note-small {
+      font-size: .75rem;
+      color: var(--muted);
+      display: block;
+      margin-top: .3rem;
+      line-height: 1.7;
+    }
+
+    /* ── 区切り ── */
+    .section-divider {
+      margin: 2.5rem 0 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-divider span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .75rem;
+      letter-spacing: .3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── 返金ポリシー強調 ── */
+    .policy-box {
+      background: #fff8f0;
+      border: 1px solid #e8d0b0;
+      border-radius: 6px;
+      padding: 1.3rem 1.5rem;
+      margin-top: 2rem;
+      font-size: .83rem;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.9;
+      letter-spacing: .06em;
+    }
+    .policy-box strong {
+      font-weight: 500;
+      color: var(--ink);
+      display: block;
+      margin-bottom: .5rem;
+      font-size: .85rem;
+    }
+
+    /* ── フッター ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: .75rem;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+    .footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .footer a:hover { opacity: .8; }
+
+    @media (max-width: 560px) {
+      .tokusho-table th { width: 38%; font-size: .78rem; white-space: normal; }
+      .tokusho-table td { font-size: .8rem; }
+      .tokusho-table th,
+      .tokusho-table td { padding: .9rem .5rem .9rem 0; }
+      .tokusho-table td { padding-left: .7rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a class="nav-logo" href="./index.html">sonosann</a>
+    <a class="nav-back" href="./index.html#contact">
+      ← ポートフォリオに戻る
+    </a>
+  </nav>
+
+  <header class="page-header">
+    <span class="page-label">Legal</span>
+    <h1 class="page-title">特定商取引法に基づく表記</h1>
+    <p class="page-date">最終更新：2026年5月28日</p>
+  </header>
+
+  <main class="container">
+
+    <p class="intro-note">
+      特定商取引法（特商法）第11条に基づき、以下の通り表記します。<br>
+      本ページはデジタルコンテンツ（PDFファイル）の販売に関する表記です。
+    </p>
+
+    <table class="tokusho-table">
+      <tr>
+        <th>販売業者</th>
+        <td>sonosann Web&amp;AIサポート</td>
+      </tr>
+      <tr>
+        <th>運営責任者</th>
+        <td>
+          園田（そのだ）
+          <span class="note-small">※氏名の詳細は請求があり次第、遅滞なく開示いたします。</span>
+        </td>
+      </tr>
+      <tr>
+        <th>所在地</th>
+        <td>
+          宮崎県小林市
+          <span class="note-small">
+            ※番地等の詳細は、購入者または関係機関からの請求があった場合に、<br>遅滞なく開示いたします。
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <th>電話番号</th>
+        <td>
+          メールにてお問い合わせください。
+          <span class="note-small">
+            ※お問い合わせをいただいた後、必要に応じて電話番号を開示いたします。
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <th>メールアドレス</th>
+        <td>
+          <a href="mailto:sonosannworks@gmail.com">sonosannworks@gmail.com</a>
+        </td>
+      </tr>
+      <tr>
+        <th>販売URL</th>
+        <td>
+          <a href="https://sonosannworks.github.io/start_reposi/#contact" target="_blank" rel="noopener">
+            https://sonosannworks.github.io/start_reposi/#contact
+          </a>
+        </td>
+      </tr>
+
+      <tr>
+        <th colspan="2" style="padding-top:0;padding-bottom:0;">
+          <div class="section-divider"><span>商品・価格</span></div>
+        </th>
+      </tr>
+
+      <tr>
+        <th>販売商品</th>
+        <td>
+          デジタルコンテンツ（PDFファイル）<br>
+          介護・看護・AI活用・Web制作に関する実践ガイドブック類
+        </td>
+      </tr>
+      <tr>
+        <th>販売価格</th>
+        <td>
+          各商品ページに税込価格を表示<br>
+          <span class="note-small">※現在の主な価格帯：¥300〜¥500（税込）</span>
+        </td>
+      </tr>
+      <tr>
+        <th>追加手数料等</th>
+        <td>表示価格以外の費用は発生しません。</td>
+      </tr>
+
+      <tr>
+        <th colspan="2" style="padding-top:0;padding-bottom:0;">
+          <div class="section-divider"><span>支払・納品</span></div>
+        </th>
+      </tr>
+
+      <tr>
+        <th>支払方法</th>
+        <td>
+          PayPay / クレジットカード（Stripe決済）<br>
+          <span class="note-small">VISA・Mastercard・JCB・American Express 対応</span>
+        </td>
+      </tr>
+      <tr>
+        <th>支払時期</th>
+        <td>ご注文手続き完了時にお支払いが確定します。</td>
+      </tr>
+      <tr>
+        <th>商品の引渡し時期</th>
+        <td>
+          決済完了後、即時にダウンロードリンクをご案内します。<br>
+          <span class="note-small">※お支払い確認後、自動的に提供ページへ遷移します。</span>
+        </td>
+      </tr>
+
+      <tr>
+        <th colspan="2" style="padding-top:0;padding-bottom:0;">
+          <div class="section-divider"><span>返品・キャンセル</span></div>
+        </th>
+      </tr>
+
+      <tr>
+        <th>返品・キャンセル</th>
+        <td>
+          デジタルコンテンツの性質上、<strong style="font-weight:500;">購入後の返品・返金・キャンセルはお受けできません。</strong><br>
+          <span class="note-small">
+            ※ご購入前に商品説明をよくご確認ください。<br>
+            ※万が一、ファイルの不具合・ダウンロード障害が発生した場合は、<br>
+            　sonosannworks@gmail.com までご連絡ください。速やかに対応いたします。
+          </span>
+        </td>
+      </tr>
+    </table>
+
+    <div class="policy-box">
+      <strong>🔒 安全なお取引について</strong>
+      決済処理はStripe, Inc.の安全なシステムを利用しています。カード情報・PayPay情報は当サイトには保存されません。ご不明な点はお気軽にメールにてお問い合わせください。
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>
+      © 2026 sonosann Web&amp;AIサポート　／　
+      <a href="./index.html">ポートフォリオに戻る</a>
+    </p>
+  </footer>
+
+</body>
+</html>
