@@ -204,6 +204,40 @@
       font-size: .8rem;
     }
 
+    /* ── 感想フォーム ── */
+    .feedback-section {
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .feedback-desc {
+      font-size: .83rem;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: .06em;
+      line-height: 1.9;
+      margin-bottom: 1.4rem;
+    }
+    .feedback-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: var(--gold);
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      padding: .85rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .feedback-btn:hover { background: var(--gold-deep); }
+
     /* ── 他の商品 ── */
     .other-section {
       border-top: 1px solid var(--border);
@@ -358,6 +392,24 @@
       <strong>⚠️ ご注意</strong>
       このページのURLを知っている方はどなたでもPDFをダウンロードできます。URLの共有はご遠慮ください。<br>
       ダウンロードに問題がある場合は <a href="mailto:sonosannworks@gmail.com" style="color:var(--gold-deep);">sonosannworks@gmail.com</a> までご連絡ください。
+    </div>
+
+    <!-- 感想フォーム -->
+    <div class="feedback-section">
+      <p class="dl-section-title">ご感想をお聞かせください</p>
+      <p class="feedback-desc">
+        ガイドブックはお役に立てましたか？<br>
+        いただいたご意見を今後の改善に活かします🌿
+      </p>
+      <a class="feedback-btn"
+         href="https://docs.google.com/forms/d/e/1FAIpQLScc-lV2P3LIeHr-gRTHUINQT-8K54rQhYpzHi0fC3UrmplPXg/viewform?usp=publish-editor"
+         target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        感想フォームに回答する（1分程度）
+      </a>
     </div>
 
     <div class="other-section">
