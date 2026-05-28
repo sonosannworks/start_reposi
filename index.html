@@ -320,6 +320,113 @@
       .monitor-entry-btn { width: 100%; justify-content: center; }
       .monitor-entry-wrap { padding: 1.3rem 1rem; }
     }
+    /* ===== おたすけガイドブック 販売カード ===== */
+.shop-card-wrap {
+  margin: 0 0 2.2rem;
+}
+.shop-card {
+  background: linear-gradient(160deg, #fdfaf4 0%, #f5f0e4 100%);
+  border: 1px solid #c8b890;
+  border-radius: 10px;
+  padding: 1.6rem 1.8rem;
+  position: relative;
+  overflow: hidden;
+}
+.shop-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #b4a078, #d4b878, #b4a078);
+}
+.shop-card-badge {
+  display: inline-block;
+  background: #b4a078;
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  padding: .2em .9em;
+  border-radius: 20px;
+  margin-bottom: .7rem;
+}
+.shop-card-title {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  letter-spacing: .06em;
+  margin-bottom: .5rem;
+}
+.shop-card-desc {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .78rem;
+  font-weight: 300;
+  color: #4a4540;
+  line-height: 1.9;
+  letter-spacing: .05em;
+  margin-bottom: 1.2rem;
+}
+.shop-card-items {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  margin-bottom: 1.2rem;
+}
+.shop-card-item {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  background: #fff;
+  border: 1px solid #e8e0d0;
+  border-radius: 6px;
+  padding: .7rem 1rem;
+}
+.shop-item-emoji { font-size: 1.1rem; flex-shrink: 0; }
+.shop-item-name {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .85rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  letter-spacing: .05em;
+  flex: 1;
+}
+.shop-item-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #1a1a2e;
+  letter-spacing: .05em;
+  flex-shrink: 0;
+}
+.shop-item-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #b4a078;
+  color: #fff;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  padding: .45rem 1rem;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.shop-item-btn:hover { background: #9a8860; }
+.shop-card-note {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .72rem;
+  color: #9a8870;
+  letter-spacing: .05em;
+  line-height: 1.8;
+  text-align: center;
+}
+@media (max-width: 480px) {
+  .shop-card-item { flex-wrap: wrap; }
+  .shop-item-btn { width: 100%; justify-content: center; margin-top: .3rem; }
+}
   </style>
 </head>
 <body>
@@ -711,7 +818,46 @@
         </a>
         <p class="monitor-entry-note">締切：6月5日（金）17:00／完成予定：6月末</p>
       </div>
-
+      <!-- おたすけガイドブック 販売カード -->
+<div class="shop-card-wrap">
+  <div class="shop-card">
+    <div class="shop-card-header">
+      <span class="shop-card-badge">📄 PDF販売中</span>
+      <h3 class="shop-card-title">おたすけガイドブックシリーズ</h3>
+      <p class="shop-card-desc">
+        病気・ケガ・退職……いざというときに知っておきたい給付金・手続きをわかりやすく解説。<br>
+        看護師・ケアマネ30年の現場経験 × AI活用で作った実践ガイドです。
+      </p>
+    </div>
+    <div class="shop-card-items">
+      <div class="shop-card-item">
+        <span class="shop-item-emoji">🏥</span>
+        <span class="shop-item-name">傷病手当金編</span>
+        <span class="shop-item-price">¥100</span>
+        <a href="https://buy.stripe.com/fZu3cvaqkaPMdH68mE7bW02"
+           class="shop-item-btn" target="_blank" rel="noopener">購入</a>
+      </div>
+      <div class="shop-card-item">
+        <span class="shop-item-emoji">🦽</span>
+        <span class="shop-item-name">障害年金編</span>
+        <span class="shop-item-price">¥100</span>
+        <a href="https://buy.stripe.com/cNi3cv0PKcXUgTi0Uc7bW03"
+           class="shop-item-btn" target="_blank" rel="noopener">購入</a>
+      </div>
+      <div class="shop-card-item">
+        <span class="shop-item-emoji">📋</span>
+        <span class="shop-item-name">退職編</span>
+        <span class="shop-item-price">¥100</span>
+        <a href="https://buy.stripe.com/cNi4gzfKEaPM1YobyQ7bW04"
+           class="shop-item-btn" target="_blank" rel="noopener">購入</a>
+      </div>
+    </div>
+    <p class="shop-card-note">
+      クレジットカード払い対応 ／ PayPay（審査中・近日対応予定）<br>
+      決済完了後すぐにPDFをダウンロードできます
+    </p>
+  </div>
+</div>
       <div class="contact-links">
         <a href="https://crowdworks.jp/public/employees/6735369" class="contact-btn" target="_blank" rel="noopener">CrowdWorks プロフィール</a>
         <a href="https://coconala.com/users/5975070" class="contact-btn contact-btn--outline" target="_blank" rel="noopener">Coconala プロフィール&amp;ブログ</a>
