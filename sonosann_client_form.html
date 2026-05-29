@@ -170,6 +170,117 @@
       .type-grid { grid-template-columns: repeat(3, 1fr); }
       .priority-grid { gap: 5px; }
     }
+    /* ===== 料金表BOX アコーディオン ===== */
+.fee-box {
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.fee-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--gray-lt);
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--teal);
+  transition: background 0.15s;
+}
+.fee-toggle:hover { background: var(--teal-lt); }
+.fee-toggle[aria-expanded="true"] { background: var(--teal-lt); }
+.fee-arrow {
+  font-size: 11px;
+  color: var(--teal);
+  transition: transform 0.25s;
+  display: inline-block;
+}
+.fee-toggle[aria-expanded="true"] .fee-arrow {
+  transform: rotate(180deg);
+}
+.fee-body {
+  padding: 1rem;
+  background: var(--white);
+  border-top: 1px solid var(--gray-border);
+  animation: fadeDown 0.2s ease;
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fee-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+.fee-card {
+  background: var(--gray-lt);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.fee-card--featured {
+  border: 2px solid var(--teal);
+  background: var(--teal-lt);
+}
+.fee-phase {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--teal);
+  background: var(--white);
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  border: 1px solid var(--teal-mid);
+}
+.fee-card--featured .fee-phase {
+  background: var(--teal);
+  color: var(--white);
+  border-color: var(--teal);
+}
+.fee-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.fee-price {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.fee-price span {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.fee-items {
+  list-style: none;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+.fee-items li::before {
+  content: '– ';
+  color: var(--teal);
+}
+.fee-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-top: 0.5rem;
+}
+@media (max-width: 500px) {
+  .fee-grid { grid-template-columns: 1fr; }
+}
   </style>
 </head>
 <body>
@@ -240,7 +351,58 @@
       </div>
 
       <hr class="divider">
-
+  <!-- 料金表BOX（アコーディオン） -->
+      <div class="fee-box">
+        <button class="fee-toggle" onclick="toggleFee(this)" aria-expanded="false">
+          <span>💴 料金プランを確認する</span>
+          <span class="fee-arrow">▼</span>
+        </button>
+        <div class="fee-body" id="fee-body" style="display:none;">
+          <div class="fee-grid">
+            <div class="fee-card">
+              <div class="fee-phase">フェーズ 1</div>
+              <div class="fee-name">初期契約・モック制作</div>
+              <div class="fee-price">¥10,000 <span>一括・着手時</span></div>
+              <ul class="fee-items">
+                <li>初回ヒアリング・要件整理</li>
+                <li>モックアップ・デザイン案提示</li>
+                <li>方向性の合意・契約締結</li>
+              </ul>
+            </div>
+            <div class="fee-card fee-card--featured">
+              <div class="fee-phase">フェーズ 2</div>
+              <div class="fee-name">試験運用期間（3ヶ月）</div>
+              <div class="fee-price">¥20,000 <span>× 3ヶ月 = ¥60,000</span></div>
+              <ul class="fee-items">
+                <li>サイト実装・公開（当方サーバー）</li>
+                <li>月3回までの修正対応</li>
+                <li>未入金3日後に運用停止</li>
+              </ul>
+            </div>
+            <div class="fee-card">
+              <div class="fee-phase">フェーズ 3</div>
+              <div class="fee-name">納品・本契約完了</div>
+              <div class="fee-price">合計 <span>¥70,000</span></div>
+              <ul class="fee-items">
+                <li>全データ・ソースコード納品</li>
+                <li>サーバー・ドメイン移管</li>
+                <li>操作マニュアル提供</li>
+              </ul>
+            </div>
+            <div class="fee-card">
+              <div class="fee-phase">オプション</div>
+              <div class="fee-name">保守・運用サポート</div>
+              <div class="fee-price">¥5,000 <span>/ 月（任意）</span></div>
+              <ul class="fee-items">
+                <li>軽微な修正・文言変更</li>
+                <li>月次レポート</li>
+                <li>相談対応（メール・チャット）</li>
+              </ul>
+            </div>
+          </div>
+          <p class="fee-note">※ サーバー費用：試験運用中は当方負担。納品後はクライアント負担。<br>GitHub Pages運用も可（無料）。</p>
+        </div>
+      </div>
       <!-- STEP 2: 用件別フォーム（動的） -->
       <div id="dynamic-form" style="display:none;"></div>
 
@@ -640,6 +802,18 @@
     //  ユーティリティ
     // ============================================================
     function escAttr(str) { return String(str).replace(/'/g, "&#39;"); }
+    // ===== 料金表アコーディオン =====
+function toggleFee(btn) {
+  const body = document.getElementById('fee-body');
+  const isOpen = btn.getAttribute('aria-expanded') === 'true';
+  if (isOpen) {
+    body.style.display = 'none';
+    btn.setAttribute('aria-expanded', 'false');
+  } else {
+    body.style.display = 'block';
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
   </script>
 </body>
 </html>
