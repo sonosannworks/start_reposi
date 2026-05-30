@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>おかしの家 クレール | こだわりシフォンケーキ専門店</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Zen Maru Gothic', 'Noto Sans JP', sans-serif;
+      background-color: #FFFDF5;
+      color: #5C3D1E;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    :root {
+      --cream: #FFFDD0;
+      --brown: #7B4F2E;
+      --brown-dark: #5C3D1E;
+      --brown-light: #C8956C;
+    }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,253,245,0.96);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid #EFE0C8;
+      padding: 10px 20px;
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .logo img { height: 50px; width: auto; object-fit: contain; }
+    nav { display: flex; align-items: center; gap: 24px; }
+    nav a {
+      font-size: 0.9rem; font-weight: 500; color: var(--brown-dark);
+      position: relative; padding-bottom: 2px; transition: color 0.2s;
+    }
+    nav a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 2px; background: var(--brown); transition: width 0.25s;
+    }
+    nav a:hover { color: var(--brown); }
+    nav a:hover::after { width: 100%; }
+    .btn-reserve {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--brown); color: #fff !important;
+      border-radius: 50px; padding: 9px 20px;
+      font-size: 0.85rem; font-weight: 700;
+      transition: background 0.2s, transform 0.15s; white-space: nowrap;
+    }
+    .btn-reserve:hover { background: var(--brown-dark); transform: translateY(-1px); }
+    .btn-reserve::after { display: none !important; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px; background: none; border: none;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--brown-dark); border-radius: 2px; transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-nav {
+      display: none; flex-direction: column;
+      background: #FFFDF5; border-top: 1px solid #EFE0C8; padding: 8px 0 16px;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      padding: 12px 24px; font-size: 0.95rem; font-weight: 500;
+      color: var(--brown-dark); border-bottom: 1px solid #F0E8D8;
+    }
+    .mobile-nav .btn-reserve { margin: 12px 24px 0; justify-content: center; }
+
+    /* Hero */
+    .hero { position: relative; min-height: 55vw; max-height: 580px; overflow: hidden; }
+    .hero img.hero-bg {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center; position: absolute; inset: 0;
+    }
+    .hero-text {
+      position: absolute; top: 50%; left: 5%;
+      transform: translateY(-50%); max-width: 340px;
+    }
+    .hero-text img { width: 100%; max-width: 300px; }
+
+    /* Section base */
+    section { padding: 56px 20px; }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .section-title {
+      text-align: center; font-size: 1.4rem; font-weight: 700;
+      color: var(--brown-dark); margin-bottom: 32px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .section-title::before,
+    .section-title::after {
+      content: ''; display: inline-block; width: 26px; height: 26px;
+      background: url('images/flower.png') center/contain no-repeat; opacity: 0.8;
+    }
+
+    /* About */
+    .about { background: #FFFDF5; }
+    .about-wave {
+      background: url('images/backe1.png') center/100% 100% no-repeat;
+      padding: 52px 48px; text-align: center;
+      max-width: 680px; margin: 0 auto;
+    }
+    .about-wave p { font-size: 1rem; color: var(--brown-dark); line-height: 2.1; }
+    .about-icons {
+      display: flex; justify-content: center; gap: 32px;
+      margin-top: 36px; flex-wrap: wrap;
+    }
+    .about-icon {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-size: 0.85rem; font-weight: 700; color: var(--brown);
+    }
+    .about-icon .icon-circle {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: #FFF8E7; display: flex; align-items: center;
+      justify-content: center; font-size: 1.8rem;
+      box-shadow: 0 2px 8px rgba(123,79,46,0.12);
+    }
+
+    /* Menu */
+    .menu { background: #FFF9EE; }
+    .menu-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px;
+    }
+    .menu-link {
+      font-size: 0.85rem; color: var(--brown);
+      text-decoration: underline; text-underline-offset: 3px;
+    }
+    .menu-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+    .menu-card {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 3px 12px rgba(123,79,46,0.1); position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .menu-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(123,79,46,0.18); }
+    .menu-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+    .menu-card-body { padding: 12px 14px 16px; }
+    .menu-card-body h3 { font-size: 0.9rem; font-weight: 700; color: var(--brown-dark); margin-bottom: 4px; }
+    .menu-card-body .price { font-size: 0.95rem; color: var(--brown); font-weight: 700; }
+    .menu-card-body .price small { font-size: 0.75rem; font-weight: 400; }
+    .badge-popular {
+      position: absolute; top: 10px; left: 10px;
+      background: #F5C842; color: #5C3D1E;
+      font-size: 0.7rem; font-weight: 700; border-radius: 50px; padding: 3px 10px;
+    }
+
+    /* Gift */
+    .gift { background: var(--cream); text-align: center; }
+    .gift-inner {
+      display: flex; align-items: center; justify-content: center;
+      gap: 24px; flex-wrap: wrap;
+    }
+    .gift img { width: 76px; }
+    .gift-text h2 { font-size: 1.2rem; font-weight: 700; color: var(--brown-dark); margin-bottom: 6px; }
+    .gift-text p { font-size: 0.9rem; color: var(--brown-light); }
+
+    /* Instagram */
+    .instagram { background: #FFFDF5; }
+    .instagram-content { text-align: center; }
+    .instagram-header {
+      display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px;
+    }
+    .instagram-header h2 { font-size: 1.4rem; font-weight: 700; color: var(--brown-dark); }
+    .instagram-header svg { width: 28px; height: 28px; }
+    .instagram-sub { font-size: 0.88rem; color: var(--brown-light); margin-bottom: 24px; }
+    .instagram-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+      margin: 0 auto 24px; max-width: 480px;
+    }
+    .instagram-grid img {
+      width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px;
+    }
+    .btn-instagram {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+      color: #fff; border-radius: 50px; padding: 12px 28px;
+      font-size: 0.9rem; font-weight: 700; transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-instagram:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Shop */
+    .shop { background: #FFF9EE; }
+    .shop-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    .shop-img-wrap img { width: 100%; border-radius: 16px; box-shadow: 0 4px 16px rgba(123,79,46,0.15); }
+    .shop-info-list { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+    .shop-info-item { display: flex; gap: 14px; align-items: flex-start; }
+    .shop-info-icon { width: 22px; flex-shrink: 0; margin-top: 2px; font-size: 1.1rem; }
+    .shop-info-item dt { font-weight: 700; font-size: 0.82rem; color: var(--brown-light); margin-bottom: 2px; }
+    .shop-info-item dd { font-size: 0.95rem; color: var(--brown-dark); }
+    .btn-map {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--brown); color: #fff;
+      border-radius: 50px; padding: 10px 22px;
+      font-size: 0.85rem; font-weight: 700; margin-top: 20px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-map:hover { background: var(--brown-dark); transform: translateY(-1px); }
+
+    /* Reservation */
+    .reservation { background: var(--cream); text-align: center; }
+    .reservation h2 { font-size: 1.4rem; font-weight: 700; color: var(--brown-dark); margin-bottom: 8px; }
+    .reservation > .section-inner > p { font-size: 0.9rem; color: var(--brown-light); margin-bottom: 32px; }
+    .reservation-steps {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; flex-wrap: wrap; margin-bottom: 36px;
+    }
+    .step-card {
+      background: #fff; border-radius: 16px; padding: 20px 16px;
+      width: 144px; text-align: center; box-shadow: 0 3px 10px rgba(123,79,46,0.1);
+    }
+    .step-card .step-icon { font-size: 2rem; margin-bottom: 8px; }
+    .step-card .step-icon img { width: 44px; height: 44px; object-fit: contain; margin: 0 auto; }
+    .step-card p { font-size: 0.78rem; color: var(--brown-dark); font-weight: 500; line-height: 1.5; }
+    .step-arrow { font-size: 1.4rem; color: var(--brown-light); }
+    .btn-reserve-large {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--brown); color: #fff;
+      border-radius: 50px; padding: 16px 40px;
+      font-size: 1rem; font-weight: 700;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(123,79,46,0.3);
+    }
+    .btn-reserve-large:hover { background: var(--brown-dark); transform: translateY(-2px); }
+    .reserve-note { margin-top: 12px; font-size: 0.8rem; color: var(--brown-light); }
+
+    /* Footer */
+    footer {
+      background: var(--brown-dark); color: rgba(255,255,255,0.85);
+      text-align: center; padding: 32px 20px; font-size: 0.82rem;
+    }
+    footer .footer-logo { margin: 0 auto 12px; height: 40px; filter: brightness(10); opacity: 0.9; }
+    footer p { line-height: 1.9; }
+
+    /* Fixed bottom CTA */
+    .fixed-cta {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+      display: none; background: var(--brown); color: #fff;
+      text-align: center; padding: 14px 20px;
+      font-size: 0.95rem; font-weight: 700;
+      align-items: center; justify-content: center; gap: 8px;
+    }
+
+    /* Scroll animation */
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .hamburger { display: flex; }
+      .hero { min-height: 65vw; max-height: 460px; }
+      .hero-text { max-width: 220px; }
+      .hero-text img { max-width: 200px; }
+      .menu-grid { grid-template-columns: repeat(2,1fr); }
+      .shop-inner { grid-template-columns: 1fr; }
+      .fixed-cta { display: flex; }
+      .reservation, footer { padding-bottom: 72px; }
+    }
+    @media (max-width: 480px) {
+      .menu-grid { gap: 12px; }
+      .instagram-grid { max-width: 320px; }
+      .step-card { width: 108px; padding: 14px 8px; }
+      .step-arrow { display: none; }
+      .reservation-steps { gap: 12px; }
+      .hero-text { max-width: 175px; }
+      .about-wave { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <a href="#top" class="logo">
+        <img src="images/rogo.png" alt="おかしの家 クレール" />
+      </a>
+      <nav>
+        <a href="#top">トップ</a>
+        <a href="#menu">メニュー</a>
+        <a href="#shop">店舗情報</a>
+        <a href="#instagram">Instagram</a>
+        <a href="#reservation" class="btn-reserve">&#128197; 受取予約</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="メニューを開く">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="#top" class="mobile-link">トップ</a>
+      <a href="#menu" class="mobile-link">メニュー</a>
+      <a href="#shop" class="mobile-link">店舗情報</a>
+      <a href="#instagram" class="mobile-link">Instagram</a>
+      <a href="#reservation" class="btn-reserve mobile-link">&#128197; 受取予約はこちら</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <img class="hero-bg" src="images/top.png" alt="シフォンケーキ" />
+    <div class="hero-text">
+      <img src="images/tegakimoji.png" alt="ふわふわ、しあわせ。やさしい素材でつくるこだわりのシフォンケーキ" />
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about fade-in">
+    <div class="section-inner">
+      <h2 class="section-title">おかしの家クレールについて</h2>
+      <div class="about-wave">
+        <p>地元の新鮮な卵や牛乳、国産小麦を使い、<br />
+          無添加でやさしい味わいのシフォンケーキを<br />
+          毎日ひとつひとつ丁寧に焼き上げています。</p>
+      </div>
+      <div class="about-icons">
+        <div class="about-icon">
+          <div class="icon-circle">&#127807;</div>
+          <span>地元の<br />新鮮な食材</span>
+        </div>
+        <div class="about-icon">
+          <div class="icon-circle">&#10024;</div>
+          <span>無添加・<br />やさしい味わい</span>
+        </div>
+        <div class="about-icon">
+          <div class="icon-circle">&#127856;</div>
+          <span>毎日手作りで<br />ひとつずつ</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu -->
+  <section class="menu fade-in" id="menu">
+    <div class="section-inner">
+      <div class="menu-header">
+        <h2 class="section-title" style="margin-bottom:0;">人気のシフォンケーキ</h2>
+        <a href="#menu" class="menu-link">メニュー一覧へ &#8594;</a>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-card">
+          <span class="badge-popular">人気 No.1</span>
+          <img src="images/top.png" alt="プレーンシフォン" />
+          <div class="menu-card-body">
+            <h3>プレーンシフォン</h3>
+            <p class="price">&#165;350<small>（税込）</small></p>
+          </div>
+        </div>
+        <div class="menu-card">
+          <img src="images/top.png" alt="抹茶シフォン" style="filter:hue-rotate(75deg) saturate(0.6) brightness(0.9);" />
+          <div class="menu-card-body">
+            <h3>抹茶シフォン</h3>
+            <p class="price">&#165;380<small>（税込）</small></p>
+          </div>
+        </div>
+        <div class="menu-card">
+          <img src="images/top.png" alt="チョコチップシフォン" style="filter:brightness(0.75) sepia(0.5) saturate(1.4);" />
+          <div class="menu-card-body">
+            <h3>チョコチップ<br />シフォン</h3>
+            <p class="price">&#165;380<small>（税込）</small></p>
+          </div>
+        </div>
+        <div class="menu-card">
+          <img src="images/top.png" alt="オレンジシフォン" style="filter:hue-rotate(18deg) saturate(1.6) brightness(1.05);" />
+          <div class="menu-card-body">
+            <h3>オレンジシフォン</h3>
+            <p class="price">&#165;360<small>（税込）</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gift -->
+  <section class="gift fade-in">
+    <div class="section-inner">
+      <div class="gift-inner">
+        <img src="images/icon_gift.png" alt="" />
+        <div class="gift-text">
+          <h2>手土産や差し入れにも喜ばれています&#9825;</h2>
+          <p>大切な方へのギフトにも。ご相談はお気軽にどうぞ。</p>
+        </div>
+        <img src="images/icon_gift (1).png" alt="" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Instagram -->
+  <section class="instagram fade-in" id="instagram">
+    <div class="section-inner">
+      <div class="instagram-content">
+        <div class="instagram-header">
+          <h2>Instagram</h2>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <defs>
+              <linearGradient id="igG" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#f09433"/>
+                <stop offset="50%" stop-color="#dc2743"/>
+                <stop offset="100%" stop-color="#bc1888"/>
+              </linearGradient>
+            </defs>
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="url(#igG)"/>
+            <circle cx="12" cy="12" r="4" stroke="url(#igG)"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="#dc2743" stroke="none"/>
+          </svg>
+        </div>
+        <p class="instagram-sub">日々のシフォンや季節限定メニューをお届け中&#9834;</p>
+        <div class="instagram-grid">
+          <img src="images/top.png" alt="Instagram" />
+          <img src="images/top.png" alt="Instagram" style="filter:brightness(1.06) hue-rotate(8deg);" />
+          <img src="images/top.png" alt="Instagram" style="filter:saturate(1.3) brightness(0.95);" />
+          <img src="images/top.png" alt="Instagram" style="filter:hue-rotate(25deg) brightness(1.08);" />
+          <img src="images/top.png" alt="Instagram" style="filter:sepia(0.25);" />
+          <img src="images/top.png" alt="Instagram" style="filter:brightness(0.9) hue-rotate(-8deg);" />
+        </div>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="btn-instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/>
+          </svg>
+          Instagram&#12434;&#12501;&#12457;&#12525;&#12540;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop -->
+  <section class="shop fade-in" id="shop">
+    <div class="section-inner">
+      <h2 class="section-title">店舗情報</h2>
+      <div class="shop-inner">
+        <div class="shop-img-wrap">
+          <img src="images/shop.png" alt="おかしの家クレール 外観" />
+          <a href="https://maps.google.com/" target="_blank" rel="noopener" class="btn-map">
+            &#128205; Google&#12510;&#12483;&#12503;&#12391;&#35211;&#12427;
+          </a>
+        </div>
+        <div>
+          <ul class="shop-info-list">
+            <li class="shop-info-item">
+              <span class="shop-info-icon">&#127968;</span>
+              <dl>
+                <dt>店舗名</dt>
+                <dd>おかしの家 クレール<br /><small>（テイクアウト専門）</small></dd>
+              </dl>
+            </li>
+            <li class="shop-info-item">
+              <span class="shop-info-icon">&#128336;</span>
+              <dl>
+                <dt>営業時間</dt>
+                <dd>10:00〜18:00<br /><small>（売り切れ次第終了）</small></dd>
+              </dl>
+            </li>
+            <li class="shop-info-item">
+              <span class="shop-info-icon">&#128197;</span>
+              <dl>
+                <dt>定休日</dt>
+                <dd>毎週 月曜日・火曜日</dd>
+              </dl>
+            </li>
+            <li class="shop-info-item">
+              <span class="shop-info-icon">&#128222;</span>
+              <dl>
+                <dt>ご予約・お問い合わせ</dt>
+                <dd><a href="tel:09012345678" style="color:var(--brown);font-weight:700;">090-1234-5678</a></dd>
+              </dl>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reservation -->
+  <section class="reservation fade-in" id="reservation">
+    <div class="section-inner">
+      <h2>受取予約</h2>
+      <p>お待たせしない受取予約が便利です&#9835;</p>
+      <div class="reservation-steps">
+        <div class="step-card">
+          <div class="step-icon">
+            <img src="images/icon_carender.jpg" alt="" />
+          </div>
+          <p>日付を選ぶ<br />受取希望日を選択</p>
+        </div>
+        <span class="step-arrow">&#8594;</span>
+        <div class="step-card">
+          <div class="step-icon">&#127856;</div>
+          <p>メニューを選ぶ<br />個数・時間を選択</p>
+        </div>
+        <span class="step-arrow">&#8594;</span>
+        <div class="step-card">
+          <div class="step-icon">
+            <img src="images/icon_mail.jpg" alt="" />
+          </div>
+          <p>予約を完了する<br />確認メールが届きます</p>
+        </div>
+      </div>
+      <a href="tel:09012345678" class="btn-reserve-large">
+        &#128197; 受取予約はこちら
+      </a>
+      <p class="reserve-note">お電話にてご予約承ります</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <img class="footer-logo" src="images/rogo.png" alt="おかしの家 クレール" />
+    <p>おかしの家 クレール（テイクアウト専門）<br />
+      営業時間 10:00〜18:00（売り切れ次第終了）｜定休日 月・火曜日<br />
+      090-1234-5678</p>
+    <p style="margin-top:16px;font-size:0.75rem;opacity:0.55;">&#169; 2024 おかしの家 クレール. All rights reserved.</p>
+  </footer>
+
+  <!-- Fixed bottom CTA (mobile) -->
+  <a href="#reservation" class="fixed-cta">&#128197; 受取予約はこちら</a>
+
+  <script>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileNav.classList.toggle('open');
+    });
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileNav.classList.remove('open');
+      });
+    });
+
+    // Scroll fade-in
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Active nav
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('header nav a:not(.btn-reserve)');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        if (window.scrollY >= sec.offsetTop - 80) current = sec.id;
+      });
+      navLinks.forEach(link => {
+        link.style.fontWeight = link.getAttribute('href') === '#' + current ? '700' : '500';
+      });
+    }, { passive: true });
+  </script>
+</body>
+</html>
