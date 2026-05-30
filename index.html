@@ -185,6 +185,21 @@
       .kaigo-playlist-btn { width: 100%; justify-content: center; }
     }
 
+    /* ===== 介護動画予定カード ===== */
+    .kaigo-video-block {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e8e0d0;
+    }
+    .kaigo-video-block-title {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .82rem;
+      font-weight: 500;
+      color: #7a7060;
+      letter-spacing: .08em;
+      margin-bottom: 1rem;
+    }
+
     /* ===== About アンケートボタン ===== */
     .about-survey-wrap {
       margin-top: 2.5rem;
@@ -542,6 +557,46 @@
             訪問看護向け
           </a>
         </div>
+
+        <!-- 動画制作予定カード（ここに移動） -->
+        <div class="kaigo-video-block">
+          <p class="kaigo-video-block-title">🎬 動画制作予定コンテンツ</p>
+          <div class="web-grid">
+            <div class="web-card">
+              <div class="web-card-thumb">
+                <span class="web-card-label">🔜 Coming Soon</span>
+              </div>
+              <div class="web-card-body">
+                <h3>介護認定について</h3>
+                <p>介護認定の仕組みや申請方法をわかりやすく解説。YouTube動画で公開予定。</p>
+                <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
+                <a href="https://www.youtube.com/@nscaremanesatsuki" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
+              </div>
+            </div>
+            <div class="web-card">
+              <div class="web-card-thumb">
+                <span class="web-card-label">🔜 Coming Soon</span>
+              </div>
+              <div class="web-card-body">
+                <h3>認知症の分類について</h3>
+                <p>アルツハイマー型・レビー小体型など認知症の種類と特徴を解説予定。</p>
+                <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
+                <a href="https://www.youtube.com/@nscaremanesatsuki" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
+              </div>
+            </div>
+            <div class="web-card">
+              <div class="web-card-thumb">
+                <span class="web-card-label">🔜 Coming Soon</span>
+              </div>
+              <div class="web-card-body">
+                <h3>介護サービスについて</h3>
+                <p>訪問介護・デイサービスなど介護サービスの種類と使い方を解説予定。</p>
+                <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
+                <a href="https://www.youtube.com/@nscaremanesatsuki" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ★ アンケートボタン（3つ） ★ -->
@@ -609,78 +664,33 @@
       <h2 class="section-title">Web Design Works</h2>
       <p class="section-sub">HTML / CSS / JavaScript でコーディングした制作物</p>
 
-      <h3 class="works-category-title">🏥 医療・介護 × Web制作</h3>
-      <div class="web-grid">
-        <div class="web-card">
-          <div class="web-card-thumb">
-            <span class="web-card-label">🔜 Coming Soon</span>
-          </div>
-          <div class="web-card-body">
-            <h3>介護認定について</h3>
-            <p>介護認定の仕組みや申請方法をわかりやすく解説。YouTube動画で公開予定。</p>
-            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
-            <a href="https://www.youtube.com/@nscaremanesatsuki" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
-          </div>
-        </div>
-        <div class="web-card">
-          <div class="web-card-thumb">
-            <span class="web-card-label">🔜 Coming Soon</span>
-          </div>
-          <div class="web-card-body">
-            <h3>認知症の分類について</h3>
-            <p>アルツハイマー型・レビー小体型など認知症の種類と特徴を解説予定。</p>
-            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
-            <a href="https://www.youtube.com/@nscaremanesatsuki" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
-          </div>
-        </div>
-        <div class="web-card">
-          <div class="web-card-thumb">
-            <span class="web-card-label">🔜 Coming Soon</span>
-          </div>
-          <div class="web-card-body">
-            <h3>介護サービスについて</h3>
-            <p>訪問介護・デイサービスなど介護サービスの種類と使い方を解説予定。</p>
-            <div class="web-card-tags"><span>YouTube</span><span>医療・介護</span></div>
-            <a href="https://www.youtube.com/@nscaremanesatsuki" class="web-card-link" target="_blank" rel="noopener">チャンネルを見る →</a>
-          </div>
-        </div>
+      <!-- ペルソナ実績へのリンクボタン -->
+      <div style="margin: 2rem 0 1.5rem; text-align: center;">
+        <a href="persona-works.html" class="contact-btn" style="display:inline-flex; align-items:center; gap:.5rem; font-size:.88rem;">
+          🎭 ペルソナ制作実績を見る（5件）→
+        </a>
       </div>
 
-      <h3 class="works-category-title">💻 Web制作</h3>
-      <div class="web-grid">
-        <div class="web-card">
+      <h3 class="works-category-title">💻 Web制作 学習記録</h3>
+      <div class="web-grid" style="grid-template-columns: 1fr;">
+        <div class="web-card" style="max-width: 720px;">
           <div class="web-card-thumb">
-            <span class="web-card-label">Claudeで初ポートフォリオ作成</span>
+            <span class="web-card-label">Web制作 学習〜クラウドソーシング挑戦</span>
           </div>
           <div class="web-card-body">
-            <h3>ポートフォリオサイト</h3>
-            <p>自己紹介・実績をまとめたPDFファイルを基にClaudeに特に細かな指示をせずつくらせてみた。</p>
-            <div class="web-card-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
-            <a href="https://kobayashi4556.github.io/my-portfolio/portfolio.html" class="web-card-link" target="_blank" rel="noopener">GitHub Pages で見る →</a>
-          </div>
-        </div>
-        <div class="web-card">
-          <div class="web-card-thumb web-card-thumb--2">
-            <span class="web-card-label">とあるテスト案件</span>
-          </div>
-          <div class="web-card-body">
-            <h3>レスポンシブ デザイン</h3>
-            <p>本来ならFigmaでのレスポンシブ デザインをClaudeで先にデザインさせたSP版。</p>
-            <div class="web-card-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
-            <a href="https://kobayashi4556.github.io/my-portfolio/sonosann_scheduled_sp.html" class="web-card-link" target="_blank" rel="noopener">GitHub で見る →</a>
-          </div>
-        </div>
-        <div class="web-card">
-          <div class="web-card-thumb web-card-thumb--3">
-            <span class="web-card-label">とあるテスト案件２</span>
-          </div>
-          <div class="web-card-body">
-            <h3>レスポンシブ デザイン</h3>
-            <p>本来ならFigmaでのレスポンシブ デザイン・テーマはメール管理のサイト PC版。</p>
-            <div class="web-card-tags"><span>HTML</span><span>CSS</span></div>
-            <a href="https://kobayashi4556.github.io/my-portfolio/sonosann_draft_list_pc.html" class="web-card-link" target="_blank" rel="noopener">GitHub Pages で見る →</a>
-            <br>
-            <a href="https://kobayashi4556.github.io/my-portfolio/Figma.png" class="web-card-link" target="_blank" rel="noopener">FigmaのデザインカンプをGitHubで見る →</a>
+            <h3>ポートフォリオ &amp; クライアント案件への挑戦</h3>
+            <p>
+              まずClaudeに自己紹介PDFを渡すだけで初ポートフォリオを作成。<br>
+              その後、クラウドソーシングで案件に応募。クライアントからの指示でFigmaデザインカンプを作成する前にClaudeでHTMLコーディングを先行実施（SP版・PC版）。<br>
+              Figmaは本来デザインカンプ作成に使うツールですが、学習中のため先にコードで形を作り、後からFigmaに起こすという逆引きアプローチで対応しました。
+            </p>
+            <div class="web-card-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Figma</span><span>Claude</span><span>クラウドソーシング</span></div>
+            <div style="display:flex; flex-wrap:wrap; gap:.6rem; margin-top:.8rem;">
+              <a href="https://kobayashi4556.github.io/my-portfolio/portfolio.html" class="web-card-link" target="_blank" rel="noopener">初ポートフォリオを見る →</a>
+              <a href="https://kobayashi4556.github.io/my-portfolio/sonosann_scheduled_sp.html" class="web-card-link" target="_blank" rel="noopener">SP版を見る →</a>
+              <a href="https://kobayashi4556.github.io/my-portfolio/sonosann_draft_list_pc.html" class="web-card-link" target="_blank" rel="noopener">PC版を見る →</a>
+              <a href="https://kobayashi4556.github.io/my-portfolio/Figma.png" class="web-card-link" target="_blank" rel="noopener">Figmaカンプを見る →</a>
+            </div>
           </div>
         </div>
       </div>
