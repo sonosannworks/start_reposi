@@ -22,7 +22,6 @@
     a { text-decoration: none; color: inherit; }
     img { max-width: 100%; display: block; }
 
-    /* ===== Page Hero ===== */
     .page-hero {
       background: linear-gradient(160deg, #1a1a2e 0%, #2a2a48 100%);
       padding: 80px 20px 60px;
@@ -62,7 +61,6 @@
       max-width: 560px; margin: 0 auto;
     }
 
-    /* ===== Workflow Banner ===== */
     .workflow-banner {
       background: #f5f0e8;
       border-bottom: 1px solid #e8e0d0;
@@ -87,20 +85,17 @@
     }
     .wf-arrow { font-size: .7rem; color: #c8b898; }
 
-    /* ===== Main ===== */
     .main {
       max-width: 1060px; margin: 0 auto;
       padding: 56px 20px 80px;
     }
 
-    /* ===== Grid ===== */
     .persona-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 28px;
     }
 
-    /* ===== Card ===== */
     .persona-card {
       border-radius: 16px; overflow: hidden;
       background: #fff;
@@ -114,19 +109,21 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.13);
     }
 
-    /* サムネイル */
     .persona-card-thumb {
-      width: 100%; aspect-ratio: 16 / 10;
-      overflow: hidden; position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      position: relative;
       background: #f0ede8;
     }
     .persona-card-thumb img {
-      width: 100%; height: 100%; object-fit: cover;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: left top;
       transition: transform 0.4s ease;
     }
     .persona-card:hover .persona-card-thumb img { transform: scale(1.04); }
 
-    /* Coming Soon */
     .coming-overlay {
       position: absolute; inset: 0;
       background: rgba(240,236,230,0.88);
@@ -139,7 +136,6 @@
       color: #aaa; letter-spacing: .14em;
     }
 
-    /* タグ */
     .persona-card-tags {
       position: absolute; top: 10px; left: 10px;
       display: flex; flex-wrap: wrap; gap: 4px;
@@ -153,7 +149,6 @@
     .tag-tool { background: rgba(255,255,255,0.92); color: #555; border: 1px solid #ddd; }
     .tag-done { background: #b4a078; color: #fff; }
 
-    /* 本文 */
     .persona-card-body {
       padding: 18px 18px 14px;
       flex: 1; display: flex; flex-direction: column; gap: 5px;
@@ -172,7 +167,6 @@
       line-height: 1.8; margin-top: 2px; flex: 1;
     }
 
-    /* ワークフロー */
     .workflow-pills {
       display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px;
     }
@@ -183,7 +177,6 @@
     }
     .workflow-arrow { font-size: .58rem; color: #ccc; display: flex; align-items: center; }
 
-    /* フッター */
     .persona-card-footer {
       padding: 12px 18px 16px;
       border-top: 1px solid #f0f0f0;
@@ -199,8 +192,9 @@
     .btn-card-primary:hover { background: #b4a078; }
     .btn-card-outline { border: 1px solid #ddd; color: #555; background: #fff; }
     .btn-card-outline:hover { border-color: #1a1a2e; color: #1a1a2e; }
+    .btn-card-doc { border: 1px solid #b4a078; color: #b4a078; background: #fff; }
+    .btn-card-doc:hover { background: #b4a078; color: #fff; }
 
-    /* ===== 注記 ===== */
     .note-block {
       background: #f5f0e8; border-left: 3px solid #b4a078;
       border-radius: 0 8px 8px 0; padding: 16px 20px;
@@ -208,7 +202,6 @@
       color: #5c4a30; line-height: 1.85;
     }
 
-    /* ===== Back Button ===== */
     .back-section {
       text-align: center; margin-top: 56px;
       padding-top: 36px; border-top: 1px solid #e8e0d0;
@@ -222,7 +215,6 @@
     }
     .btn-back:hover { background: #b4a078; }
 
-    /* ===== Responsive ===== */
     @media (max-width: 860px) {
       .persona-grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -234,7 +226,6 @@
 </head>
 <body>
 
-  <!-- ナビゲーション（ポートフォリオ共通） -->
   <nav class="nav" id="nav">
     <div class="nav-inner">
       <a class="nav-logo" href="./index.html">sonosann</a>
@@ -253,7 +244,6 @@
     </div>
   </nav>
 
-  <!-- Page Hero -->
   <div class="page-hero">
     <a href="index.html#html-works" class="page-hero-back">← Web Design Works に戻る</a>
     <span class="page-hero-label">Persona Works</span>
@@ -264,7 +254,6 @@
     </p>
   </div>
 
-  <!-- Workflow Banner -->
   <div class="workflow-banner">
     <div class="workflow-banner-inner">
       <span class="workflow-banner-label">制作フロー</span>
@@ -284,7 +273,6 @@
     </div>
   </div>
 
-  <!-- Main -->
   <main class="main">
 
     <div class="note-block">
@@ -309,7 +297,7 @@
           <h3 class="persona-card-title">おかしの家 クレール<br />シフォンケーキ専門店 LP</h3>
           <p class="persona-card-desc">
             地元のシフォンケーキ専門テイクアウト店のLP。
-            ナチュラル&温かみのあるトーンで、メニュー・店舗情報・受取予約導線を設計。
+            ナチュラル&amp;温かみのあるトーンで、メニュー・店舗情報・受取予約導線を設計。
             仮画像をGPTで生成し、後からクライアント実写真に差し替え。
           </p>
           <div class="workflow-pills">
@@ -331,17 +319,22 @@
         <div class="persona-card-footer">
           <a href="https://sonosannworks.github.io/cake/" target="_blank" rel="noopener" class="btn-card btn-card-primary">サイトを見る →</a>
           <a href="https://github.com/sonosannworks/cake" target="_blank" rel="noopener" class="btn-card btn-card-outline">GitHub</a>
+          <a href="https://docs.google.com/document/d/1zG9sGpgWtIlWKgZRFamn911HSzPBpBDlDFMOm88ac9g/edit?tab=t.faq2971ucgc#heading=h.uv7e2cifq5vb" target="_blank" rel="noopener" class="btn-card btn-card-doc">依頼書</a>
         </div>
       </div>
 
       <!-- ===== 2. 訪問看護ステーション ひだまり ===== -->
-    <div class="persona-card-thumb">
-  <img src="https://drive.google.com/uc?export=view&id=12USOsciPJBp7kjioeb6ZlFsLnszABe5R" alt="訪問看護ステーション ひだまり モック" />
-  <div class="persona-card-tags">
-    <span class="tag tag-persona">ペルソナ #2</span>
-    <span class="tag tag-done">制作中</span>
-  </div>
-       </div>
+      <div class="persona-card">
+        <div class="persona-card-thumb" style="background: linear-gradient(135deg,#e8f5ee 0%,#fff8f0 100%);">
+          <div class="coming-overlay" style="background:rgba(240,252,245,0.82);">
+            <span>🔧</span>
+            <span style="color:#c8a030;">制作中</span>
+          </div>
+          <div class="persona-card-tags">
+            <span class="tag tag-persona">ペルソナ #2</span>
+            <span class="tag tag-tool" style="background:#fff8d0;border-color:#e8c840;color:#6a5010;">制作中</span>
+          </div>
+        </div>
         <div class="persona-card-body">
           <p class="persona-card-client">Medical / Home Nursing</p>
           <h3 class="persona-card-title">訪問看護ステーション ひだまり</h3>
@@ -360,17 +353,20 @@
         </div>
         <div class="persona-card-footer">
           <a href="https://sonosannworks.github.io/Home-nursing-care/" target="_blank" rel="noopener" class="btn-card btn-card-primary">サイトを見る →</a>
+          <a href="image/hidamari-mock.png" target="_blank" rel="noopener" class="btn-card btn-card-outline">モックを見る</a>
+          <a href="https://docs.google.com/document/d/1zG9sGpgWtIlWKgZRFamn911HSzPBpBDlDFMOm88ac9g/edit?tab=t.m5r0m9z2ykp4" target="_blank" rel="noopener" class="btn-card btn-card-doc">依頼書</a>
         </div>
       </div>
 
       <!-- ===== 3. 鈴木公認会計士・税理士事務所 ===== -->
-      <div class="persona-card-thumb">
-       <img src="https://drive.google.com/uc?export=view&id=1bPyb7Mm188vRFIhawrNUJJRSN0c0mtFH" alt="鈴木公認会計士・税理士事務所 モック" />
-        <div class="persona-card-tags">
-         <span class="tag tag-persona">ペルソナ #3</span>
-         <span class="tag tag-done">制作中</span>
+      <div class="persona-card">
+        <div class="persona-card-thumb">
+          <img src="https://sonosannworks.github.io/accountant/image/top0.png" alt="鈴木公認会計士・税理士事務所" />
+          <div class="persona-card-tags">
+            <span class="tag tag-persona">ペルソナ #3</span>
+            <span class="tag tag-tool" style="background:#fff8d0;border-color:#e8c840;color:#6a5010;">制作中</span>
+          </div>
         </div>
-      </div>
         <div class="persona-card-body">
           <p class="persona-card-client">Tax Accountant / BtoB</p>
           <h3 class="persona-card-title">鈴木公認会計士・税理士事務所</h3>
@@ -386,17 +382,16 @@
           </div>
         </div>
         <div class="persona-card-footer">
-          <a href="https://sonosannworks.github.io/accountant/" ...>
+          <a href="https://sonosannworks.github.io/accountant/" target="_blank" rel="noopener" class="btn-card btn-card-primary">サイトを見る →</a>
+          <a href="image/accountant-mock.png" target="_blank" rel="noopener" class="btn-card btn-card-outline">モックを見る</a>
+          <a href="https://docs.google.com/document/d/1zG9sGpgWtIlWKgZRFamn911HSzPBpBDlDFMOm88ac9g/edit?tab=t.2yzgp38rhuoq#heading=h.w7u1m2clz8c9" target="_blank" rel="noopener" class="btn-card btn-card-doc">依頼書</a>
         </div>
       </div>
 
       <!-- ===== 4. 街のデジタル塾 スマイル ===== -->
       <div class="persona-card">
-        <div class="persona-card-thumb" style="background: linear-gradient(135deg,#fff8e0 0%,#e8f4ff 100%);">
-          <div class="coming-overlay" style="background:rgba(255,252,240,0.82);">
-            <span>🔧</span>
-            <span style="color:#c8a030;">制作中</span>
-          </div>
+        <div class="persona-card-thumb">
+          <img src="image/smile-mock.jpg" alt="街のデジタル塾 スマイル" />
           <div class="persona-card-tags">
             <span class="tag tag-persona">ペルソナ #4</span>
             <span class="tag tag-tool" style="background:#fff8d0;border-color:#e8c840;color:#6a5010;">制作中</span>
@@ -418,15 +413,16 @@
             <span class="workflow-pill">WordPress</span>
           </div>
         </div>
+        <div class="persona-card-footer">
+          <a href="image/smile-mock.jpg" target="_blank" rel="noopener" class="btn-card btn-card-outline">モックを見る</a>
+          <a href="https://docs.google.com/document/d/1zG9sGpgWtIlWKgZRFamn911HSzPBpBDlDFMOm88ac9g/edit?tab=t.krhxk9ggmsov#heading=h.lbz0ll2g1suy" target="_blank" rel="noopener" class="btn-card btn-card-doc">依頼書</a>
+        </div>
       </div>
 
       <!-- ===== 5. レザーアトリエ Valo ===== -->
       <div class="persona-card">
-        <div class="persona-card-thumb" style="background: linear-gradient(135deg,#2a2018 0%,#4a3828 100%);">
-          <div class="coming-overlay" style="background:rgba(30,20,10,0.72);">
-            <span>🧳</span>
-            <span style="color:#c8a870;">COMING SOON</span>
-          </div>
+        <div class="persona-card-thumb">
+          <img src="image/valo-mock.jpg" alt="レザーアトリエ Valo" />
           <div class="persona-card-tags">
             <span class="tag tag-persona">ペルソナ #5</span>
             <span class="tag tag-tool">HTML/CSS</span>
@@ -448,11 +444,14 @@
             <span class="workflow-pill">Instagram</span>
           </div>
         </div>
+        <div class="persona-card-footer">
+          <a href="image/valo-mock.jpg" target="_blank" rel="noopener" class="btn-card btn-card-outline">モックを見る</a>
+          <a href="https://docs.google.com/document/d/1zG9sGpgWtIlWKgZRFamn911HSzPBpBDlDFMOm88ac9g/edit?tab=t.uo11q8q06r40#heading=h.ipgz0da1arva" target="_blank" rel="noopener" class="btn-card btn-card-doc">依頼書</a>
+        </div>
       </div>
 
     </div><!-- /persona-grid -->
 
-    <!-- Back Button -->
     <div class="back-section">
       <a href="index.html#html-works" class="btn-back">← ポートフォリオに戻る</a>
     </div>
@@ -470,7 +469,6 @@
 
   <script src="script.js?v=2"></script>
   <script>
-    // Hamburger（ポートフォリオ共通）
     const navToggle = document.getElementById('navToggle');
     const navLinks  = document.getElementById('navLinks');
     if (navToggle) {
