@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>下書きリスト </title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: #F5F4F8; color: #1a1a2e; }
+
+  .app { display: flex; height: 800px; width: 1280px; border: 1px solid #E0DFF0; border-radius: 14px; overflow: hidden; background: #F5F4F8; }
+
+  .sidebar { width: 220px; min-width: 220px; background: #fff; border-right: 1px solid #ECEAF6; display: flex; flex-direction: column; }
+  .logo { padding: 20px 20px 16px; border-bottom: 1px solid #ECEAF6; }
+  .logo-mark { display: flex; align-items: center; gap: 8px; }
+  .logo-icon { width: 30px; height: 30px; border-radius: 9px; background: #7F77DD; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 16px; height: 16px; fill: white; }
+  .logo-text { font-size: 15px; font-weight: 700; color: #1a1a2e; }
+  .nav { flex: 1; padding: 12px 0; }
+  .nav-section-label { font-size: 10.5px; color: #aaa; padding: 8px 20px 4px; letter-spacing: 0.07em; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 13.5px; color: #666; cursor: pointer; position: relative; }
+  .nav-item:hover { background: #F5F4F8; color: #1a1a2e; }
+  .nav-item.active { background: #EEEDFE; color: #534AB7; font-weight: 500; }
+  .nav-item.active::before { content: ''; position: absolute; right: 0; top: 4px; bottom: 4px; width: 3px; background: #7F77DD; border-radius: 3px 0 0 3px; }
+  .nav-item .icon { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; font-size: 11px; padding: 1px 7px; border-radius: 20px; font-weight: 500; }
+  .nav-badge.purple { background: #7F77DD; color: #fff; }
+  .nav-badge.gray { background: #ECEAF6; color: #888; }
+  .sidebar-footer { padding: 16px 20px; border-top: 1px solid #ECEAF6; display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #EEEDFE; display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 700; color: #534AB7; flex-shrink: 0; }
+  .avatar-name { font-size: 13px; font-weight: 500; color: #1a1a2e; }
+  .avatar-role { font-size: 11px; color: #aaa; }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { height: 58px; background: #fff; border-bottom: 1px solid #ECEAF6; display: flex; align-items: center; padding: 0 24px; gap: 12px; }
+  .topbar-title { font-size: 16px; font-weight: 700; color: #1a1a2e; flex: 1; }
+  .topbar-title span { font-size: 12.5px; font-weight: 400; color: #aaa; margin-left: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: 8px; border: 1px solid #E0DFF0; background: #fff; font-size: 13px; color: #444; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .btn:hover { background: #F5F4F8; }
+  .btn-primary { background: #7F77DD; color: white; border-color: transparent; font-weight: 500; }
+  .btn-primary:hover { background: #6b64c4; }
+  .btn svg { width: 14px; height: 14px; }
+
+  .content { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+  .summary-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .summary-card { background: #fff; border: 1px solid #ECEAF6; border-radius: 10px; padding: 14px 16px; }
+  .summary-label { font-size: 12px; color: #888; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+  .summary-value { font-size: 24px; font-weight: 700; color: #1a1a2e; line-height: 1; }
+  .summary-sub { font-size: 11px; color: #bbb; margin-top: 5px; }
+
+  .info-banner { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #EEEDFE; border-radius: 8px; margin-bottom: 14px; }
+  .info-banner svg { width: 15px; height: 15px; color: #534AB7; flex-shrink: 0; }
+  .info-banner span { font-size: 12.5px; color: #534AB7; }
+
+  .filters-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .search-box { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #E0DFF0; border-radius: 8px; padding: 8px 12px; flex: 1; min-width: 200px; }
+  .search-box svg { width: 14px; height: 14px; color: #bbb; flex-shrink: 0; }
+  .search-box input { border: none; background: transparent; font-size: 13px; color: #1a1a2e; outline: none; width: 100%; font-family: inherit; }
+  .search-box input::placeholder { color: #ccc; }
+  .filter-select { background: #fff; border: 1px solid #E0DFF0; border-radius: 8px; padding: 8px 28px 8px 12px; font-size: 13px; color: #555; cursor: pointer; font-family: inherit; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%23aaa' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-color: #fff; }
+  .tab-pills { display: flex; gap: 3px; background: #ECEAF6; border-radius: 8px; padding: 3px; }
+  .tab-pill { padding: 5px 13px; border-radius: 6px; font-size: 12px; cursor: pointer; color: #888; font-family: inherit; border: none; background: transparent; }
+  .tab-pill.active { background: #fff; color: #534AB7; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  .table-wrap { background: #fff; border: 1px solid #ECEAF6; border-radius: 12px; overflow: hidden; }
+  .table-header-row { display: grid; grid-template-columns: 36px 1fr 155px 125px 115px 105px 100px; padding: 10px 16px; border-bottom: 1px solid #ECEAF6; background: #FAFAF8; }
+  .th { font-size: 12px; font-weight: 500; color: #aaa; display: flex; align-items: center; gap: 4px; }
+  .th svg { width: 11px; height: 11px; }
+  .table-row { display: grid; grid-template-columns: 36px 1fr 155px 125px 115px 105px 100px; padding: 13px 16px; border-bottom: 1px solid #F0EFF8; align-items: center; cursor: pointer; transition: background 0.12s; }
+  .table-row:last-child { border-bottom: none; }
+  .table-row:hover { background: #FAFAF8; }
+  .table-row.review-row { background: #FFFDF5; }
+  .table-row.review-row:hover { background: #FFF9EA; }
+  .checkbox { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #D0CFF0; }
+  .msg-name { font-size: 13.5px; font-weight: 500; color: #1a1a2e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg-preview { font-size: 12px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .cell { font-size: 13px; color: #555; }
+  .cell-small { font-size: 11.5px; color: #bbb; margin-top: 2px; }
+  .cell-today { color: #0F6E56; font-weight: 500; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+  .badge-draft   { background: #ECEAF6; color: #534AB7; }
+  .badge-editing { background: #E1F5EE; color: #0F6E56; }
+  .badge-review  { background: #FAEEDA; color: #854F0B; }
+  .recipients { display: flex; align-items: center; gap: 2px; }
+  .r-avatar { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; margin-left: -5px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+  .r-avatar:first-child { margin-left: 0; }
+  .r-count { font-size: 12px; color: #aaa; margin-left: 5px; }
+  .actions { display: flex; gap: 4px; justify-content: flex-end; }
+  .icon-btn { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid #E0DFF0; background: transparent; cursor: pointer; color: #888; transition: background 0.12s; }
+  .icon-btn:hover { background: #F5F4F8; }
+  .icon-btn.send { color: #534AB7; border-color: #AFA9EC; }
+  .icon-btn.send:hover { background: #EEEDFE; }
+  .icon-btn svg { width: 13px; height: 13px; }
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid #F0EFF8; }
+  .page-info { font-size: 12px; color: #bbb; }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; cursor: pointer; border: 1px solid #E0DFF0; color: #888; background: #fff; font-family: inherit; }
+  .page-btn.active { background: #7F77DD; color: white; border-color: transparent; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">
+        <div class="logo-icon">
+          <svg viewBox="0 0 16 16"><path d="M2 3h12v1.5L8 9 2 4.5V3zm0 3l6 4 6-4V13H2V6z"/></svg>
+        </div>
+        <span class="logo-text">sonosann</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section-label">メッセージ</div>
+      <div class="nav-item">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.75 3.5v4l2.5 1.5-.75 1.25-3-1.75V4.5h1.25z"/></svg>
+        送信予約
+        <span class="nav-badge gray">12</span>
+      </div>
+      <div class="nav-item active">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3 3h10v1.5L8 8.5 3 4.5V3zm0 2.5V13h10V5.5L8 9.5 3 5.5z"/></svg>
+        下書き
+        <span class="nav-badge purple">5</span>
+      </div>
+      <div class="nav-item">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm3.3 5.3l-4 4a1 1 0 01-1.4 0l-2-2 1.4-1.4L7 8.6l3.3-3.3 1.4 1.4z"/></svg>
+        送信済み
+        <span class="nav-badge gray">48</span>
+      </div>
+      <div class="nav-section-label" style="margin-top:10px;">管理</div>
+      <div class="nav-item">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a3 3 0 110 6A3 3 0 018 1zm0 8c-3.3 0-6 1.3-6 3v1h12v-1c0-1.7-2.7-3-6-3z"/></svg>
+        登録者管理
+      </div>
+      <div class="nav-item">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3 3h10v2H3V3zm0 3h7v2H3V6zm0 3h10v2H3V9zm0 3h5v2H3v-2z"/></svg>
+        テンプレート
+      </div>
+      <div class="nav-item">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 3h1.5v5h-1.5V4zm0 6h1.5v1.5h-1.5V10z"/></svg>
+        設定
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar">田中</div>
+      <div>
+        <div class="avatar-name">田中 一郎</div>
+        <div class="avatar-role">管理者</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">
+        下書き
+        <span>保存中のメッセージを管理・編集</span>
+      </div>
+      <button class="btn">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2v10M2 7h10"/></svg>
+        新規作成
+      </button>
+      <button class="btn btn-primary">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 7l4 4 6-6"/></svg>
+        選択して送信予約
+      </button>
+    </div>
+
+    <div class="content">
+      <!-- Summary cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="summary-label"><span class="dot" style="background:#7F77DD;"></span>下書き中</div>
+          <div class="summary-value">5</div>
+          <div class="summary-sub">未送信のメッセージ</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label"><span class="dot" style="background:#1D9E75;"></span>編集中</div>
+          <div class="summary-value">2</div>
+          <div class="summary-sub">最終編集：本日</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label"><span class="dot" style="background:#EF9F27;"></span>レビュー待ち</div>
+          <div class="summary-value">1</div>
+          <div class="summary-sub">承認が必要</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label"><span class="dot" style="background:#888;"></span>最終更新</div>
+          <div class="summary-value" style="font-size:17px;padding-top:4px;">2026/03/14</div>
+          <div class="summary-sub">田中 一郎</div>
+        </div>
+      </div>
+
+      <!-- Info banner -->
+      <div class="info-banner">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 3h1.5v5h-1.5V4zm0 6h1.5v1.5h-1.5V10z"/></svg>
+        <span>下書きは自動保存されます。送信予約に移行するには「送信予約へ」ボタンを押してください。</span>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-row">
+        <div class="search-box">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="3.5"/><path d="M8.5 8.5l3 3"/></svg>
+          <input type="text" placeholder="メッセージ名・本文で検索...">
+        </div>
+        <select class="filter-select">
+          <option>全ステータス</option>
+          <option>下書き中</option>
+          <option>編集中</option>
+          <option>レビュー待ち</option>
+        </select>
+        <select class="filter-select">
+          <option>更新日 ↓（新しい順）</option>
+          <option>作成日 ↓</option>
+          <option>宛先数 ↓</option>
+        </select>
+        <div class="tab-pills">
+          <button class="tab-pill active">すべて (5)</button>
+          <button class="tab-pill">自分の下書き</button>
+          <button class="tab-pill">チーム共有</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <div class="table-header-row">
+          <div class="th"><div class="checkbox"></div></div>
+          <div class="th">メッセージ名・内容
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5.5 2v7M3 7l2.5 2.5L8 7"/></svg>
+          </div>
+          <div class="th">最終更新日時</div>
+          <div class="th">宛先（予定）</div>
+          <div class="th">ステータス</div>
+          <div class="th">作成者</div>
+          <div class="th"></div>
+        </div>
+
+        <!-- Row 1 - editing -->
+        <div class="table-row">
+          <div><div class="checkbox"></div></div>
+          <div>
+            <div class="msg-name">5月連休前キャンペーン</div>
+            <div class="msg-preview">ゴールデンウィーク特別セールのお知らせ。対象商品は...</div>
+          </div>
+          <div>
+            <div class="cell cell-today">2026/03/14 18:32</div>
+            <div class="cell-small">本日 編集済み</div>
+          </div>
+          <div>
+            <div class="recipients">
+              <div class="r-avatar" style="background:#EEEDFE;color:#534AB7;">田</div>
+              <div class="r-avatar" style="background:#E1F5EE;color:#0F6E56;">佐</div>
+              <span class="r-count">+320人</span>
+            </div>
+          </div>
+          <div><span class="badge badge-editing"><span class="dot" style="background:#1D9E75;"></span>編集中</span></div>
+          <div class="cell-small">田中 一郎</div>
+          <div class="actions">
+            <div class="icon-btn" title="編集"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z"/></svg></div>
+            <div class="icon-btn send" title="送信予約へ"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+            <div class="icon-btn" title="削除"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h8M5 4V3h4v1M5 6v5M9 6v5M4 4l.5 8h5l.5-8"/></svg></div>
+          </div>
+        </div>
+
+        <!-- Row 2 - review -->
+        <div class="table-row review-row">
+          <div><div class="checkbox"></div></div>
+          <div>
+            <div class="msg-name">新プラン移行のご案内</div>
+            <div class="msg-preview">この度、サービスプランの改定を行います。詳細は...</div>
+          </div>
+          <div>
+            <div class="cell">2026/03/13 14:20</div>
+            <div class="cell-small">昨日</div>
+          </div>
+          <div>
+            <div class="recipients">
+              <div class="r-avatar" style="background:#FAEEDA;color:#854F0B;">山</div>
+              <span class="r-count">+1,240人</span>
+            </div>
+          </div>
+          <div><span class="badge badge-review"><span class="dot" style="background:#EF9F27;"></span>レビュー待ち</span></div>
+          <div class="cell-small">山田 花子</div>
+          <div class="actions">
+            <div class="icon-btn"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z"/></svg></div>
+            <div class="icon-btn send"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+            <div class="icon-btn"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h8M5 4V3h4v1M5 6v5M9 6v5M4 4l.5 8h5l.5-8"/></svg></div>
+          </div>
+        </div>
+
+        <!-- Row 3 - draft -->
+        <div class="table-row">
+          <div><div class="checkbox"></div></div>
+          <div>
+            <div class="msg-name">夏季セミナー招待状</div>
+            <div class="msg-preview">7月開催の年次セミナーへご招待します。今年のテーマは...</div>
+          </div>
+          <div>
+            <div class="cell">2026/03/10 09:15</div>
+            <div class="cell-small">4日前</div>
+          </div>
+          <div>
+            <div class="recipients">
+              <div class="r-avatar" style="background:#FAECE7;color:#993C1D;">鈴</div>
+              <div class="r-avatar" style="background:#EEEDFE;color:#534AB7;">伊</div>
+              <span class="r-count">+88人</span>
+            </div>
+          </div>
+          <div><span class="badge badge-draft"><span class="dot" style="background:#7F77DD;"></span>下書き中</span></div>
+          <div class="cell-small">鈴木 健</div>
+          <div class="actions">
+            <div class="icon-btn"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z"/></svg></div>
+            <div class="icon-btn send"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+            <div class="icon-btn"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h8M5 4V3h4v1M5 6v5M9 6v5M4 4l.5 8h5l.5-8"/></svg></div>
+          </div>
+        </div>
+
+        <!-- Row 4 - editing -->
+        <div class="table-row">
+          <div><div class="checkbox"></div></div>
+          <div>
+            <div class="msg-name">定期メンテナンスのお知らせ</div>
+            <div class="msg-preview">システムメンテナンスのため、以下の時間帯にサービスを...</div>
+          </div>
+          <div>
+            <div class="cell cell-today">2026/03/14 11:05</div>
+            <div class="cell-small">本日 編集済み</div>
+          </div>
+          <div>
+            <div class="recipients">
+              <div class="r-avatar" style="background:#E1F5EE;color:#0F6E56;">高</div>
+              <span class="r-count">+2,048人</span>
+            </div>
+          </div>
+          <div><span class="badge badge-editing"><span class="dot" style="background:#1D9E75;"></span>編集中</span></div>
+          <div class="cell-small">高橋 誠</div>
+          <div class="actions">
+            <div class="icon-btn"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z"/></svg></div>
+            <div class="icon-btn send"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+            <div class="icon-btn"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h8M5 4V3h4v1M5 6v5M9 6v5M4 4l.5 8h5l.5-8"/></svg></div>
+          </div>
+        </div>
+
+        <!-- Row 5 - draft -->
+        <div class="table-row">
+          <div><div class="checkbox"></div></div>
+          <div>
+            <div class="msg-name">会員限定クーポン配布</div>
+            <div class="msg-preview">プレミアム会員の皆様へ、感謝を込めた特別クーポンを...</div>
+          </div>
+          <div>
+            <div class="cell">2026/03/08 16:44</div>
+            <div class="cell-small">6日前</div>
+          </div>
+          <div>
+            <div class="recipients">
+              <div class="r-avatar" style="background:#EEEDFE;color:#534AB7;">伊</div>
+              <div class="r-avatar" style="background:#FAECE7;color:#993C1D;">中</div>
+              <span class="r-count">+560人</span>
+            </div>
+          </div>
+          <div><span class="badge badge-draft"><span class="dot" style="background:#7F77DD;"></span>下書き中</span></div>
+          <div class="cell-small">伊藤 美咲</div>
+          <div class="actions">
+            <div class="icon-btn"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z"/></svg></div>
+            <div class="icon-btn send"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></div>
+            <div class="icon-btn"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h8M5 4V3h4v1M5 6v5M9 6v5M4 4l.5 8h5l.5-8"/></svg></div>
+          </div>
+        </div>
+
+        <div class="pagination">
+          <div class="page-info">5件中 1〜5件を表示（全件表示中）</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

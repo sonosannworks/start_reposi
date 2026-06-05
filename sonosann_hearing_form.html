@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web制作 ヒアリングシート｜sonosann Web&AIサポート</title>
+  <style>
+    /* ===== リセット & ベース ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      background: #f5f4f0;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    /* ===== カラー変数 ===== */
+    :root {
+      --teal:       #0F6E56;
+      --teal-lt:    #E1F5EE;
+      --teal-dark:  #085041;
+      --teal-mid:   #9FE1CB;
+      --gray-lt:    #F1EFE8;
+      --gray:       #5F5E5A;
+      --gray-border:#C8C8C0;
+      --blue-lt:    #E6F1FB;
+      --blue:       #185FA5;
+      --red-lt:     #FCEBEB;
+      --red:        #A32D2D;
+      --white:      #ffffff;
+      --text:       #1a1a1a;
+      --text-muted: #5F5E5A;
+      --bg:         #f5f4f0;
+      --radius-md:  8px;
+      --radius-lg:  12px;
+    }
+
+    /* ===== ラッパー ===== */
+    .page-header {
+      max-width: 680px;
+      margin: 0 auto 1.5rem;
+    }
+    .page-header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+    .page-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* ===== プログレスバー ===== */
+    .progress-wrap { margin-bottom: 1.5rem; }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .progress-bar {
+      height: 5px;
+      background: var(--gray-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--teal);
+      border-radius: 3px;
+      transition: width 0.35s ease;
+    }
+
+    /* ===== ステップヘッダー ===== */
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--gray-border);
+    }
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--teal-lt);
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .step-info-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .step-info-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* ===== フィールド ===== */
+    .field { margin-bottom: 1.25rem; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+    .field .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    .field input[type="text"],
+    .field input[type="email"],
+    .field textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--gray-border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input[type="text"]:focus,
+    .field input[type="email"]:focus,
+    .field textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(15, 110, 86, 0.1);
+    }
+    .field textarea {
+      min-height: 72px;
+      resize: vertical;
+    }
+
+    /* ===== チェックボックス風ボタン ===== */
+    .check-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 4px;
+    }
+    .check-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border: 1px solid var(--gray-border);
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: var(--white);
+      user-select: none;
+      transition: all 0.15s;
+    }
+    .check-item:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: var(--teal-lt);
+    }
+    .check-item.checked {
+      background: var(--teal-lt);
+      border-color: var(--teal);
+      color: var(--teal-dark);
+      font-weight: 500;
+    }
+    .check-item .check-icon {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid currentColor;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+    }
+    .check-item.checked .check-icon::after {
+      content: '✓';
+      font-size: 10px;
+    }
+
+    /* ===== ナビゲーション ===== */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--gray-border);
+    }
+    .step-dots {
+      display: flex;
+      gap: 7px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-border);
+      transition: background 0.2s;
+    }
+    .dot.active { background: var(--teal); }
+    .dot.done   { background: var(--teal-mid); }
+
+    .btn-group { display: flex; gap: 8px; }
+    .btn {
+      padding: 9px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .btn-back {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      color: var(--text-muted);
+    }
+    .btn-back:hover { background: var(--gray-lt); }
+    .btn-next {
+      background: var(--teal);
+      border: 1px solid var(--teal);
+      color: var(--white);
+    }
+    .btn-next:hover { background: var(--teal-dark); }
+
+    /* ===== 完了画面 ===== */
+    #done-screen { display: none; }
+    .done-icon {
+      font-size: 48px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .done-title {
+      font-size: 18px;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .done-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ===== サマリー ===== */
+    .summary-block {
+      background: var(--gray-lt);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .summary-row {
+      display: flex;
+      gap: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--gray-border);
+      font-size: 13px;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-key {
+      color: var(--text-muted);
+      min-width: 120px;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+    .summary-val { color: var(--text); }
+
+    /* ===== 印刷ボタン ===== */
+    .btn-print {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      color: var(--text-muted);
+      width: 100%;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .btn-print:hover { background: var(--gray-lt); }
+
+    /* ===== 印刷スタイル ===== */
+    @media print {
+      body { background: white; padding: 0; font-size: 12px; }
+      .card { border: none; padding: 0; box-shadow: none; }
+      .nav, .progress-wrap, .btn-group, .btn-print { display: none !important; }
+      .summary-block { border: 1px solid #ccc; }
+    }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 500px) {
+      .card { padding: 1.25rem; }
+      .check-item { font-size: 11px; padding: 5px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Web制作 ヒアリングシート</h1>
+    <p>sonosann Web &amp; AIサポート｜このフォームにご回答ください</p>
+  </div>
+
+  <div class="card">
+
+    <!-- プログレスバー -->
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="step-label">ステップ 1 / 5</span>
+        <span id="step-pct">20%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="prog" style="width: 20%;"></div>
+      </div>
+    </div>
+
+    <!-- ステップコンテンツ -->
+    <div id="step-content"></div>
+
+    <!-- 完了画面 -->
+    <div id="done-screen">
+      <div class="done-icon">✅</div>
+      <div class="done-title">回答が完了しました</div>
+      <div class="done-sub">以下の内容でヒアリングシートをまとめました。<br>印刷またはコピーしてご利用ください。</div>
+      <div class="summary-block" id="summary"></div>
+      <button class="btn btn-next" style="width:100%;" onclick="printSummary()">
+        🖨️ 印刷する
+      </button>
+      <button class="btn btn-print" onclick="resetForm()">
+        ↩ 最初からやり直す
+      </button>
+    </div>
+
+  </div><!-- /.card -->
+
+  <script>
+    /* ===== データ定義 ===== */
+    const STEPS = [
+      {
+        num: 1,
+        icon: '🏪',
+        title: '事業・基本情報',
+        sub: '事業内容とターゲットについて',
+        fields: [
+          { id: 'name',         label: 'お名前・事業者名',                     type: 'text',     placeholder: '例：田中花子 / 田中花子 鍼灸院' },
+          { id: 'business',     label: '事業内容・サービスの概要',             type: 'textarea', placeholder: '例：小林市で訪問介護事業を運営。60〜80代の高齢者を中心にサービスを提供しています。' },
+          { id: 'target',       label: 'ターゲットとなるお客様（年齢層・職業・地域など）', type: 'textarea', placeholder: '例：65歳以上の高齢者とその家族。要支援〜要介護1〜2程度の方...' },
+          { id: 'existing_url', label: '既存のWebサイトURL（あれば記入）',     type: 'text',     placeholder: 'https://...（なければ空欄）' },
+          { id: 'ref_sites',    label: '参考にしたい競合・同業サイト（好き/嫌い各1〜3件）', type: 'textarea', placeholder: '好きなサイト：https://...\n嫌いなサイト：https://...' },
+        ]
+      },
+      {
+        num: 2,
+        icon: '🎨',
+        title: 'デザイン方向性',
+        sub: 'トンマナ・雰囲気・カラー',
+        fields: [
+          { id: 'mood',  label: 'サイトの雰囲気イメージ（複数選択可）', type: 'check',
+            options: ['清潔感・信頼感', '温かみ・親しみやすさ', 'プロフェッショナル・高級感', 'ポップ・元気', 'シンプル・ミニマル', '和風・落ち着き'] },
+          { id: 'font',  label: 'フォントイメージ', type: 'check',
+            options: ['ゴシック系（すっきり）', '明朝系（上品）', '丸ゴシック（やわらかい）', 'おまかせ'] },
+          { id: 'color', label: 'イメージカラー', type: 'text',
+            placeholder: '例：緑・白ベース / ブルー系 / #2E7D32 など（なければ空欄）',
+            hint: 'なければ空欄でOK。こちらで提案します。' },
+          { id: 'logo',  label: 'ロゴの有無', type: 'check',
+            options: ['あり（データ提供可）', 'あり（データ要確認）', 'なし（作成依頼したい）', 'なし（不要）'] },
+        ]
+      },
+      {
+        num: 3,
+        icon: '🖥️',
+        title: 'UI・UX要件',
+        sub: '機能・デバイス・ページ構成',
+        fields: [
+          { id: 'device',        label: 'メインで使うデバイス', type: 'check',
+            options: ['スマートフォン優先', 'PC優先', 'どちらも同程度'] },
+          { id: 'action',        label: 'サイトで最も重視するアクション', type: 'check',
+            options: ['問い合わせ・相談', '予約', '料金確認', 'サービス閲覧', '購入', 'その他'] },
+          { id: 'accessibility', label: '特別な配慮が必要なユーザー層', type: 'check',
+            options: ['高齢者向け（文字大きめ等）', 'バリアフリー対応', '特になし'] },
+          { id: 'pages',         label: '必要なページ・機能（複数選択可）', type: 'check',
+            options: ['トップ', 'サービス紹介', '料金表', 'スタッフ紹介', 'よくある質問', 'ブログ・お知らせ', 'お問い合わせフォーム', '採用情報', 'アクセス・地図'] },
+        ]
+      },
+      {
+        num: 4,
+        icon: '📷',
+        title: 'コンテンツ・素材',
+        sub: '写真・文章・実績の準備状況',
+        fields: [
+          { id: 'photo',     label: '写真素材の準備', type: 'check',
+            options: ['プロ撮影データあり', 'スマホ撮影データあり', 'AI生成・フリー素材でOK', '未定・要相談'] },
+          { id: 'copy',      label: '文章（原稿）の準備', type: 'check',
+            options: ['自分で書ける', '大まかな内容は出せる', 'ひな形をもとに書きたい', 'AIサポート希望'] },
+          { id: 'results',   label: '実績・お客様の声の掲載', type: 'check',
+            options: ['あり（準備できる）', '今後集める予定', '不要'] },
+          { id: 'self_edit', label: '公開後の自己更新の希望', type: 'check',
+            options: ['自分で更新したい', '更新はお任せしたい', '未定'] },
+        ]
+      },
+      {
+        num: 5,
+        icon: '⚙️',
+        title: '技術・運用',
+        sub: 'CMS・連携・スケジュール',
+        fields: [
+          { id: 'cms',      label: '制作方法の希望', type: 'check',
+            options: ['WordPress（自分で更新しやすい）', 'HTML/CSS（軽量・高速）', 'どちらでもよい'] },
+          { id: 'sns',      label: '外部サービスとの連携（複数選択可）', type: 'check',
+            options: ['LINE公式アカウント', 'Instagram', 'Facebook', 'Googleマップ', '予約システム', '不要'] },
+          { id: 'email',    label: 'お問い合わせフォームの送信先メール', type: 'email',
+            placeholder: 'example@example.com' },
+          { id: 'deadline', label: '公開希望日・目安のスケジュール', type: 'text',
+            placeholder: '例：2026年8月頃 / できるだけ早く' },
+          { id: 'other',    label: 'その他のご要望・ご質問', type: 'textarea',
+            placeholder: 'なんでもお気軽にどうぞ' },
+        ]
+      }
+    ];
+
+    const LABELS = {
+      name: '事業者名', business: '事業内容', target: 'ターゲット',
+      existing_url: '既存URL', ref_sites: '参考サイト',
+      mood: '雰囲気イメージ', font: 'フォント', color: 'イメージカラー', logo: 'ロゴ',
+      device: 'デバイス優先', action: '重視アクション', accessibility: '配慮事項', pages: '必要ページ',
+      photo: '写真素材', copy: '文章原稿', results: '実績・お客様の声', self_edit: '自己更新希望',
+      cms: '制作方法', sns: '連携サービス', email: '送信先メール',
+      deadline: '公開希望日', other: 'その他ご要望'
+    };
+
+    /* ===== 状態管理 ===== */
+    let current = 0;
+    const answers = {};
+
+    /* ===== レンダリング ===== */
+    function render() {
+      const step = STEPS[current];
+      const pct = Math.round((current + 1) / STEPS.length * 100);
+
+      // プログレス更新
+      document.getElementById('prog').style.width = pct + '%';
+      document.getElementById('step-label').textContent = `ステップ ${current + 1} / ${STEPS.length}`;
+      document.getElementById('step-pct').textContent = pct + '%';
+
+      // HTMLビルド
+      let html = '';
+
+      // ステップヘッダー
+      html += `
+        <div class="step-header">
+          <div class="step-icon">${step.icon}</div>
+          <div>
+            <div class="step-info-title">${step.title}</div>
+            <div class="step-info-sub">${step.sub}</div>
+          </div>
+        </div>
+      `;
+
+      // フィールド
+      step.fields.forEach(f => {
+        html += `<div class="field">`;
+        html += `<label for="f_${f.id}">${f.label}</label>`;
+        if (f.hint) html += `<div class="hint">${f.hint}</div>`;
+
+        if (f.type === 'text' || f.type === 'email') {
+          const val = answers[f.id] || '';
+          html += `<input type="${f.type}" id="f_${f.id}" value="${escHtml(val)}" placeholder="${f.placeholder || ''}">`;
+
+        } else if (f.type === 'textarea') {
+          const val = answers[f.id] || '';
+          html += `<textarea id="f_${f.id}" placeholder="${f.placeholder || ''}">${escHtml(val)}</textarea>`;
+
+        } else if (f.type === 'check') {
+          const sel = answers[f.id] || [];
+          html += `<div class="check-grid">`;
+          f.options.forEach(opt => {
+            const checked = sel.includes(opt) ? 'checked' : '';
+            html += `<div class="check-item ${checked}" onclick="toggleCheck('${f.id}', '${escAttr(opt)}', this)">
+              <span class="check-icon"></span>${opt}
+            </div>`;
+          });
+          html += `</div>`;
+        }
+        html += `</div>`;
+      });
+
+      // ナビゲーション
+      const isLast = current === STEPS.length - 1;
+      html += `<div class="nav">
+        <div class="step-dots">
+          ${STEPS.map((_, i) => `<div class="dot ${i < current ? 'done' : i === current ? 'active' : ''}"></div>`).join('')}
+        </div>
+        <div class="btn-group">
+          ${current > 0 ? `<button class="btn btn-back" onclick="goBack()">← 戻る</button>` : ''}
+          <button class="btn btn-next" onclick="goNext()">${isLast ? '内容を確認する →' : '次へ →'}</button>
+        </div>
+      </div>`;
+
+      document.getElementById('step-content').innerHTML = html;
+      document.getElementById('step-content').style.display = 'block';
+      document.getElementById('done-screen').style.display = 'none';
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ===== 回答保存 ===== */
+    function saveCurrentAnswers() {
+      const step = STEPS[current];
+      step.fields.forEach(f => {
+        if (f.type === 'check') return; // チェックはtoggleCheckで即時保存
+        const el = document.getElementById('f_' + f.id);
+        if (el) answers[f.id] = el.value.trim();
+      });
+    }
+
+    function toggleCheck(fid, opt, el) {
+      if (!answers[fid]) answers[fid] = [];
+      const idx = answers[fid].indexOf(opt);
+      if (idx >= 0) {
+        answers[fid].splice(idx, 1);
+        el.classList.remove('checked');
+      } else {
+        answers[fid].push(opt);
+        el.classList.add('checked');
+      }
+    }
+
+    /* ===== ナビゲーション ===== */
+    function goNext() {
+      saveCurrentAnswers();
+      if (current < STEPS.length - 1) {
+        current++;
+        render();
+      } else {
+        showDone();
+      }
+    }
+
+    function goBack() {
+      saveCurrentAnswers();
+      if (current > 0) {
+        current--;
+        render();
+      }
+    }
+
+    /* ===== 完了画面 ===== */
+    function showDone() {
+      document.getElementById('prog').style.width = '100%';
+      document.getElementById('step-label').textContent = '完了';
+      document.getElementById('step-pct').textContent = '100%';
+      document.getElementById('step-content').style.display = 'none';
+      document.getElementById('done-screen').style.display = 'block';
+
+      let html = '';
+      for (const [k, v] of Object.entries(answers)) {
+        if (!v || (Array.isArray(v) && v.length === 0)) continue;
+        const val = Array.isArray(v) ? v.join('、') : v;
+        html += `<div class="summary-row">
+          <span class="summary-key">${LABELS[k] || k}</span>
+          <span class="summary-val">${escHtml(val)}</span>
+        </div>`;
+      }
+      document.getElementById('summary').innerHTML =
+        html || '<div style="color:#888;text-align:center;padding:1rem;">（回答なし）</div>';
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function printSummary() {
+      window.print();
+    }
+
+    function resetForm() {
+      current = 0;
+      for (const k in answers) delete answers[k];
+      render();
+    }
+
+    /* ===== ユーティリティ ===== */
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+    function escAttr(str) {
+      return String(str).replace(/'/g, '&#39;');
+    }
+
+    /* ===== 初期表示 ===== */
+    render();
+  </script>
+</body>
+</html>
