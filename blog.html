@@ -198,12 +198,12 @@ function parseCSV(text) {
   return rows.slice(1).filter(r=>r.some(v=>v)).map(r=>{const o={};h.forEach((k,i)=>o[k]=r[i]||'');return o;});
 }
 
-function createCard(p) {
+function createCard(p, idx) {
   const cat=p.category||'other', emo=catEmoji[cat]||'📝', label=catLabel[cat]||cat;
   const thumb=p.image_url
     ?`<div class="article-thumb ${cat}"><img src="${p.image_url}" alt="" onerror="this.parentElement.innerHTML='<span class=\\'article-thumb-emoji\\'>${emo}</span>'"></div>`
     :`<div class="article-thumb ${cat}"><span class="article-thumb-emoji">${emo}</span></div>`;
-  return `<a class="article-card" data-cat="${cat}" href="post.html?id=${encodeURIComponent(p.id)}">
+  return `<a class="article-card" data-cat="${cat}" href="post.html?idx=${idx}">
     ${thumb}
     <div>
       <div class="article-meta">
@@ -230,7 +230,7 @@ fetch(SHEET_URL)
       .filter(p=>(p.status||'').toLowerCase()!=='draft')
       .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
     const list=document.getElementById('articlesList');
-    list.innerHTML=posts.length?posts.map(createCard).join(''):'<p style="color:#aaa;text-align:center;padding:2rem 0;font-size:.85rem;">まだ記事がありません。</p>';
+    list.innerHTML=posts.length?posts.map((p, i) => createCard(p, i)).join(''):'<p style="color:#aaa;text-align:center;padding:2rem 0;font-size:.85rem;">まだ記事がありません。</p>';
     document.getElementById('loadingState').style.display='none';
     list.style.display='flex';
     const params = new URLSearchParams(location.search);

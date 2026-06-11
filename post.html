@@ -224,7 +224,7 @@ function bodyToHTML(text) {
     .join('');
 }
 
-const urlId = new URLSearchParams(location.search).get('id');
+const urlIdx = parseInt(new URLSearchParams(location.search).get('idx'), 10);
 
 fetch(SHEET_URL)
   .then(r=>{if(!r.ok)throw new Error();return r.text();})
@@ -233,7 +233,7 @@ fetch(SHEET_URL)
       .filter(p=>(p.status||'').toLowerCase()!=='draft')
       .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
 
-    const post = allPosts.find(p => String(p.id) === String(urlId));
+    const post = (!isNaN(urlIdx) && urlIdx >= 0 && urlIdx < allPosts.length) ? allPosts[urlIdx] : null;
     document.getElementById('loadingFull').style.display='none';
 
     if (!post) {
@@ -273,21 +273,21 @@ fetch(SHEET_URL)
       document.getElementById('postTags').innerHTML = tags.map(t=>`<span class="post-tag">${t.trim()}</span>`).join('');
     }
 
-    const idx = allPosts.findIndex(p=>String(p.id)===String(urlId));
+    const idx = urlIdx;
     const prev = allPosts[idx+1];
     const next = allPosts[idx-1];
     document.getElementById('postNav').innerHTML = `
-      <a class="post-nav-item prev${prev?'':' disabled'}" href="${prev?`post.html?id=${prev.id}`:'#'}">
+      <a class="post-nav-item prev${prev?'':' disabled'}" href="${prev?`post.html?idx=${idx+1}`:'#'}">
         <span class="post-nav-label">← Prev</span>
         <span class="post-nav-title">${prev?prev.title:'最初の記事です'}</span>
       </a>
-      <a class="post-nav-item next${next?'':' disabled'}" href="${next?`post.html?id=${next.id}`:'#'}">
+      <a class="post-nav-item next${next?'':' disabled'}" href="${next?`post.html?idx=${idx-1}`:'#'}">
         <span class="post-nav-label">Next →</span>
         <span class="post-nav-title">${next?next.title:'最新の記事です'}</span>
       </a>`;
 
     document.getElementById('recentList').innerHTML = allPosts.slice(0,5)
-      .map(p=>`<li><a href="post.html?id=${p.id}"><span class="recent-date">${p.date}</span>${p.title}</a></li>`)
+      .map((p,i)=>`<li><a href="post.html?idx=${i}"><span class="recent-date">${p.date}</span>${p.title}</a></li>`)
       .join('');
 
     document.getElementById('postContent').style.display='block';
