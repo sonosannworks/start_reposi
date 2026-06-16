@@ -400,6 +400,9 @@
     <!-- JS で動的に挿入 -->
     <div id="dl-cards" class="dl-cards"></div>
 
+    <!-- アップセル（単品購入者向け：DLカード直下） -->
+    <div id="upsell-box"></div>
+
     <div class="notice-box">
       <strong>⚠️ ご注意</strong>
       このページのURLを知っている方はどなたでもPDFをダウンロードできます。URLの共有はご遠慮ください。<br>
@@ -424,8 +427,8 @@
       </a>
     </div>
 
-    <!-- アップセル or 他の単品案内（JS で切り替え） -->
-    <div id="upsell-area"></div>
+    <!-- 他の単品案内（JS で切り替え） -->
+    <div id="other-area"></div>
 
   </main>
 
@@ -488,7 +491,8 @@
     const item = params.get('item'); // shoubyou / shougai / taishoku / set
 
     const dlCardsEl   = document.getElementById('dl-cards');
-    const upsellEl    = document.getElementById('upsell-area');
+    const upsellBoxEl = document.getElementById('upsell-box');
+    const otherAreaEl = document.getElementById('other-area');
     const badgeEl     = document.getElementById('purchase-badge');
 
     // ── 単品購入 ──
@@ -502,12 +506,12 @@
       // DLカード（買った1冊だけ）
       dlCardsEl.innerHTML = makeCard(p);
 
-      // アップセル：残り2冊＋セット案内
+      // アップセル：残り2冊＋セット案内（DLカード直下）
       const others = Object.entries(PRODUCTS)
         .filter(([key]) => key !== item)
         .map(([, v]) => v);
 
-      upsellEl.innerHTML = `
+      upsellBoxEl.innerHTML = `
         <div class="upsell-section">
           <div class="upsell-badge">💡 まとめてお得！</div>
           <h2 class="upsell-title">3冊セットなら半額でご購入いただけます</h2>
@@ -521,7 +525,10 @@
           <a class="upsell-btn" href="${SET_STRIPE_URL}" target="_blank" rel="noopener">
             🛒 3冊セットを購入する（¥200）
           </a>
-        </div>
+        </div>`;
+
+      // 他の単品案内（感想フォーム下）
+      otherAreaEl.innerHTML = `
         <div class="other-section">
           <h2 class="other-title">他の単品も見る</h2>
           <p class="other-desc">各100円でご購入いただけます</p>
@@ -540,14 +547,16 @@
 
       dlCardsEl.innerHTML = Object.values(PRODUCTS).map(makeCard).join('');
 
-      // セット購入者には「他の商品」案内は不要
-      upsellEl.innerHTML = '';
+      // セット購入者には案内不要
+      upsellBoxEl.innerHTML = '';
+      otherAreaEl.innerHTML = '';
 
     // ── パラメータなし（旧URL・直アクセス）→ 全冊表示（後方互換） ──
     } else {
       dlCardsEl.innerHTML = Object.values(PRODUCTS).map(makeCard).join('');
 
-      upsellEl.innerHTML = `
+      upsellBoxEl.innerHTML = '';
+      otherAreaEl.innerHTML = `
         <div class="other-section">
           <h2 class="other-title">ガイドブックシリーズ</h2>
           <p class="other-desc">各100円でご購入いただけます</p>
