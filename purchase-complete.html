@@ -33,7 +33,6 @@
       line-height: 1.8;
     }
 
-    /* ── ナビ ── */
     .nav {
       background: rgba(253,250,245,.97);
       border-bottom: 1px solid var(--border);
@@ -62,7 +61,6 @@
     }
     .nav-back:hover { opacity: .7; }
 
-    /* ── サンクスヘッダー ── */
     .thanks-header {
       text-align: center;
       padding: 4rem 1.5rem 2.5rem;
@@ -106,14 +104,26 @@
       opacity: .6;
     }
 
-    /* ── コンテンツ ── */
+    /* 購入商品バッジ */
+    .purchase-badge {
+      display: inline-block;
+      background: var(--green-bg);
+      border: 1px solid var(--green-bd);
+      border-radius: 20px;
+      padding: .35rem 1.2rem;
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--green);
+      letter-spacing: .1em;
+      margin-bottom: 1rem;
+    }
+
     .container {
       max-width: 680px;
       margin: 0 auto;
       padding: 0 1.5rem 5rem;
     }
 
-    /* ── ダウンロードセクション ── */
     .dl-section-title {
       font-family: 'Noto Sans JP', sans-serif;
       font-size: .78rem;
@@ -143,12 +153,8 @@
       gap: 1rem;
       transition: box-shadow .2s;
     }
-    .dl-card:hover {
-      box-shadow: 0 4px 16px rgba(0,0,0,.06);
-    }
-    .dl-card-info {
-      flex: 1;
-    }
+    .dl-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+    .dl-card-info { flex: 1; }
     .dl-card-label {
       font-size: .7rem;
       font-weight: 500;
@@ -183,7 +189,6 @@
     .dl-btn:hover { background: #235f3c; }
     .dl-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-    /* ── 注意書き ── */
     .notice-box {
       background: var(--bg-warm);
       border: 1px solid var(--border);
@@ -204,7 +209,6 @@
       font-size: .8rem;
     }
 
-    /* ── 感想フォーム ── */
     .feedback-section {
       background: var(--bg-warm);
       border: 1px solid var(--border);
@@ -238,7 +242,72 @@
     }
     .feedback-btn:hover { background: var(--gold-deep); }
 
-    /* ── 他の商品 ── */
+    /* アップセル：単品購入者向けセット案内 */
+    .upsell-section {
+      background: linear-gradient(135deg, #fdfaf5 0%, #f5f0e8 100%);
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .upsell-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .15em;
+      padding: .25rem .9rem;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+    .upsell-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--ink);
+      letter-spacing: .08em;
+      margin-bottom: .6rem;
+    }
+    .upsell-price {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: .3rem;
+    }
+    .upsell-price strong {
+      font-size: 1.1rem;
+      color: var(--green);
+      font-weight: 500;
+    }
+    .upsell-price s {
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    .upsell-desc {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1.4rem;
+    }
+    .upsell-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: var(--green);
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      padding: .85rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .upsell-btn:hover { background: #235f3c; }
+
+    /* 他の単品案内（セット購入者には不要） */
     .other-section {
       border-top: 1px solid var(--border);
       padding-top: 2rem;
@@ -281,12 +350,8 @@
       transition: border-color .2s, color .2s;
       background: #fff;
     }
-    .other-btn:hover {
-      border-color: var(--gold);
-      color: var(--ink);
-    }
+    .other-btn:hover { border-color: var(--gold); color: var(--ink); }
 
-    /* ── フッター ── */
     .footer {
       border-top: 1px solid var(--border);
       padding: 2rem 1.5rem;
@@ -296,15 +361,13 @@
       color: var(--muted);
       letter-spacing: .1em;
     }
-    .footer a {
-      color: var(--gold);
-      text-decoration: none;
-    }
+    .footer a { color: var(--gold); text-decoration: none; }
 
     @media (max-width: 520px) {
       .dl-card { flex-direction: column; align-items: flex-start; }
       .dl-btn { width: 100%; justify-content: center; }
       .other-btn { width: 100%; justify-content: center; }
+      .upsell-btn { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -321,6 +384,7 @@
         <polyline points="20 6 9 17 4 12"/>
       </svg>
     </div>
+    <div id="purchase-badge" class="purchase-badge" style="display:none;"></div>
     <h1 class="thanks-title">ご購入ありがとうございます</h1>
     <p class="thanks-sub">
       お支払いが確認できました。<br>
@@ -333,60 +397,8 @@
 
     <p class="dl-section-title">PDF ダウンロード</p>
 
-    <div class="dl-cards">
-
-      <div class="dl-card">
-        <div class="dl-card-info">
-          <span class="dl-card-label">おたすけガイドブック</span>
-          <p class="dl-card-name">傷病手当金編</p>
-        </div>
-        <a class="dl-btn"
-           href="https://drive.google.com/file/d/1vkvGJYFl102iOs2jxkYN8jXp2ftvK93m/view?usp=drive_link"
-           target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          ダウンロード
-        </a>
-      </div>
-
-      <div class="dl-card">
-        <div class="dl-card-info">
-          <span class="dl-card-label">おたすけガイドブック</span>
-          <p class="dl-card-name">障害年金編</p>
-        </div>
-        <a class="dl-btn"
-           href="https://drive.google.com/file/d/1_4-0Q8s1pJbNYDRjvAzN8c2lVcGrtOPQ/view?usp=sharing"
-           target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          ダウンロード
-        </a>
-      </div>
-
-      <div class="dl-card">
-        <div class="dl-card-info">
-          <span class="dl-card-label">おたすけガイドブック</span>
-          <p class="dl-card-name">退職編</p>
-        </div>
-        <a class="dl-btn"
-           href="https://drive.google.com/file/d/1-YFacWai3zq8JRh0sMjSgmLvJUPAl7s9/view?usp=drive_link"
-           target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          ダウンロード
-        </a>
-      </div>
-
-    </div>
+    <!-- JS で動的に挿入 -->
+    <div id="dl-cards" class="dl-cards"></div>
 
     <div class="notice-box">
       <strong>⚠️ ご注意</strong>
@@ -412,27 +424,142 @@
       </a>
     </div>
 
-    <div class="other-section">
-      <h2 class="other-title">他のガイドブックも見る</h2>
-      <p class="other-desc">各100円でご購入いただけます</p>
-      <div class="other-btns">
-        <a class="other-btn" href="https://buy.stripe.com/fZu3cvaqkaPMdH68mE7bW02" target="_blank" rel="noopener">
-          📄 傷病手当金編を購入
-        </a>
-        <a class="other-btn" href="https://buy.stripe.com/cNi3cv0PKcXUgTi0Uc7bW03" target="_blank" rel="noopener">
-          📄 障害年金編を購入
-        </a>
-        <a class="other-btn" href="https://buy.stripe.com/cNi4gzfKEaPM1YobyQ7bW04" target="_blank" rel="noopener">
-          📄 退職編を購入
-        </a>
-      </div>
-    </div>
+    <!-- アップセル or 他の単品案内（JS で切り替え） -->
+    <div id="upsell-area"></div>
 
   </main>
 
   <footer class="footer">
     <p>© 2026 sonosann Web&AIサポート　／　<a href="./index.html">ポートフォリオに戻る</a>　／　<a href="./tokushoho.html">特定商取引法に基づく表記</a></p>
   </footer>
+
+  <script>
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 商品マスター
+    // ★ セット購入用の Stripe Payment Link は作成後ここに入力
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const PRODUCTS = {
+      shoubyou: {
+        label: '傷病手当金編',
+        emoji: '🏥',
+        driveUrl: 'https://drive.google.com/file/d/1vkvGJYFl102iOs2jxkYN8jXp2ftvK93m/view?usp=drive_link',
+        stripeUrl: 'https://buy.stripe.com/fZu3cvaqkaPMdH68mE7bW02'
+      },
+      shougai: {
+        label: '障害年金編',
+        emoji: '🦽',
+        driveUrl: 'https://drive.google.com/file/d/1_4-0Q8s1pJbNYDRjvAzN8c2lVcGrtOPQ/view?usp=sharing',
+        stripeUrl: 'https://buy.stripe.com/cNi3cv0PKcXUgTi0Uc7bW03'
+      },
+      taishoku: {
+        label: '退職編',
+        emoji: '📋',
+        driveUrl: 'https://drive.google.com/file/d/1-YFacWai3zq8JRh0sMjSgmLvJUPAl7s9/view?usp=drive_link',
+        stripeUrl: 'https://buy.stripe.com/cNi4gzfKEaPM1YobyQ7bW04'
+      }
+    };
+
+    // ★ セット用 Stripe Payment Link（作成後に差し替え）
+    const SET_STRIPE_URL = 'https://buy.stripe.com/XXXXXXXXXXXXXXXX';
+
+    // DownloadSVG アイコン
+    const DL_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>`;
+
+    // ── カード生成ヘルパー ──
+    function makeCard(product) {
+      return `
+        <div class="dl-card">
+          <div class="dl-card-info">
+            <span class="dl-card-label">おたすけガイドブック</span>
+            <p class="dl-card-name">${product.emoji} ${product.label}</p>
+          </div>
+          <a class="dl-btn" href="${product.driveUrl}" target="_blank" rel="noopener">
+            ${DL_ICON} ダウンロード
+          </a>
+        </div>`;
+    }
+
+    // ── URLパラメータ取得 ──
+    const params = new URLSearchParams(location.search);
+    const item = params.get('item'); // shoubyou / shougai / taishoku / set
+
+    const dlCardsEl   = document.getElementById('dl-cards');
+    const upsellEl    = document.getElementById('upsell-area');
+    const badgeEl     = document.getElementById('purchase-badge');
+
+    // ── 単品購入 ──
+    if (item && PRODUCTS[item]) {
+      const p = PRODUCTS[item];
+
+      // バッジ
+      badgeEl.textContent = `✅ ${p.label} をご購入`;
+      badgeEl.style.display = 'inline-block';
+
+      // DLカード（買った1冊だけ）
+      dlCardsEl.innerHTML = makeCard(p);
+
+      // アップセル：残り2冊＋セット案内
+      const others = Object.entries(PRODUCTS)
+        .filter(([key]) => key !== item)
+        .map(([, v]) => v);
+
+      upsellEl.innerHTML = `
+        <div class="upsell-section">
+          <div class="upsell-badge">💡 まとめてお得！</div>
+          <h2 class="upsell-title">3冊セットなら半額でご購入いただけます</h2>
+          <p class="upsell-price">
+            通常 ¥300 → <strong>¥200</strong>（セット割引）
+          </p>
+          <p class="upsell-desc">
+            ${others.map(o => `${o.emoji}${o.label}`).join('・')} も含まれます。<br>
+            いざという時に備えて、ぜひセットでどうぞ。
+          </p>
+          <a class="upsell-btn" href="${SET_STRIPE_URL}" target="_blank" rel="noopener">
+            🛒 3冊セットを購入する（¥200）
+          </a>
+        </div>
+        <div class="other-section">
+          <h2 class="other-title">他の単品も見る</h2>
+          <p class="other-desc">各100円でご購入いただけます</p>
+          <div class="other-btns">
+            ${others.map(o => `
+              <a class="other-btn" href="${o.stripeUrl}" target="_blank" rel="noopener">
+                ${o.emoji} ${o.label}を購入
+              </a>`).join('')}
+          </div>
+        </div>`;
+
+    // ── セット購入 ──
+    } else if (item === 'set') {
+      badgeEl.textContent = '✅ 3冊セットをご購入';
+      badgeEl.style.display = 'inline-block';
+
+      dlCardsEl.innerHTML = Object.values(PRODUCTS).map(makeCard).join('');
+
+      // セット購入者には「他の商品」案内は不要
+      upsellEl.innerHTML = '';
+
+    // ── パラメータなし（旧URL・直アクセス）→ 全冊表示（後方互換） ──
+    } else {
+      dlCardsEl.innerHTML = Object.values(PRODUCTS).map(makeCard).join('');
+
+      upsellEl.innerHTML = `
+        <div class="other-section">
+          <h2 class="other-title">ガイドブックシリーズ</h2>
+          <p class="other-desc">各100円でご購入いただけます</p>
+          <div class="other-btns">
+            ${Object.values(PRODUCTS).map(o => `
+              <a class="other-btn" href="${o.stripeUrl}" target="_blank" rel="noopener">
+                ${o.emoji} ${o.label}を購入
+              </a>`).join('')}
+          </div>
+        </div>`;
+    }
+  </script>
 
 </body>
 </html>
