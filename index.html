@@ -466,14 +466,74 @@
   background: #fff;
   border: 1px solid #e8e0d0;
   border-radius: 8px;
-  padding: 1.2rem 1rem;
+  overflow: hidden;
+  padding: 0;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .45rem;
+  gap: 0;
 }
-.pricing-single-emoji { font-size: 1.5rem; }
+.pricing-single-cover {
+  width: 100%;
+  aspect-ratio: 1870 / 841;
+  object-fit: contain;
+  display: block;
+}
+.pricing-single-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .45rem;
+  width: 100%;
+  flex: 1;
+  box-sizing: border-box;
+}
+.pricing-single-title {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: .04em;
+  line-height: 1.5;
+}
+.pricing-intro-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3rem;
+  width: 100%;
+  background: none;
+  border: 1px solid #b4a078;
+  color: #7a6c52;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  padding: .45rem .8rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.pricing-intro-btn:hover { background: #b4a078; color: #fff; }
+.pricing-intro-chevron {
+  display: inline-block;
+  transition: transform .25s;
+}
+.pricing-intro-btn[aria-expanded="true"] .pricing-intro-chevron {
+  transform: rotate(90deg);
+}
+.pricing-intro-body {
+  display: none;
+  text-align: left;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  color: #6b6b6b;
+  line-height: 1.8;
+  width: 100%;
+}
+.pricing-intro-body.is-open { display: block; }
 .pricing-single-name {
   font-family: 'Noto Sans JP', sans-serif;
   font-size: .8rem;
@@ -964,23 +1024,71 @@
 
   <!-- 単品3カラム -->
   <div class="pricing-singles">
+    <!-- 傷病手当金編 -->
     <div class="pricing-single-card">
-      <span class="pricing-single-emoji">🏥</span>
-      <span class="pricing-single-name">傷病手当金編</span>
-      <span class="pricing-single-price">¥100</span>
-      <a href="https://buy.stripe.com/fZu3cvaqkaPMdH68mE7bW02" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+      <img class="pricing-single-cover" src="images/cover-shobyo.jpg" alt="傷病手当金申請ガイドブック 表紙">
+      <div class="pricing-single-body">
+        <p class="pricing-single-title">傷病手当金申請ガイドブック</p>
+        <span class="pricing-single-price">¥100</span>
+        <button class="pricing-intro-btn" aria-expanded="false" onclick="toggleIntro(this)">はじめにを見る <span class="pricing-intro-chevron">›</span></button>
+        <div class="pricing-intro-body">
+          <strong>このガイドブックを作ったわけ</strong><br><br>
+          50代まで会社員として懸命に働いてきたのに、ある日突然、体が動かなくなる。<br>
+          職場の人間関係、積み重なったストレス、思いがけない怪我――<br>
+          そんなとき、「来月の生活費、どうしよう」という不安が頭をよぎります。<br><br>
+          私自身、妻の体調の変化をきっかけに、この制度と出会いました。<br>
+          AIを活用しながら申請手続きを調べ、協会けんぽへのオンライン申請を行い、<br>
+          妻は今も毎月受給することができています。<br><br>
+          長年、健康保険料を納め続けてきた。<br>
+          その積み重ねが、いざというとき「傷病手当金」という形で<br>
+          あなたの生活を守ってくれます。<br><br>
+          知らなかったから損をした――そんな方が一人でも減るように。<br>
+          このガイドブックが、自分らしい生活を取り戻すきっかけになれば、<br>
+          こんなに嬉しいことはありません。<br><br>
+          sonosann Web&amp;AIサポート　その
+        </div>
+        <a href="https://buy.stripe.com/fZu3cvaqkaPMdH68mE7bW02" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+      </div>
     </div>
+    <!-- 障害年金編 -->
     <div class="pricing-single-card">
-      <span class="pricing-single-emoji">🦽</span>
-      <span class="pricing-single-name">障害年金編</span>
-      <span class="pricing-single-price">¥100</span>
-      <a href="https://buy.stripe.com/cNi3cv0PKcXUgTi0Uc7bW03" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+      <img class="pricing-single-cover" src="images/cover-shogai.jpg" alt="障害年金申請ガイドブック 表紙">
+      <div class="pricing-single-body">
+        <p class="pricing-single-title">障害年金申請ガイドブック</p>
+        <span class="pricing-single-price">¥100</span>
+        <button class="pricing-intro-btn" aria-expanded="false" onclick="toggleIntro(this)">はじめにを見る <span class="pricing-intro-chevron">›</span></button>
+        <div class="pricing-intro-body">
+          「障害年金は、65歳以上がもらうもの」――違います。<br><br>
+          傷病手当金の受給を続けるなかで、なかなか体調が回復しない。<br>
+          1年6ヶ月という受給期間の終わりが近づいてきて、不安になっている方へ。<br><br>
+          障害年金は、20歳以上であれば年齢に関係なく申請できる制度です。<br>
+          30代・40代・50代で受給している方はたくさんいます。
+        </div>
+        <a href="https://buy.stripe.com/cNi3cv0PKcXUgTi0Uc7bW03" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+      </div>
     </div>
+    <!-- 退職編 -->
     <div class="pricing-single-card">
-      <span class="pricing-single-emoji">📋</span>
-      <span class="pricing-single-name">退職編</span>
-      <span class="pricing-single-price">¥100</span>
-      <a href="https://buy.stripe.com/cNi4gzfKEaPM1YobyQ7bW04" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+      <img class="pricing-single-cover" src="images/cover-taishoku.jpg" alt="退職後にもらえるお金ガイドブック 表紙">
+      <div class="pricing-single-body">
+        <p class="pricing-single-title">退職後にもらえるお金ガイドブック</p>
+        <span class="pricing-single-price">¥100</span>
+        <button class="pricing-intro-btn" aria-expanded="false" onclick="toggleIntro(this)">はじめにを見る <span class="pricing-intro-chevron">›</span></button>
+        <div class="pricing-intro-body">
+          「退職したらどんなお金がもらえるの？」――そんな疑問を持つ方は多いのではないでしょうか。<br><br>
+          特に40年以上まじめに雇用保険を納め続けてきた方にとって、<br>
+          退職後の給付制度はあなた自身が積み上げてきた権利です。<br><br>
+          このガイドブックでは、59歳での退職を例に、<br>
+          失業手当（雇用保険の基本手当）についてわかりやすく・具体的に解説します。<br><br>
+          この1冊を読めば…<br>
+          ・自分がいくらもらえるか計算できる<br>
+          ・ハローワークで何をすればいいかわかる<br>
+          ・知らないと損する制度を3つ知れる<br><br>
+          このガイドブックが、あなたの次のステップを照らす一冊になれば。<br><br>
+          sonosann Web&amp;AIサポート　その
+        </div>
+        <a href="https://buy.stripe.com/cNi4gzfKEaPM1YobyQ7bW04" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+      </div>
     </div>
   </div>
 
@@ -1060,5 +1168,12 @@
   </p>
 </footer> 
 <script src="script.js?v=2"></script>
+<script>
+function toggleIntro(btn) {
+  var expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!expanded));
+  btn.nextElementSibling.classList.toggle('is-open', !expanded);
+}
+</script>
 </body>
 </html>
