@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   createSlideshow('image', 5, 'aiSlidesWrap', 'aiPrev', 'aiNext', 'aiDots', 'aiCounter', 'AI作品');
 
   // ---- Competition Works スライドショー ----
-  createSlideshow('work', 5, 'workSlidesWrap', 'workPrev', 'workNext', 'workDots', 'workCounter', 'コンペ作品');
+  createSlideshow('work', 9, 'workSlidesWrap', 'workPrev', 'workNext', 'workDots', 'workCounter', 'コンペ作品');
 
   // ---- スクロールアニメーション ----
   const observer = new IntersectionObserver((entries) => {
