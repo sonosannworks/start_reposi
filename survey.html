@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>理想のセカンドライフについてのアンケート</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #b4a078;
+            --text-color: #333;
+            --bg-color: #f9f8f6;
+            --border-color: #e8e0d0;
+            --error-color: #d32f2f;
+            --success-color: #388e3c;
+        }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background-color: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 600px; width: 100%; }
+        .thread-content { background-color: #faf8f4; padding: 20px 25px; border-left: 4px solid var(--primary-color); border-radius: 0 8px 8px 0; margin-bottom: 30px; font-size: 0.95rem; color: #4a4540; }
+        h2 { text-align: center; font-weight: 500; color: #1a1a2e; margin-top: 0; margin-bottom: 30px; font-size: 1.5rem; }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; color: #444; }
+        .required { color: var(--error-color); font-weight: bold; margin-left: 4px; }
+        input[type="text"], select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
+        textarea { resize: vertical; min-height: 120px; }
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+        .checkbox-label { cursor: pointer; position: relative; margin: 0; display: inline-block; }
+        .checkbox-label input[type="checkbox"] { position: absolute; opacity: 0; }
+        .checkbox-text { display: inline-block; padding: 8px 16px; border: 1px solid var(--border-color); border-radius: 20px; background-color: #fff; color: #666; font-size: 0.9rem; transition: all 0.2s ease; }
+        .checkbox-label input[type="checkbox"]:checked + .checkbox-text { background-color: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+        .submit-btn { background-color: var(--primary-color); color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
+        .loading { display: none; text-align: center; margin-top: 20px; }
+        .spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #messageArea { display: none; margin-top: 20px; padding: 15px; border-radius: 6px; text-align: center; }
+        .success { background-color: #fff; color: var(--text-color); border: none; }
+        .error { background-color: #ffebee; color: var(--error-color); border: 1px solid #ffcdd2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 id="formTitle">アンケートにご協力ください</h2>
+        
+        <div id="introText" class="thread-content">
+            <p>介護保険は、損得勘定で使うものではなく、いざという時に自分や家族の生活を守るための「お守り」です。</p>
+            <p>健康で自立した毎日を長く続けることこそが、実は一番の「得」なのかもしれません。<br>あなたの理想のセカンドライフについて、ぜひコメントで教えてください！</p>
+        </div>
+
+        <form id="surveyForm">
+            <div class="form-group">
+                <label for="name">お名前 (ニックネーム可)<span class="required">【必須】</span></label>
+                <input type="text" id="name" name="name" required placeholder="例: さつき">
+            </div>
+
+            <div class="form-group">
+                <label for="age">ご年代<span class="required">【必須】</span></label>
+                <select id="age" name="age" required>
+                    <option value="" disabled selected>選択してください</option>
+                    <option value="20代以下">20代以下</option>
+                    <option value="30代">30代</option>
+                    <option value="40代">40代</option>
+                    <option value="50代">50代</option>
+                    <option value="60代">60代</option>
+                    <option value="70代">70代</option>
+                    <option value="80代以上">80代以上</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>現在の状況・気になっていること (複数選択可)</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="① 先のことは考えていない"><span class="checkbox-text">① 先のことは考えていない</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="② 今親が介護保険サービスを利用している"><span class="checkbox-text">② 今親が介護保険サービスを利用している</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="③ 親が入院している"><span class="checkbox-text">③ 親が入院している</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="④ 親の介護に不安がある"><span class="checkbox-text">④ 親の介護に不安がある</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="⑤ 親の物忘れが気になる"><span class="checkbox-text">⑤ 親の物忘れが気になる</span></label>
+                    <label class="checkbox-label"><input type="checkbox" name="concerns" value="⑥ 自分の未来のため何ができるのか知りたい"><span class="checkbox-text">⑥ 自分の未来のため何ができるのか知りたい</span></label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="comment">あなたの理想のセカンドライフを教えてください<span class="required">【必須】</span></label>
+                <textarea id="comment" name="comment" required placeholder="例：健康で旅行にたくさん行きたい、など"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">送信する</button>
+            <div class="loading" id="loadingIndicator"><div class="spinner"></div><p>送信中...</p></div>
+        </form>
+
+        <div id="messageArea"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('surveyForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const messageArea = document.getElementById('messageArea');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const formTitle = document.getElementById('formTitle');
+            const introText = document.getElementById('introText');
+
+            const GAS_URL = 'https://script.google.com/macros/s/AKfycbwE4ME1TGD87cafgTA9AFKdimc38p0xTDfxGYMmrkBsQ2RCu8X4C_epFeprO5aRFNk/exec';
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const selectedConcerns = formData.getAll('concerns');
+                const data = {
+                    name: formData.get('name'),
+                    age: formData.get('age'),
+                    concerns: selectedConcerns.join(', '),
+                    comment: formData.get('comment'),
+                    timestamp: new Date().toISOString()
+                };
+
+                submitBtn.style.display = 'none';
+                loadingIndicator.style.display = 'block';
+
+                try {
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        form.style.display = 'none';
+                        introText.style.display = 'none';
+                        formTitle.textContent = '送信が完了しました';
+                        
+                        messageArea.className = 'success';
+                        messageArea.style.display = 'block';
+                        messageArea.innerHTML = `
+    <div style="text-align: center; padding: 10px;">
+        <p style="font-size: 1.2rem; font-weight: bold; color: #388e3c; margin-bottom: 10px;">アンケートにご回答<br>ありがとうございました！</p>
+        <p style="font-size: 1rem; margin-bottom: 25px;">大切に読ませていただきました。<br>お礼の【無料】介護おたすけガイドブックをお受け取りください。</p>
+        
+        <div style="background: #f0fdf4; padding: 20px; border-radius: 15px; border: 1px solid #cceadd;">
+            <p style="font-weight: bold; margin-bottom: 15px;">🎁 【無料】介護おたすけガイドブックを受け取る手順</p>
+            
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://lin.ee/XfZJj2S" alt="LINE QR Code" style="margin-bottom: 15px; border: 5px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            
+            <p style="font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6;">
+                1. 上のボタンかQRコードから友達追加<br>
+                2. トーク画面で<strong style="color: #d32f2f;">「キーワード」</strong>を送信<br>
+                自動で【無料】介護おたすけガイドブックをお送りします！
+            </p>
+            
+            <a href="https://lin.ee/XfZJj2S" target="_blank" style="display:inline-block; background:#06C755; color:#fff; padding:15px 30px; border-radius:30px; text-decoration:none; font-weight:bold; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(6,199,85,0.3);">🟢 LINEで友だち追加する</a>
+        </div>
+        
+        <p style="margin-top: 25px; font-size: 0.9rem; color: #666;">公式LINEでお待ちしております！</p>
+    </div>
+`;
+                    } else { throw new Error(); }
+                } catch (error) {
+                    loadingIndicator.style.display = 'none';
+                    submitBtn.style.display = 'block';
+                    messageArea.textContent = '送信に失敗しました。再度お試しください。';
+                    messageArea.className = 'error';
+                    messageArea.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

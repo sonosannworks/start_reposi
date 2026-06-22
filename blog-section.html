@@ -1,0 +1,342 @@
+<!--
+================================================================================
+  📌 使い方
+  ① このファイルの「▼ HTML ここから」〜「▼ HTML ここまで」を
+    index.html の <div class="divider"></div>（コンタクトの直前）に貼り付ける
+  ② 「▼ CSS ここから」〜「▼ CSS ここまで」を
+    index.html の </style> タグの直前に貼り付ける
+  ③ ナビゲーションの <nav> と .mobile-menu に以下を追加する：
+    <a href="#blog">Blog</a>
+================================================================================
+-->
+
+
+<!-- ▼ HTML ここから ============================================================ -->
+
+<div class="divider"></div>
+
+<!-- ===== Blog ===== -->
+<section id="blog">
+  <div class="fade-in">
+    <p class="section-label">Blog</p>
+    <h2 class="section-title">ブログ</h2>
+    <p class="section-lead">
+      看護師・ケアマネからフリーランスへの転換記録、AIツールの活用法、
+      Webデザイン学習の日々を綴っています。
+    </p>
+  </div>
+
+  <!-- カテゴリータブ -->
+  <div class="blog-tabs fade-in">
+    <button class="blog-tab active" data-cat="all">すべて</button>
+    <button class="blog-tab" data-cat="career">🏥 キャリア転換</button>
+    <button class="blog-tab" data-cat="ai">🤖 AIツール活用</button>
+    <button class="blog-tab" data-cat="web">💻 Web学習日記</button>
+  </div>
+
+  <!-- 記事カード一覧 -->
+  <div class="blog-grid" id="blogGrid">
+
+    <!-- ── キャリア転換 ── -->
+    <article class="blog-card fade-in" data-cat="career">
+      <div class="blog-card-cat career">🏥 キャリア転換</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.01</time>
+        <h3 class="blog-card-title">
+          看護師30年、なぜ私はフリーランスを選んだのか
+        </h3>
+        <p class="blog-card-desc">
+          現場で感じた「もっとできることがあるはず」という思いが、
+          私をAIとWebデザインの世界へと引き寄せました。転換のきっかけと決断の理由を正直に綴ります。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+    <article class="blog-card fade-in" data-cat="career">
+      <div class="blog-card-cat career">🏥 キャリア転換</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.10</time>
+        <h3 class="blog-card-title">
+          クラウドワークスに登録してみた——初めての案件応募体験記
+        </h3>
+        <p class="blog-card-desc">
+          プロフィール作成から最初の応募まで、戸惑ったこと・気づいたこと。
+          医療・介護の経験がどう武器になるかを実感した話です。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+    <article class="blog-card fade-in" data-cat="career">
+      <div class="blog-card-cat career">🏥 キャリア転換</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.18</time>
+        <h3 class="blog-card-title">
+          スキルアップ支援制度を活用して講座を受講——手続きの流れを解説
+        </h3>
+        <p class="blog-card-desc">
+          再就職支援・スキルアップ給付金の申請から受給まで。
+          同じように転換を考えている方へ、実体験をもとにわかりやすくまとめました。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+    <!-- ── AIツール活用 ── -->
+    <article class="blog-card fade-in" data-cat="ai">
+      <div class="blog-card-cat ai">🤖 AIツール活用</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.05</time>
+        <h3 class="blog-card-title">
+          Google Geminiで介護書類を自動作成——ケアマネが試してみた
+        </h3>
+        <p class="blog-card-desc">
+          課題整理総括表や支援経過記録をAIで下書きする方法を実践レポート。
+          現場の方でも使えるプロンプトの書き方も紹介します。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+    <article class="blog-card fade-in" data-cat="ai">
+      <div class="blog-card-cat ai">🤖 AIツール活用</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.14</time>
+        <h3 class="blog-card-title">
+          nanobananaで手書きスケッチをデジタルイラストに変換する方法
+        </h3>
+        <p class="blog-card-desc">
+          紙に描いたラフをスキャンしてAIでデジタル化、さらに着色まで。
+          私が実際に使っているワークフローをステップごとに解説します。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+    <article class="blog-card fade-in" data-cat="ai">
+      <div class="blog-card-cat ai">🤖 AIツール活用</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.22</time>
+        <h3 class="blog-card-title">
+          AI絵本動画の作り方——Gemini・SunoAI・CapCutを組み合わせて
+        </h3>
+        <p class="blog-card-desc">
+          YouTubeチャンネル「AI picture book」で使っている制作フローを全公開。
+          ストーリー構成から音楽生成・動画編集まで一連の流れを紹介します。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+    <!-- ── Web学習日記 ── -->
+    <article class="blog-card fade-in" data-cat="web">
+      <div class="blog-card-cat web">💻 Web学習日記</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.08</time>
+        <h3 class="blog-card-title">
+          HTML・CSSを始めて1ヶ月——50代でもコードは書ける！
+        </h3>
+        <p class="blog-card-desc">
+          Flexboxの概念でつまずき、VS Codeのショートカットに感動した1ヶ月。
+          ゼロから始めたリアルな学習記録をお届けします。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+    <article class="blog-card fade-in" data-cat="web">
+      <div class="blog-card-cat web">💻 Web学習日記</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.20</time>
+        <h3 class="blog-card-title">
+          WordPressを一昨日から始めました——インストールから初投稿まで
+        </h3>
+        <p class="blog-card-desc">
+          ローカル環境の構築、テーマ選び、最初の記事投稿まで。
+          HTML/CSSを先に学んでいたおかげで感じたこと、気づいたことを率直に書きます。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+    <article class="blog-card fade-in" data-cat="web">
+      <div class="blog-card-cat web">💻 Web学習日記</div>
+      <div class="blog-card-body">
+        <time class="blog-date">2025.06.28</time>
+        <h3 class="blog-card-title">
+          GitHubにポートフォリオを公開した話——Pages設定の手順メモ
+        </h3>
+        <p class="blog-card-desc">
+          GitHub Pagesで自分のポートフォリオを世界に公開するまでの手順を
+          スクリーンショット付きでわかりやすくまとめました。
+        </p>
+        <a href="#" class="blog-card-link">続きを読む →</a>
+      </div>
+    </article>
+
+  </div><!-- /.blog-grid -->
+</section>
+
+<!-- ▼ HTML ここまで ============================================================ -->
+
+
+
+
+<!-- ▼▼▼ CSS ここから（</style>の直前に貼り付けてください） ▼▼▼ ================ -->
+<style id="blog-css-paste-into-style-tag">
+/*
+  ⚠️ このstyleタグごとコピーするのではなく、
+     中身のCSSだけを index.html の </style> の直前に貼り付けてください
+*/
+
+/* ===== Blog Section ===== */
+#blog { background: var(--warm-bg); }
+
+/* タブ */
+.blog-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+.blog-tab {
+  background: var(--cream);
+  border: 1px solid var(--beige);
+  color: var(--brown);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.45rem 1.1rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.blog-tab:hover {
+  background: var(--beige);
+  color: var(--dark);
+}
+.blog-tab.active {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: var(--cream);
+}
+
+/* グリッド */
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+/* カード */
+.blog-card {
+  background: var(--cream);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+.blog-card.hidden { display: none; }
+
+/* カテゴリーバー */
+.blog-card-cat {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 0.45rem 1rem;
+}
+.blog-card-cat.career { background: #f0e8d8; color: #7a5c38; }
+.blog-card-cat.ai     { background: #e4ede0; color: #4a6e42; }
+.blog-card-cat.web    { background: #dde8f0; color: #3a5c78; }
+
+/* カード本文 */
+.blog-card-body {
+  padding: 1.2rem 1.3rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.blog-date {
+  font-size: 0.72rem;
+  color: var(--tan);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.blog-card-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: var(--dark);
+  line-height: 1.55;
+  margin-bottom: 0.7rem;
+}
+.blog-card-desc {
+  font-size: 0.82rem;
+  color: var(--text-sub);
+  line-height: 1.8;
+  flex: 1;
+  margin-bottom: 1rem;
+}
+.blog-card-link {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.2s, letter-spacing 0.2s;
+}
+.blog-card-link:hover {
+  color: var(--dark);
+  letter-spacing: 0.08em;
+}
+
+/* レスポンシブ */
+@media (max-width: 960px) {
+  .blog-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .blog-grid { grid-template-columns: 1fr; }
+  .blog-tabs { gap: 0.4rem; }
+  .blog-tab  { font-size: 0.78rem; padding: 0.4rem 0.9rem; }
+}
+</style>
+<!-- ▼▼▼ CSS ここまで ▼▼▼ ===================================================== -->
+
+
+
+
+<!-- ▼▼▼ JS ここから（</script>の直前、既存のJSの末尾に追記してください） ▼▼▼ == -->
+<script id="blog-js-paste-into-script-tag">
+/*
+  ⚠️ このscriptタグごとコピーするのではなく、
+     中身のJSだけを index.html の既存 </script> の直前に貼り付けてください
+*/
+
+/* ---- Blog カテゴリータブ ---- */
+document.querySelectorAll('.blog-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    // タブのアクティブ切替
+    document.querySelectorAll('.blog-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    const cat = tab.dataset.cat;
+    document.querySelectorAll('.blog-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  });
+});
+</script>
+<!-- ▼▼▼ JS ここまで ▼▼▼ ====================================================== -->

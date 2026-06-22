@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Designer sonosann | Portfolio - CrowdWorks</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="blog-style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  .blog-nav-section{background:#f5f0e8;padding:5rem 1.5rem;text-align:center;}
+  .blog-nav-label{font-family:'Cormorant Garamond',serif;font-size:.75rem;letter-spacing:.35em;color:#b4a078;text-transform:uppercase;display:block;margin-bottom:1rem;}
+  .blog-nav-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:300;color:#1a1a2e;letter-spacing:.1em;margin-bottom:.75rem;}
+  .blog-nav-desc{font-family:'Noto Sans JP',sans-serif;font-size:.85rem;font-weight:300;color:#4a4540;letter-spacing:.08em;line-height:1.9;margin-bottom:2.5rem;}
+  .blog-nav-line{width:48px;height:1px;background:#b4a078;margin:0 auto 2.5rem;opacity:.6;}
+  .blog-nav-buttons{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;max-width:760px;margin:0 auto 2.5rem;}
+  .blog-nav-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.6rem;font-family:'Noto Sans JP',sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.06em;border-radius:4px;border-width:1px;border-style:solid;text-decoration:none;transition:opacity .2s;white-space:nowrap;}
+  .blog-nav-btn:hover{opacity:.8;}
+  .blog-nav-btn.career{background:#fce8f0;border-color:#e8b0cc;color:#7a2a4a;}
+  .blog-nav-btn.nurse{background:#fff8d6;border-color:#e8d880;color:#6a5a10;}
+  .blog-nav-btn.ai{background:#ededeb;border-color:#c0bfba;color:#3a3a38;}
+  .blog-nav-btn.web{background:#e6f1fb;border-color:#90bce8;color:#0c447c;}
+  .blog-nav-btn-emoji{font-size:16px;line-height:1;}
+  .blog-nav-all{font-family:'Cormorant Garamond',serif;font-size:.88rem;letter-spacing:.15em;color:#b4a078;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;transition:opacity .2s;}
+  .blog-nav-all:hover{opacity:.75;}
+  @media(max-width:480px){.blog-nav-btn{width:100%;justify-content:center;}}
+</style>
+</head>
+<body>
+
+<!-- ナビゲーション -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="./crowdworks.html">Nurse Care Manager Web Designer sonosann</a>
+    <button class="nav-toggle" id="navToggle" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#ai-works">AI Works</a></li>
+      <li><a href="#competition">Competition</a></li>
+      <li><a href="#html-works">Web Design</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#blog">BLOG</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ヒーロー -->
+<section class="hero" id="top">
+  <div class="hero-image-wrap">
+    <img src="image/top.png" alt="トップ画像" class="hero-img" id="heroImg">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-sub fade-up">Nurse &amp; Care Manager → Web Designer &amp; AI Creator</p>
+    <h1 class="hero-title fade-up delay-1">Nurse Care Manager Web Designer sonosann</h1>
+    <p class="hero-desc fade-up delay-2">30年の医療・介護経験 × AI・Webデザインで<br>新しい価値を創る</p>
+    <a href="#ai-works" class="hero-btn fade-up delay-3">Works を見る</a>
+  </div>
+  <div class="hero-scroll"><span></span></div>
+</section>
+
+<!-- About -->
+<section class="section" id="about">
+  <div class="container">
+    <h2 class="section-title">About</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p class="about-lead">看護師・ケアマネジャーとして30年以上のキャリアを積み、<br>AIとWebデザインの世界へ転身。</p>
+        <p>医療・介護現場での実務経験をベースに、AIツールを駆使したコンテンツ制作とWebデザインを学んでいます。複数のAIを組み合わせた動画制作・画像生成・文書自動化を実践しており、現場目線の課題解決力が強みです。</p>
+        <div class="about-tags">
+          <span>看護師</span>
+          <span>ケアマネジャー</span>
+          <span>AI活用</span>
+          <span>YouTube運営</span>
+          <span>Webデザイン学習中</span>
+          <span>フリーランス</span>
+        </div>
+      </div>
+      <div class="about-channels">
+        <h3>YouTube チャンネル</h3>
+        <a class="channel-card" href="https://www.youtube.com/@vu24kpye/playlists" target="_blank" rel="noopener">
+          <div class="channel-icon"><img src="./image/satsuki.jpg" alt="ナース・ケアマネ さつき">
+          </div>
+          <div>
+            <p class="channel-name">ナース・ケアマネ さつき</p>
+            <p class="channel-desc">医療・介護の現場知識を発信</p>
+          </div>
+        </a>
+        <a class="channel-card" href="https://www.youtube.com/@AIpicturebook-oc4fl/playlists" target="_blank" rel="noopener">
+          <div class="channel-icon"><img src="./image/kiron.jpg" alt="AI picture book">
+          </div>
+          <div>
+            <p class="channel-name">AI picture book</p>
+            <p class="channel-desc">AIで作る絵本・動画コンテンツ</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI Works スライドショー -->
+<section class="section section-light" id="ai-works">
+  <div class="container">
+    <h2 class="section-title">AI Image Works</h2>
+    <p class="section-sub">Google Gemini / Nanobanana Pro を使用したAI画像制作</p>
+    <div class="slideshow" id="aiSlideshow">
+      <div class="slides-wrap" id="aiSlidesWrap"></div>
+      <button class="slide-btn prev" id="aiPrev" aria-label="前へ">&#8592;</button>
+      <button class="slide-btn next" id="aiNext" aria-label="次へ">&#8594;</button>
+      <div class="slide-dots" id="aiDots"></div>
+    </div>
+    <div class="slide-counter" id="aiCounter">1 / 5</div>
+  </div>
+</section>
+
+<!-- Competition Works スライドショー -->
+<section class="section" id="competition">
+  <div class="container">
+    <h2 class="section-title">Competition Works</h2>
+    <p class="section-sub">コンペへの挑戦作品</p>
+    <div class="slideshow" id="workSlideshow">
+      <div class="slides-wrap" id="workSlidesWrap"></div>
+      <button class="slide-btn prev" id="workPrev" aria-label="前へ">&#8592;</button>
+      <button class="slide-btn next" id="workNext" aria-label="次へ">&#8594;</button>
+      <div class="slide-dots" id="workDots"></div>
+    </div>
+    <div class="slide-counter" id="workCounter">1 / 5</div>
+  </div>
+</section>
+
+<!-- HTML Works -->
+<section class="section section-light" id="html-works">
+  <div class="container">
+    <h2 class="section-title">Web Design Works</h2>
+    <p class="section-sub">claude ai、claude code、gemini、chatGPT、canvaを駆使してHTML / CSS / JavaScript でコーディングした制作物</p>
+    <div class="web-grid" id="webGrid">
+      <div class="web-card">
+        <div class="web-card-thumb">
+          <span class="web-card-label">Claudeで初ポートフォリオ作成</span>
+        </div>
+        <div class="web-card-body">
+          <h3>ポートフォリオサイト</h3>
+          <p>自己紹介・実績をまとめたPDFファイルを基にClaudeに特に細かな指示をせずつくらせてみた。</p>
+          <div class="web-card-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+          <a href="https://kobayashi4556.github.io/my-portfolio/portfolio.html" class="web-card-link" target="_blank" rel="noopener">GitHub Pages で見る →</a>
+        </div>
+      </div>
+      <div class="web-card">
+        <div class="web-card-thumb web-card-thumb--2">
+          <span class="web-card-label">とあるテスト案件</span>
+        </div>
+        <div class="web-card-body">
+          <h3>レスポンシブ デザイン</h3>
+          <p>本来ならFigmaでのレスポンシブ デザインをClaudeで先にデザインさせたSP版。</p>
+          <div class="web-card-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+          <a href="https://kobayashi4556.github.io/my-portfolio/sonosann_scheduled_sp.html" class="web-card-link" target="_blank" rel="noopener">GitHub で見る →</a>
+        </div>
+      </div>
+      <div class="web-card">
+        <div class="web-card-thumb web-card-thumb--3">
+          <span class="web-card-label">とあるテスト案件２</span>
+        </div>
+        <div class="web-card-body">
+          <h3>レスポンシブ デザイン</h3>
+          <p>本来ならFigmaでのレスポンシブ デザイン ・テーマはメール管理のサイト PC版。。</p>
+          <div class="web-card-tags"><span>HTML</span><span>CSS</span></div>
+          <a href="https://kobayashi4556.github.io/my-portfolio/sonosann_draft_list_pc.html" class="web-card-link" target="_blank" rel="noopener">GitHub Pages で見る →</a>
+          <br>
+          <a href="https://kobayashi4556.github.io/my-portfolio/Figma.png" class="web-card-link" target="_blank" rel="noopener">GitHub Pages でFigmaの画像を見る →</a>
+        </div>
+      </div>
+    </div>
+    <p class="web-note">※ リンクは公開後に差し替えてください</p>
+  </div>
+</section>
+
+<!-- Skills -->
+<section class="section" id="skills">
+  <div class="container">
+    <h2 class="section-title">Skills &amp; Tools</h2>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <h3>AI ツール</h3>
+        <ul>
+          <li>Google Gemini</li>
+          <li>Nanobanana Pro</li>
+          <li>Google AI Studio</li>
+          <li>Google NotebookLM</li>
+          <li>Veo </li>
+          <li>SunoAI</li>
+          <li>Claude/Claude code</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3>動画・画像編集</h3>
+        <ul>
+          <li>CapCut</li>
+          <li>Wondershare Filmora 14</li>
+          <li>VideoProc Vlogger</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3>Web 制作</h3>
+        <ul>
+            <li>HTML / CSS</li>
+            <li>JavaScript</li>
+            <li>Figma</li>
+            <li>WordPress</li>
+          <li>Visual Studio Code</li>
+          <li>GitHub / GitHub Pages</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3>医療・介護の専門知識</h3>
+        <ul>
+          <li>看護師（30年以上）</li>
+          <li>ケアマネジャー</li>
+          <li>介護福祉書類・申請業務</li>
+          <li>Microsoft Access（DB構築）</li>
+          <li>オンライン会議（Zoom / Google Meet）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== Blog 誘導セクション ===== -->
+<section id="blog" class="blog-nav-section">
+  <span class="blog-nav-label">sonosann's journal</span>
+  <h2 class="blog-nav-title">Blog</h2>
+  <p class="blog-nav-desc">
+    看護師・ケアマネからフリーランスへ。<br>
+    AI・Webデザイン・キャリア転換の記録。
+  </p>
+  <div class="blog-nav-line"></div>
+  <div class="blog-nav-buttons">
+    <a href="blog.html?cat=career" class="blog-nav-btn career"><span class="blog-nav-btn-emoji">🌸</span> 59歳からの挑戦</a>
+    <a href="blog.html?cat=nurse"  class="blog-nav-btn nurse"><span class="blog-nav-btn-emoji">🩺</span> ナース・ケアマネ日記</a>
+    <a href="blog.html?cat=ai"     class="blog-nav-btn ai"><span class="blog-nav-btn-emoji">🤖</span> AIツール活用</a>
+    <a href="blog.html?cat=web"    class="blog-nav-btn web"><span class="blog-nav-btn-emoji">💻</span> Web学習日記</a>
+  </div>
+  <a href="blog.html" class="blog-nav-all">すべての記事を読む →</a>
+</section>
+
+<!-- ===== Contact（CrowdWorks版） ===== -->
+<section class="section section-light" id="contact">
+  <div class="container contact-container">
+    <h2 class="section-title">Contact</h2>
+    <p class="contact-desc">ご依頼・ご相談はCrowdWorksのプロフィールページからお気軽にどうぞ。<br>ブログでは日々の学びや制作の裏側も発信しています。</p>
+    <div class="contact-links">
+      <a href="https://crowdworks.jp/public/employees/6735369" class="contact-btn" target="_blank" rel="noopener">CrowdWorks プロフィールを見る</a>
+      <a href="blog.html" class="contact-btn contact-btn--outline">ブログを読む</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>© 2026 sonosann. All rights reserved.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

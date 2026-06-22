@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog | sonosann</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="blog-style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  .blog-hero { position:relative; padding:120px 0 0; background:linear-gradient(135deg,#1a1a2e 0%,#2d2d44 50%,#1a1a2e 100%); overflow:hidden; }
+  .blog-hero::before { content:''; position:absolute; inset:0; background-image:radial-gradient(ellipse 60% 40% at 20% 60%,rgba(180,160,120,.08) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 80% 30%,rgba(180,160,120,.06) 0%,transparent 70%); }
+  .blog-hero-inner { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:0 1.5rem 2.5rem; text-align:center; }
+  .blog-hero-label { display:inline-block; font-family:'Cormorant Garamond',serif; font-size:.75rem; letter-spacing:.35em; color:#b4a078; text-transform:uppercase; margin-bottom:1rem; }
+  .blog-hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,6vw,4rem); font-weight:300; color:#f0ebe3; letter-spacing:.1em; margin-bottom:.75rem; }
+  .blog-hero-desc { font-family:'Noto Sans JP',sans-serif; font-size:.85rem; font-weight:300; color:rgba(240,235,227,.6); letter-spacing:.08em; line-height:1.9; }
+  .blog-hero-line { width:48px; height:1px; background:#b4a078; margin:1.5rem auto 0; opacity:.6; }
+  .back-link { display:inline-flex; align-items:center; gap:.5rem; font-family:'Cormorant Garamond',serif; font-size:.85rem; letter-spacing:.12em; color:rgba(240,235,227,.7); text-decoration:none; transition:color .2s; }
+  .back-link:hover { color:#b4a078; }
+  .blog-filter-wrap { background:#f8f6f2; border-bottom:1px solid rgba(0,0,0,.06); position:sticky; top:0; z-index:100; }
+  .blog-filter-inner { max-width:960px; margin:0 auto; padding:0 1.5rem; display:flex; gap:.25rem; overflow-x:auto; scrollbar-width:none; }
+  .blog-filter-inner::-webkit-scrollbar { display:none; }
+  .filter-btn { flex-shrink:0; padding:.85rem 1.25rem; font-family:'Noto Sans JP',sans-serif; font-size:.78rem; font-weight:400; letter-spacing:.06em; color:#6b6560; background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:color .2s,border-color .2s; white-space:nowrap; display:inline-flex; align-items:center; gap:.4rem; }
+  .filter-btn:hover { color:#2d2d44; }
+  .filter-btn.active { color:#2d2d44; border-bottom-color:#b4a078; font-weight:500; }
+  .blog-main { max-width:960px; margin:0 auto; padding:3rem 1.5rem 5rem; display:grid; grid-template-columns:1fr 280px; gap:3rem; align-items:start; }
+  @media(max-width:720px){ .blog-main { grid-template-columns:1fr; gap:2rem; } }
+  .articles-list { display:flex; flex-direction:column; }
+  .article-card { display:grid; grid-template-columns:100px 1fr; gap:1.25rem; padding:1.75rem 0; border-bottom:1px solid rgba(0,0,0,.07); text-decoration:none; color:inherit; }
+  .article-card.hidden { display:none; }
+  .article-card:first-child { padding-top:0; }
+  .article-card:hover .article-title { color:#b4a078; }
+  .article-thumb { width:100px; height:72px; border-radius:4px; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .article-thumb img { width:100%; height:100%; object-fit:cover; }
+  .article-thumb-emoji { font-size:2rem; line-height:1; }
+  .article-thumb.career { background:linear-gradient(135deg,#e8e0d0,#d4c8b0); }
+  .article-thumb.nurse  { background:linear-gradient(135deg,#e8d0d8,#d4b0bc); }
+  .article-thumb.ai     { background:linear-gradient(135deg,#d0d8e8,#b0b8d4); }
+  .article-thumb.web    { background:linear-gradient(135deg,#d0e8d4,#b0d4b4); }
+  .article-thumb.other  { background:linear-gradient(135deg,#e8e0e8,#d0b8d0); }
+  .article-meta { display:flex; align-items:center; gap:.6rem; margin-bottom:.4rem; flex-wrap:wrap; }
+  .article-cat { font-size:.68rem; letter-spacing:.06em; padding:.2em .7em; border-radius:2px; font-family:'Noto Sans JP',sans-serif; font-weight:400; }
+  .article-cat.career { background:#f0ebe0; color:#7a6a4a; }
+  .article-cat.nurse  { background:#f0e0e8; color:#7a4a5a; }
+  .article-cat.ai     { background:#e0e8f0; color:#3a5070; }
+  .article-cat.web    { background:#e0f0e4; color:#3a6040; }
+  .article-cat.other  { background:#ede0f0; color:#5a3a70; }
+  .article-date { font-size:.72rem; color:#9a9490; font-family:'Cormorant Garamond',serif; letter-spacing:.05em; }
+  .article-title { font-family:'Noto Sans JP',sans-serif; font-size:.95rem; font-weight:500; color:#2d2d2d; line-height:1.6; margin-bottom:.4rem; transition:color .2s; }
+  .article-desc { font-size:.8rem; color:#7a7570; line-height:1.75; font-family:'Noto Sans JP',sans-serif; font-weight:300; }
+  .loading-state { text-align:center; padding:3rem 0; color:#aaa; font-size:.85rem; font-family:'Noto Sans JP',sans-serif; }
+  .loading-spinner { width:28px; height:28px; border:2px solid #e0dbd0; border-top-color:#b4a078; border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 1rem; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .error-state { text-align:center; padding:2rem; color:#a08060; font-size:.82rem; line-height:1.9; font-family:'Noto Sans JP',sans-serif; background:#faf8f4; border:1px solid #e0d8c8; border-radius:4px; }
+  .no-articles { text-align:center; padding:3rem 0; color:#aaa; font-size:.85rem; display:none; }
+  .blog-sidebar { display:flex; flex-direction:column; gap:2rem; }
+  .sidebar-widget { background:#f8f6f2; border:1px solid rgba(0,0,0,.06); border-radius:4px; padding:1.5rem; }
+  .sidebar-widget-title { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:400; letter-spacing:.12em; color:#2d2d44; margin-bottom:1rem; padding-bottom:.6rem; border-bottom:1px solid rgba(0,0,0,.08); }
+  .sidebar-profile-icon { width:56px; height:56px; border-radius:50%; overflow:hidden; margin-bottom:.75rem; }
+  .sidebar-profile-name { font-family:'Noto Sans JP',sans-serif; font-size:.85rem; font-weight:500; color:#2d2d2d; margin-bottom:.25rem; }
+  .sidebar-profile-desc { font-size:.75rem; color:#7a7570; line-height:1.7; font-family:'Noto Sans JP',sans-serif; font-weight:300; }
+  .sidebar-cat-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.5rem; }
+  .sidebar-cat-list li a { display:flex; justify-content:space-between; align-items:center; gap:.4rem; font-size:.8rem; color:#5a5550; font-family:'Noto Sans JP',sans-serif; font-weight:300; text-decoration:none; padding:.3rem 0; transition:color .2s; }
+  .sidebar-cat-list li a span:first-child { display:inline-flex; align-items:center; gap:.4rem; }
+  .sidebar-cat-list li a:hover { color:#b4a078; }
+  .sidebar-cat-count { font-size:.7rem; color:#aaa; font-family:'Cormorant Garamond',serif; }
+  .sidebar-link-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.5rem; }
+  .sidebar-link-list li a { display:flex; align-items:center; gap:.5rem; font-size:.8rem; color:#5a5550; font-family:'Noto Sans JP',sans-serif; font-weight:300; text-decoration:none; padding:.3rem 0; transition:color .2s; }
+  .sidebar-link-list li a:hover { color:#b4a078; }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">Nurse Care Manager Web Designer sonosann</a>
+    <button class="nav-toggle" id="navToggle" aria-label="メニュー"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#ai-works">AI Works</a></li>
+      <li><a href="index.html#competition">Competition</a></li>
+      <li><a href="index.html#html-works">Web Design</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="blog.html" class="active">BLOG</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="blog-hero">
+  <div class="blog-hero-inner">
+    <a href="index.html" class="back-link">← Portfolio に戻る</a>
+    <div class="blog-hero-line" style="margin-top:1.5rem;"></div>
+    <p class="blog-hero-label" style="margin-top:1.5rem;">sonosann's journal</p>
+    <h1 class="blog-hero-title">Blog</h1>
+    <p class="blog-hero-desc">看護師・ケアマネからフリーランスへ。<br>AI・Webデザイン・キャリア転換の記録。</p>
+    <div class="blog-hero-line"></div>
+  </div>
+</div>
+
+<div class="blog-filter-wrap">
+  <div class="blog-filter-inner">
+    <button class="filter-btn active" data-cat="all">すべて</button>
+    <button class="filter-btn" data-cat="career"><img src="icon/blog-icon-career.png" alt="" width="20" height="20"> 59歳からの挑戦</button>
+    <button class="filter-btn" data-cat="nurse"><img src="icon/blog-icon-nurse.png" alt="" width="20" height="20"> ナース・ケアマネ日記</button>
+    <button class="filter-btn" data-cat="ai"><img src="icon/blog-icon-ai.png" alt="" width="20" height="20"> AIツール活用</button>
+    <button class="filter-btn" data-cat="web"><img src="icon/blog-icon-web.png" alt="" width="20" height="20"> Web学習日記</button>
+  </div>
+</div>
+
+<main class="blog-main">
+  <section>
+    <div class="loading-state" id="loadingState">
+      <div class="loading-spinner"></div>
+      記事を読み込んでいます…
+    </div>
+    <div class="articles-list" id="articlesList" style="display:none;"></div>
+    <p class="no-articles" id="noArticles">該当する記事がありません。</p>
+  </section>
+  <aside class="blog-sidebar">
+    <div class="sidebar-widget">
+      <h3 class="sidebar-widget-title">About me</h3>
+      <div class="sidebar-profile-icon"><img src="image/icon-profile.png" alt="sonosann" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
+      <p class="sidebar-profile-name">sonosann</p>
+      <p class="sidebar-profile-desc">看護師・ケアマネジャー歴30年以上。AIとWebデザインの世界へ転身中。宮崎在住フリーランス。</p>
+    </div>
+    <div class="sidebar-widget">
+      <h3 class="sidebar-widget-title">Category</h3>
+      <ul class="sidebar-cat-list">
+        <li><a href="#" data-filter="career"><span><img src="icon/blog-icon-career.png" alt="" width="20" height="20"> 59歳からの挑戦</span><span class="sidebar-cat-count" id="count-career">-</span></a></li>
+        <li><a href="#" data-filter="nurse"><span><img src="icon/blog-icon-nurse.png" alt="" width="20" height="20"> ナース・ケアマネ日記</span><span class="sidebar-cat-count" id="count-nurse">-</span></a></li>
+        <li><a href="#" data-filter="ai"><span><img src="icon/blog-icon-ai.png" alt="" width="20" height="20"> AIツール活用</span><span class="sidebar-cat-count" id="count-ai">-</span></a></li>
+        <li><a href="#" data-filter="web"><span><img src="icon/blog-icon-web.png" alt="" width="20" height="20"> Web学習日記</span><span class="sidebar-cat-count" id="count-web">-</span></a></li>
+      </ul>
+    </div>
+    <div class="sidebar-widget">
+      <h3 class="sidebar-widget-title">Links</h3>
+      <ul class="sidebar-link-list">
+        <li><a href="index.html" style="display:flex;align-items:center;gap:.5rem;"><img src="image/icon-profile.png" alt="" width="30" height="30" style="object-fit:cover;border-radius:50%;flex-shrink:0;">Portfolio サイト</a></li>
+        <li><a href="https://coconala.com/users/5975070" target="_blank" rel="noopener"><span><img src="image/icon-coconala.png" alt="Coconala" width="30" height="30" style="vertical-align:middle;border-radius:3px;"></span>Coconala プロフィール</a></li>
+        <li><a href="https://crowdworks.jp/public/employees/6735369" target="_blank" rel="noopener"><span><img src="image/icon-crowdworks.png" alt="CrowdWorks" width="30" height="30" style="vertical-align:middle;border-radius:3px;"></span>CrowdWorks プロフィール</a></li>
+        <li><a href="https://www.youtube.com/@vu24kpye/playlists" target="_blank" rel="noopener"><span>▶</span>YouTube（さつき）</a></li>
+        <li><a href="https://www.youtube.com/@AIpicturebook-oc4fl/playlists" target="_blank" rel="noopener"><span>▶</span>YouTube（AI picture book）</a></li>
+      </ul>
+    </div>
+  </aside>
+</main>
+
+<footer class="footer"><p>© 2026 sonosann. All rights reserved.</p></footer>
+<script>
+// ナビゲーション
+const nav = document.getElementById('nav');
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+navToggle.addEventListener('click', () => {
+  navToggle.classList.toggle('active');
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navToggle.classList.remove('active');
+    navLinks.classList.remove('open');
+  });
+});
+</script>
+<script>
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQUX0xn1BccWiAW9Z-BHM74LZQ2DjUyNDd9nZRKcpFYMJAmvBDbJWHW5mlkCdl5cT3qgEWw262To_nM/pub?gid=0&single=true&output=csv';
+
+const catLabel = {
+  career: '59歳からの挑戦',
+  nurse:  'ナース・ケアマネ日記',
+  ai:     'AIツール活用',
+  web:    'Web学習日記'
+};
+const catEmoji = {
+  career: '🌸',
+  nurse:  '🩺',
+  ai:     '🤖',
+  web:    '💻'
+};
+
+function parseCSV(text) {
+  const rows = []; let row = [], cell = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i], n = text[i+1];
+    if (c==='"') { if(inQ&&n==='"'){cell+='"';i++;}else inQ=!inQ; }
+    else if (c===','&&!inQ) { row.push(cell.trim()); cell=''; }
+    else if ((c==='\n'||(c==='\r'&&n==='\n'))&&!inQ) {
+      if(c==='\r')i++; row.push(cell.trim()); rows.push(row); row=[]; cell='';
+    } else cell+=c;
+  }
+  if(cell||row.length){row.push(cell.trim());rows.push(row);}
+  if(rows.length<2) return [];
+  const h=rows[0];
+  return rows.slice(1).filter(r=>r.some(v=>v)).map(r=>{const o={};h.forEach((k,i)=>o[k]=r[i]||'');return o;});
+}
+
+function createCard(p, idx) {
+  const cat=p.category||'other', emo=catEmoji[cat]||'📝', label=catLabel[cat]||cat;
+  const thumb=p.image_url
+    ?`<div class="article-thumb ${cat}"><img src="${p.image_url}" alt="" onerror="this.parentElement.innerHTML='<span class=\\'article-thumb-emoji\\'>${emo}</span>'"></div>`
+    :`<div class="article-thumb ${cat}"><span class="article-thumb-emoji">${emo}</span></div>`;
+  return `<a class="article-card" data-cat="${cat}" href="post.html?idx=${idx}">
+    ${thumb}
+    <div>
+      <div class="article-meta">
+        <span class="article-cat ${cat}">${label}</span>
+        <time class="article-date">${p.date||''}</time>
+      </div>
+      <h2 class="article-title">${p.title||''}</h2>
+      <p class="article-desc">${p.excerpt||''}</p>
+    </div>
+  </a>`;
+}
+
+function applyFilter(cat) {
+  document.querySelectorAll('.article-card').forEach(c=>c.classList.toggle('hidden',cat!=='all'&&c.dataset.cat!==cat));
+  const v=document.querySelectorAll('.article-card:not(.hidden)').length;
+  document.getElementById('noArticles').style.display=v===0?'block':'none';
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
+}
+
+fetch(SHEET_URL)
+  .then(r=>{if(!r.ok)throw new Error();return r.text();})
+  .then(text=>{
+    const posts=parseCSV(text)
+      .filter(p=>(p.status||'').toLowerCase()!=='draft')
+      .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    const list=document.getElementById('articlesList');
+    list.innerHTML=posts.length?posts.map((p, i) => createCard(p, i)).join(''):'<p style="color:#aaa;text-align:center;padding:2rem 0;font-size:.85rem;">まだ記事がありません。</p>';
+    document.getElementById('loadingState').style.display='none';
+    list.style.display='flex';
+    const params = new URLSearchParams(location.search);
+    const initCat = params.get('cat') || 'all';
+    applyFilter(initCat);
+    ['career','nurse','ai','web'].forEach(cat=>{
+      const el=document.getElementById('count-'+cat);
+      if(el)el.textContent=posts.filter(p=>p.category===cat).length;
+    });
+  })
+  .catch(()=>{
+    document.getElementById('loadingState').innerHTML='<div class="error-state">📋 記事データを読み込めませんでした。<br>Google Sheets の「ウェブに公開」設定を確認してください。</div>';
+  });
+
+document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>applyFilter(b.dataset.cat)));
+document.querySelectorAll('[data-filter]').forEach(l=>l.addEventListener('click',e=>{e.preventDefault();applyFilter(l.dataset.filter);window.scrollTo({top:0,behavior:'smooth'});}));
+
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  if(a.textContent.trim()==='BLOG') a.href='blog.html';
+});
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a1f9d0459302416ba57dc97c5983f7f0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

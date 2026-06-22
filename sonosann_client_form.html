@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>クライアント連絡フォーム｜sonosann Web&AIサポート</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
+      font-size: 15px; line-height: 1.7;
+      background: #f5f4f0; color: #1a1a1a;
+      min-height: 100vh; padding: 2rem 1rem;
+    }
+    :root {
+      --teal: #0F6E56; --teal-lt: #E1F5EE; --teal-dark: #085041; --teal-mid: #9FE1CB;
+      --blue: #185FA5; --blue-lt: #E6F1FB;
+      --amber: #854F0B; --amber-lt: #FAEEDA;
+      --red: #A32D2D; --red-lt: #FCEBEB;
+      --gray: #5F5E5A; --gray-lt: #F1EFE8; --gray-border: #C8C8C0;
+      --white: #ffffff; --text: #1a1a1a; --text-muted: #5F5E5A;
+      --radius-md: 8px; --radius-lg: 12px;
+    }
+
+    /* ページヘッダー */
+    .page-header { max-width: 680px; margin: 0 auto 1.5rem; }
+    .page-header h1 { font-size: 22px; font-weight: 500; color: var(--teal); margin-bottom: 4px; }
+    .page-header p  { font-size: 13px; color: var(--text-muted); }
+
+    /* カード */
+    .card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: var(--radius-lg); padding: 1.75rem;
+      max-width: 680px; margin: 0 auto 1rem;
+    }
+
+    /* 用件タイプ選択 */
+    .type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-top: 8px; }
+    .type-card {
+      border: 1.5px solid var(--gray-border); border-radius: var(--radius-md);
+      padding: 12px 10px; text-align: center; cursor: pointer;
+      transition: all 0.15s; background: var(--white);
+    }
+    .type-card:hover { border-color: var(--teal); background: var(--teal-lt); }
+    .type-card.selected { border-color: var(--teal); background: var(--teal-lt); }
+    .type-card.selected .type-label { color: var(--teal-dark); font-weight: 500; }
+    .type-icon  { font-size: 24px; margin-bottom: 4px; }
+    .type-label { font-size: 12px; color: var(--text-muted); }
+
+    /* セクションヘッダー */
+    .sec-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 1.25rem; padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--gray-border);
+    }
+    .sec-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--teal-lt); color: var(--teal);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .sec-title { font-size: 16px; font-weight: 500; }
+    .sec-sub   { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+    /* フィールド */
+    .field { margin-bottom: 1.25rem; }
+    .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+    .field .hint  { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; }
+    .field input[type="text"],
+    .field input[type="email"],
+    .field input[type="url"],
+    .field select,
+    .field textarea {
+      width: 100%; padding: 9px 12px;
+      border: 1px solid var(--gray-border); border-radius: var(--radius-md);
+      font-size: 13px; font-family: inherit; color: var(--text);
+      background: var(--white); outline: none; transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--teal); box-shadow: 0 0 0 3px rgba(15,110,86,0.1);
+    }
+    .field textarea { min-height: 80px; resize: vertical; }
+
+    /* チェック */
+    .check-grid { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+    .check-item {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border: 1px solid var(--gray-border); border-radius: 20px;
+      font-size: 12px; cursor: pointer; color: var(--text-muted);
+      background: var(--white); user-select: none; transition: all 0.15s;
+    }
+    .check-item:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-lt); }
+    .check-item.checked { background: var(--teal-lt); border-color: var(--teal); color: var(--teal-dark); font-weight: 500; }
+    .check-icon { width: 14px; height: 14px; border: 1.5px solid currentColor; border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; }
+    .check-item.checked .check-icon::after { content: '✓'; }
+
+    /* 優先度 */
+    .priority-grid { display: flex; gap: 8px; margin-top: 4px; }
+    .priority-btn {
+      flex: 1; padding: 8px; border-radius: var(--radius-md);
+      border: 1px solid var(--gray-border); background: var(--white);
+      font-size: 12px; font-family: inherit; cursor: pointer;
+      text-align: center; transition: all 0.15s; color: var(--text-muted);
+    }
+    .priority-btn:hover { border-color: var(--gray); }
+    .priority-btn.sel-high   { background: var(--red-lt);   border-color: var(--red);   color: var(--red); font-weight: 500; }
+    .priority-btn.sel-mid    { background: var(--amber-lt); border-color: var(--amber); color: var(--amber); font-weight: 500; }
+    .priority-btn.sel-low    { background: var(--blue-lt);  border-color: var(--blue);  color: var(--blue); font-weight: 500; }
+
+    /* ボタン */
+    .btn {
+      padding: 10px 22px; border-radius: var(--radius-md);
+      font-size: 13px; font-family: inherit; cursor: pointer;
+      transition: all 0.15s; font-weight: 500;
+    }
+    .btn-primary { background: var(--teal); border: 1px solid var(--teal); color: var(--white); width: 100%; font-size: 14px; padding: 12px; }
+    .btn-primary:hover { background: var(--teal-dark); }
+    .btn-primary:disabled { background: var(--gray-border); border-color: var(--gray-border); cursor: not-allowed; }
+    .btn-secondary { background: var(--white); border: 1px solid var(--gray-border); color: var(--text-muted); width: 100%; margin-top: 8px; }
+    .btn-secondary:hover { background: var(--gray-lt); }
+
+    /* 送信ステータス */
+    .status-box { display: none; text-align: center; padding: 10px; font-size: 13px; border-radius: var(--radius-md); margin-bottom: 1rem; }
+    .status-sending { background: var(--teal-lt); color: var(--teal); }
+    .status-error   { background: var(--red-lt);  color: var(--red); }
+
+    /* 完了画面 */
+    #finish-screen { display: none; text-align: center; padding: 2rem 1rem; }
+    .finish-icon  { font-size: 52px; margin-bottom: 12px; }
+    .finish-title { font-size: 18px; font-weight: 500; color: var(--teal); margin-bottom: 8px; }
+    .finish-sub   { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+    /* 履歴パネル */
+    .history-card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: var(--radius-lg); padding: 1.25rem;
+      max-width: 680px; margin: 0 auto;
+    }
+    .history-title { font-size: 14px; font-weight: 500; color: var(--text-muted); margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+    .history-empty { font-size: 13px; color: var(--text-muted); text-align: center; padding: 1rem; }
+    .history-item {
+      border: 1px solid var(--gray-border); border-radius: var(--radius-md);
+      padding: 10px 12px; margin-bottom: 8px; font-size: 12px;
+    }
+    .history-item:last-child { margin-bottom: 0; }
+    .history-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+    .history-date { color: var(--text-muted); font-size: 11px; }
+    .history-type-badge {
+      font-size: 11px; padding: 1px 8px; border-radius: 10px;
+      background: var(--teal-lt); color: var(--teal-dark); font-weight: 500;
+    }
+    .history-summary { color: var(--text); line-height: 1.5; }
+
+    /* 名前記憶バナー */
+    .remember-banner {
+      background: var(--blue-lt); border: 1px solid #B5D4F4;
+      border-radius: var(--radius-md); padding: 8px 12px;
+      font-size: 12px; color: var(--blue); margin-bottom: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .remember-banner button {
+      font-size: 11px; color: var(--blue); background: none; border: none; cursor: pointer; text-decoration: underline;
+    }
+
+    /* 区切り */
+    .divider { border: none; border-top: 1px solid var(--gray-border); margin: 1.25rem 0; }
+
+    @media (max-width: 500px) {
+      .card { padding: 1.25rem; }
+      .type-grid { grid-template-columns: repeat(3, 1fr); }
+      .priority-grid { gap: 5px; }
+    }
+    /* ===== 料金表BOX アコーディオン ===== */
+.fee-box {
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.fee-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--gray-lt);
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--teal);
+  transition: background 0.15s;
+}
+.fee-toggle:hover { background: var(--teal-lt); }
+.fee-toggle[aria-expanded="true"] { background: var(--teal-lt); }
+.fee-arrow {
+  font-size: 11px;
+  color: var(--teal);
+  transition: transform 0.25s;
+  display: inline-block;
+}
+.fee-toggle[aria-expanded="true"] .fee-arrow {
+  transform: rotate(180deg);
+}
+.fee-body {
+  padding: 1rem;
+  background: var(--white);
+  border-top: 1px solid var(--gray-border);
+  animation: fadeDown 0.2s ease;
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fee-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+.fee-card {
+  background: var(--gray-lt);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.fee-card--featured {
+  border: 2px solid var(--teal);
+  background: var(--teal-lt);
+}
+.fee-phase {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--teal);
+  background: var(--white);
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  border: 1px solid var(--teal-mid);
+}
+.fee-card--featured .fee-phase {
+  background: var(--teal);
+  color: var(--white);
+  border-color: var(--teal);
+}
+.fee-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.fee-price {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.fee-price span {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.fee-items {
+  list-style: none;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+.fee-items li::before {
+  content: '– ';
+  color: var(--teal);
+}
+.fee-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-top: 0.5rem;
+}
+@media (max-width: 500px) {
+  .fee-grid { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>クライアント連絡フォーム</h1>
+    <p>sonosann Web &amp; AIサポート｜修正依頼・追加希望・ご質問はこちらから</p>
+  </div>
+
+  <!-- メインフォームカード -->
+  <div class="card" id="main-card">
+
+    <!-- 名前記憶バナー（JS で表示制御） -->
+    <div class="remember-banner" id="remember-banner" style="display:none;">
+      <span id="remember-msg"></span>
+      <button onclick="clearSavedName()">クリア</button>
+    </div>
+
+    <!-- 完了画面 -->
+    <div id="finish-screen">
+      <div class="finish-icon">✅</div>
+      <div class="finish-title">送信が完了しました</div>
+      <div class="finish-sub">内容がスプレッドシートに保存されました。<br>確認後、担当者よりご連絡いたします。</div>
+      <button class="btn btn-primary" onclick="resetForm()">📝 続けて送信する</button>
+    </div>
+
+    <!-- フォーム本体 -->
+    <div id="form-body">
+
+      <!-- STEP 1: 基本情報 -->
+      <div class="sec-header">
+        <div class="sec-icon">👤</div>
+        <div>
+          <div class="sec-title">基本情報</div>
+          <div class="sec-sub">お名前と用件の種類を選んでください</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-name">お名前・事業者名 <span style="color:var(--red);font-size:11px;">必須</span></label>
+        <input type="text" id="f-name" placeholder="例：田中花子 鍼灸院" oninput="onNameInput()">
+      </div>
+
+      <div class="field">
+        <label>用件の種類 <span style="color:var(--red);font-size:11px;">必須</span></label>
+        <div class="type-grid" id="type-grid">
+          <div class="type-card" onclick="selectType('初回ヒアリング', this)">
+            <div class="type-icon">📋</div>
+            <div class="type-label">初回ヒアリング</div>
+          </div>
+          <div class="type-card" onclick="selectType('修正依頼', this)">
+            <div class="type-icon">✏️</div>
+            <div class="type-label">修正依頼</div>
+          </div>
+          <div class="type-card" onclick="selectType('追加希望', this)">
+            <div class="type-icon">➕</div>
+            <div class="type-label">追加希望</div>
+          </div>
+          <div class="type-card" onclick="selectType('確認・質問', this)">
+            <div class="type-icon">❓</div>
+            <div class="type-label">確認・質問</div>
+          </div>
+          <div class="type-card" onclick="selectType('その他連絡', this)">
+            <div class="type-icon">💬</div>
+            <div class="type-label">その他連絡</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+  <!-- 料金表BOX（アコーディオン） -->
+      <div class="fee-box">
+        <button class="fee-toggle" onclick="toggleFee(this)" aria-expanded="false">
+          <span>💴 料金プランを確認する</span>
+          <span class="fee-arrow">▼</span>
+        </button>
+        <div class="fee-body" id="fee-body" style="display:none;">
+          <div class="fee-grid">
+            <div class="fee-card">
+              <div class="fee-phase">フェーズ 1</div>
+              <div class="fee-name">初期契約・モック制作</div>
+              <div class="fee-price">¥10,000 <span>一括・着手時</span></div>
+              <ul class="fee-items">
+                <li>初回ヒアリング・要件整理</li>
+                <li>モックアップ・デザイン案提示</li>
+                <li>方向性の合意・契約締結</li>
+              </ul>
+            </div>
+            <div class="fee-card fee-card--featured">
+              <div class="fee-phase">フェーズ 2</div>
+              <div class="fee-name">試験運用期間（3ヶ月）</div>
+              <div class="fee-price">¥20,000 <span>× 3ヶ月 = ¥60,000</span></div>
+              <ul class="fee-items">
+                <li>サイト実装・公開（当方サーバー）</li>
+                <li>月3回までの修正対応</li>
+                <li>未入金3日後に運用停止</li>
+              </ul>
+            </div>
+            <div class="fee-card">
+              <div class="fee-phase">フェーズ 3</div>
+              <div class="fee-name">納品・本契約完了</div>
+              <div class="fee-price">合計 <span>¥70,000</span></div>
+              <ul class="fee-items">
+                <li>全データ・ソースコード納品</li>
+                <li>サーバー・ドメイン移管</li>
+                <li>操作マニュアル提供</li>
+              </ul>
+            </div>
+            <div class="fee-card">
+              <div class="fee-phase">オプション</div>
+              <div class="fee-name">保守・運用サポート</div>
+              <div class="fee-price">¥5,000 <span>/ 月（任意）</span></div>
+              <ul class="fee-items">
+                <li>軽微な修正・文言変更</li>
+                <li>月次レポート</li>
+                <li>相談対応（メール・チャット）</li>
+              </ul>
+            </div>
+          </div>
+          <p class="fee-note">※ サーバー費用：試験運用中は当方負担。納品後はクライアント負担。<br>GitHub Pages運用も可（無料）。</p>
+        </div>
+      </div>
+      <!-- STEP 2: 用件別フォーム（動的） -->
+      <div id="dynamic-form" style="display:none;"></div>
+
+    </div><!-- /#form-body -->
+  </div><!-- /.card -->
+
+  <!-- 送信履歴カード -->
+  <div class="history-card">
+    <div class="history-title">
+      <span>📂 送信履歴（このブラウザのみ）</span>
+      <button style="font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;" onclick="clearHistory()">クリア</button>
+    </div>
+    <div id="history-list">
+      <div class="history-empty">まだ送信履歴はありません</div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    //  ★ GASのデプロイURLをここに貼り付けてください ★
+    // ============================================================
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxRwT5SGycvgcu_NNTv8mfxuSCbtQkDoEm24TmqUwvhnyL0PW7K1U3wJr5S8yU5HcIG/exec';
+
+    // ============================================================
+    //  用件別フォーム定義
+    // ============================================================
+    const TYPE_FORMS = {
+
+      '初回ヒアリング': {
+        icon: '📋', sub: '事業内容・デザイン・機能についてお聞かせください',
+        sections: [
+          {
+            title: '事業・基本情報',
+            fields: [
+              { id: 'business',     label: '事業内容・サービスの概要',      type: 'textarea', placeholder: '例：小林市で訪問介護事業を運営しています。' },
+              { id: 'target',       label: 'ターゲットとなるお客様',         type: 'textarea', placeholder: '例：65歳以上の高齢者とその家族。' },
+              { id: 'existing_url', label: '既存サイトURL（あれば）',        type: 'url',      placeholder: 'https://...' },
+              { id: 'ref_sites',    label: '参考にしたいサイト（好き/嫌い）', type: 'textarea', placeholder: '好き：https://...\n嫌い：https://...' },
+            ]
+          },
+          {
+            title: 'デザイン方向性',
+            fields: [
+              { id: 'mood',  label: '雰囲気イメージ', type: 'check',
+                options: ['清潔感・信頼感','温かみ・親しみやすさ','プロフェッショナル','ポップ・元気','シンプル','和風・落ち着き'] },
+              { id: 'color', label: 'イメージカラー', type: 'text', placeholder: '例：緑・白ベース（なければ空欄）' },
+              { id: 'logo',  label: 'ロゴの有無', type: 'check',
+                options: ['あり（提供可）','あり（要確認）','なし（依頼したい）','なし（不要）'] },
+            ]
+          },
+          {
+            title: '機能・運用',
+            fields: [
+              { id: 'device',   label: 'メインデバイス', type: 'check', options: ['スマートフォン優先','PC優先','どちらも同程度'] },
+              { id: 'action',   label: '重視するアクション', type: 'check', options: ['問い合わせ','予約','料金確認','サービス閲覧','購入'] },
+              { id: 'pages',    label: '必要なページ（複数可）', type: 'check',
+                options: ['トップ','サービス紹介','料金表','スタッフ紹介','FAQ','ブログ','お問い合わせ','採用','アクセス'] },
+              { id: 'cms',      label: '制作方法の希望', type: 'check', options: ['WordPress','HTML/CSS','どちらでもよい'] },
+              { id: 'deadline', label: '公開希望日', type: 'text', placeholder: '例：2026年8月頃' },
+            ]
+          }
+        ]
+      },
+
+      '修正依頼': {
+        icon: '✏️', sub: '修正してほしい箇所と内容を具体的にお知らせください',
+        sections: [
+          {
+            title: '修正内容',
+            fields: [
+              { id: 'fix_page',    label: '修正したいページ（複数可）', type: 'check',
+                options: ['トップページ','サービス紹介','料金表','スタッフ紹介','FAQ','ブログ','お問い合わせ','その他'] },
+              { id: 'fix_type',    label: '修正の種類', type: 'check',
+                options: ['文章の変更','画像の変更','レイアウト変更','色・デザイン変更','機能の修正','リンクの修正','その他'] },
+              { id: 'fix_detail',  label: '修正内容の詳細', type: 'textarea',
+                placeholder: '例：トップページの「料金」ボタンの文字を「料金を見る」に変えてください。' },
+              { id: 'fix_ref',     label: '参考URL・画像URL（あれば）', type: 'url', placeholder: 'https://...' },
+              { id: 'priority',    label: '優先度', type: 'priority' },
+              { id: 'fix_deadline',label: '対応希望日', type: 'text', placeholder: '例：今週中・来週まででOK・急ぎではない' },
+            ]
+          }
+        ]
+      },
+
+      '追加希望': {
+        icon: '➕', sub: '新しく追加したいページ・機能・コンテンツをお知らせください',
+        sections: [
+          {
+            title: '追加内容',
+            fields: [
+              { id: 'add_type',    label: '追加したいもの（複数可）', type: 'check',
+                options: ['新しいページ','ブログ・お知らせ機能','お問い合わせフォーム','SNS連携','予約機能','地図・アクセス','写真・ギャラリー','動画','その他'] },
+              { id: 'add_detail',  label: '追加内容の詳細', type: 'textarea',
+                placeholder: '例：スタッフ紹介ページを追加したい。写真と一言コメントを載せたいです。' },
+              { id: 'add_ref',     label: '参考にしたいサイトURL', type: 'url', placeholder: 'https://...' },
+              { id: 'priority',    label: '優先度', type: 'priority' },
+              { id: 'add_deadline',label: '希望納期', type: 'text', placeholder: '例：来月中・急ぎではない' },
+            ]
+          }
+        ]
+      },
+
+      '確認・質問': {
+        icon: '❓', sub: 'わからないこと・確認したいことをお気軽にどうぞ',
+        sections: [
+          {
+            title: 'ご質問内容',
+            fields: [
+              { id: 'q_category', label: '質問の種類', type: 'check',
+                options: ['制作内容について','スケジュールについて','料金・お支払いについて','サーバー・ドメインについて','納品後の操作方法','その他'] },
+              { id: 'q_detail',   label: 'ご質問・確認内容', type: 'textarea',
+                placeholder: '例：納品後に自分でブログを更新する方法を教えてほしいです。' },
+            ]
+          }
+        ]
+      },
+
+      'その他連絡': {
+        icon: '💬', sub: '自由にメッセージをお送りください',
+        sections: [
+          {
+            title: 'メッセージ',
+            fields: [
+              { id: 'message', label: '連絡内容', type: 'textarea',
+                placeholder: '例：打ち合わせの日程についてご相談したいです。' },
+            ]
+          }
+        ]
+      }
+    };
+
+    // ============================================================
+    //  状態
+    // ============================================================
+    let selectedType = '';
+    let checkAnswers = {};
+    let priority     = '';
+
+    // ============================================================
+    //  起動時：保存済み名前を読み込む
+    // ============================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('sonosann_client_name');
+      if (saved) {
+        document.getElementById('f-name').value = saved;
+        const banner = document.getElementById('remember-banner');
+        document.getElementById('remember-msg').textContent = `前回の名前を読み込みました：${saved}`;
+        banner.style.display = 'flex';
+      }
+      renderHistory();
+    });
+
+    function onNameInput() {
+      const val = document.getElementById('f-name').value.trim();
+      if (val) localStorage.setItem('sonosann_client_name', val);
+    }
+
+    function clearSavedName() {
+      localStorage.removeItem('sonosann_client_name');
+      document.getElementById('remember-banner').style.display = 'none';
+    }
+
+    // ============================================================
+    //  用件タイプ選択
+    // ============================================================
+    function selectType(type, el) {
+      selectedType = type;
+      checkAnswers = {};
+      priority     = '';
+      document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      renderDynamicForm(type);
+    }
+
+    // ============================================================
+    //  動的フォームのレンダリング
+    // ============================================================
+    function renderDynamicForm(type) {
+      const def = TYPE_FORMS[type];
+      if (!def) return;
+
+      let html = `
+        <div class="sec-header">
+          <div class="sec-icon">${def.icon}</div>
+          <div>
+            <div class="sec-title">${type}</div>
+            <div class="sec-sub">${def.sub}</div>
+          </div>
+        </div>`;
+
+      def.sections.forEach(sec => {
+        if (def.sections.length > 1) {
+          html += `<p style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:0.75rem;margin-top:0.25rem;">${sec.title}</p>`;
+        }
+        sec.fields.forEach(f => {
+          html += `<div class="field"><label>${f.label}</label>`;
+          if (f.hint) html += `<div class="hint">${f.hint}</div>`;
+
+          if (f.type === 'text' || f.type === 'url' || f.type === 'email') {
+            html += `<input type="${f.type}" id="f_${f.id}" placeholder="${f.placeholder || ''}">`;
+          } else if (f.type === 'textarea') {
+            html += `<textarea id="f_${f.id}" placeholder="${f.placeholder || ''}"></textarea>`;
+          } else if (f.type === 'check') {
+            html += `<div class="check-grid">`;
+            f.options.forEach(opt => {
+              html += `<div class="check-item" onclick="toggleCheck('${f.id}','${escAttr(opt)}',this)"><span class="check-icon"></span>${opt}</div>`;
+            });
+            html += `</div>`;
+          } else if (f.type === 'priority') {
+            html += `<div class="priority-grid">
+              <button class="priority-btn" id="pri-high" onclick="setPriority('高')">🔴 高（急ぎ）</button>
+              <button class="priority-btn" id="pri-mid"  onclick="setPriority('中')">🟡 中（今週中）</button>
+              <button class="priority-btn" id="pri-low"  onclick="setPriority('低')">🟢 低（急がない）</button>
+            </div>`;
+          }
+          html += `</div>`;
+        });
+        html += `<hr class="divider">`;
+      });
+
+      // 送信ボタン
+      html += `
+        <div id="status-box" class="status-box"></div>
+        <button class="btn btn-primary" id="btn-submit" onclick="submitForm()">
+          📤 送信する
+        </button>
+        <button class="btn btn-secondary" onclick="resetType()">← 用件を変更する</button>`;
+
+      const el = document.getElementById('dynamic-form');
+      el.innerHTML = html;
+      el.style.display = 'block';
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ============================================================
+    //  チェック・優先度
+    // ============================================================
+    function toggleCheck(fid, opt, el) {
+      if (!checkAnswers[fid]) checkAnswers[fid] = [];
+      const idx = checkAnswers[fid].indexOf(opt);
+      if (idx >= 0) { checkAnswers[fid].splice(idx, 1); el.classList.remove('checked'); }
+      else          { checkAnswers[fid].push(opt);       el.classList.add('checked'); }
+    }
+
+    function setPriority(val) {
+      priority = val;
+      ['high','mid','low'].forEach(k => {
+        document.getElementById('pri-' + k)?.classList.remove('sel-high','sel-mid','sel-low');
+      });
+      const map = { '高': ['pri-high','sel-high'], '中': ['pri-mid','sel-mid'], '低': ['pri-low','sel-low'] };
+      const [id, cls] = map[val];
+      document.getElementById(id)?.classList.add(cls);
+    }
+
+    // ============================================================
+    //  送信処理
+    // ============================================================
+    async function submitForm() {
+      const name = document.getElementById('f-name').value.trim();
+      if (!name)         { alert('お名前・事業者名を入力してください。'); return; }
+      if (!selectedType) { alert('用件の種類を選択してください。'); return; }
+
+      // テキスト・URL系の値を収集
+      const def = TYPE_FORMS[selectedType];
+      const textData = {};
+      def.sections.forEach(sec => {
+        sec.fields.forEach(f => {
+          if (['text','url','email','textarea'].includes(f.type)) {
+            const el = document.getElementById('f_' + f.id);
+            if (el) textData[f.id] = el.value.trim();
+          }
+          if (f.type === 'priority') textData['priority'] = priority;
+        });
+      });
+
+      // 全データをまとめる
+      const payload = {
+        name,
+        type: selectedType,
+        ...textData,
+        ...Object.fromEntries(
+          Object.entries(checkAnswers).map(([k, v]) => [k, v])
+        ),
+      };
+
+      // GAS未設定チェック
+      if (GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+        showStatus('error', '⚠️ GAS_URL が設定されていません。HTMLファイル内の GAS_URL を書き換えてください。');
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+      showStatus('sending', '📤 送信中...');
+
+     try {
+      const res = await fetch(GAS_URL, {
+       method: 'POST',
+       headers: { 'Content-Type': 'text/plain' },
+       body: JSON.stringify(payload)
+     });
+     const json = await res.json();
+     if (json.status === 'success') {
+      saveHistory(payload);
+      document.getElementById('form-body').style.display = 'none';
+      document.getElementById('finish-screen').style.display = 'block';
+    } else {
+      showStatus('error', `❌ エラー：${json.message}`);
+      btn.disabled = false;
+    }
+      } catch (err) {
+        showStatus('error', `❌ 送信に失敗しました。GAS_URLをご確認ください。`);
+        btn.disabled = false;
+      }
+    }
+
+    function showStatus(type, msg) {
+      const el = document.getElementById('status-box');
+      if (!el) return;
+      el.className  = `status-box status-${type}`;
+      el.style.display = 'block';
+      el.textContent   = msg;
+    }
+
+    // ============================================================
+    //  履歴管理（localStorage）
+    // ============================================================
+    function saveHistory(data) {
+      const history = JSON.parse(localStorage.getItem('sonosann_history') || '[]');
+      history.unshift({
+        date: new Date().toLocaleString('ja-JP'),
+        name: data.name,
+        type: data.type,
+        summary: buildSummary(data),
+      });
+      // 最新10件だけ保持
+      localStorage.setItem('sonosann_history', JSON.stringify(history.slice(0, 10)));
+      renderHistory();
+    }
+
+    function buildSummary(data) {
+      const parts = [];
+      for (const [k, v] of Object.entries(data)) {
+        if (k === 'name' || k === 'type' || !v) continue;
+        const val = Array.isArray(v) ? v.join('、') : v;
+        if (val) parts.push(val);
+      }
+      const full = parts.join(' / ');
+      return full.length > 80 ? full.slice(0, 80) + '…' : full;
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('sonosann_history') || '[]');
+      const el = document.getElementById('history-list');
+      if (history.length === 0) {
+        el.innerHTML = '<div class="history-empty">まだ送信履歴はありません</div>';
+        return;
+      }
+      el.innerHTML = history.map(h => `
+        <div class="history-item">
+          <div class="history-meta">
+            <span class="history-date">${h.date}</span>
+            <span class="history-type-badge">${h.type}</span>
+          </div>
+          <div class="history-summary"><strong>${h.name}</strong>　${h.summary}</div>
+        </div>`).join('');
+    }
+
+    function clearHistory() {
+      if (!confirm('送信履歴を削除しますか？')) return;
+      localStorage.removeItem('sonosann_history');
+      renderHistory();
+    }
+
+    // ============================================================
+    //  リセット
+    // ============================================================
+    function resetForm() {
+      selectedType = ''; checkAnswers = {}; priority = '';
+      document.getElementById('form-body').style.display    = 'block';
+      document.getElementById('finish-screen').style.display = 'none';
+      document.getElementById('dynamic-form').style.display  = 'none';
+      document.getElementById('dynamic-form').innerHTML = '';
+      document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetType() {
+      selectedType = ''; checkAnswers = {}; priority = '';
+      document.getElementById('dynamic-form').style.display  = 'none';
+      document.getElementById('dynamic-form').innerHTML = '';
+      document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ============================================================
+    //  ユーティリティ
+    // ============================================================
+    function escAttr(str) { return String(str).replace(/'/g, "&#39;"); }
+    // ===== 料金表アコーディオン =====
+function toggleFee(btn) {
+  const body = document.getElementById('fee-body');
+  const isOpen = btn.getAttribute('aria-expanded') === 'true';
+  if (isOpen) {
+    body.style.display = 'none';
+    btn.setAttribute('aria-expanded', 'false');
+  } else {
+    body.style.display = 'block';
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+  </script>
+</body>
+</html>
