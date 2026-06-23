@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>間違い探しタップ - 脳トレゲーム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-top:#EAF4FB;
+    --bg-bottom:#D7E9F7;
+    --card:#FFFFFF;
+    --navy:#1F3A5F;
+    --navy-soft:#5C7693;
+    --blue:#3B82F6;
+    --green:#2BAE66;
+    --red:#E74C3C;
+    --yellow:#E8B400;
+    --chip-bg:#F3F8FD;
+    --shadow:0 12px 30px rgba(31,58,95,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:"M PLUS Rounded 1c", sans-serif;
+    background:linear-gradient(160deg,var(--bg-top),var(--bg-bottom));
+    color:var(--navy);
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior:none;
+  }
+  #app{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .card{
+    width:100%;
+    max-width:400px;
+    background:var(--card);
+    border-radius:32px;
+    box-shadow:var(--shadow);
+    padding:28px 20px 26px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:10px;
+    background:linear-gradient(90deg,var(--blue) 0 33%,var(--green) 33% 66%,var(--yellow) 66% 100%);
+  }
+  h1{
+    font-size:24px;
+    font-weight:900;
+    margin:6px 0 4px;
+  }
+  .sub{
+    font-size:14px;
+    color:var(--navy-soft);
+    margin:0 0 18px;
+    line-height:1.7;
+  }
+  .rule-box{
+    background:var(--chip-bg);
+    border-radius:18px;
+    padding:16px 18px;
+    margin-bottom:20px;
+    text-align:left;
+    font-size:14px;
+    line-height:1.8;
+  }
+  .rule-box b{color:var(--blue);}
+  .btn{
+    border:none;
+    border-radius:20px;
+    font-family:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .08s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn-start{
+    width:100%;
+    padding:20px 0;
+    font-size:22px;
+    color:#fff;
+    background:linear-gradient(135deg,var(--blue),#2563EB);
+    box-shadow:0 10px 22px rgba(59,130,246,0.35);
+  }
+  /* ---- game screen ---- */
+  #screen-game{ position:relative; }
+  .hud{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:10px;
+  }
+  .hud-item{ text-align:left; }
+  .hud-item.right{ text-align:right; }
+  .hud-label{
+    font-size:12px;
+    color:var(--navy-soft);
+    font-weight:700;
+  }
+  .hud-val{
+    font-size:20px;
+    font-weight:900;
+    line-height:1.2;
+  }
+  .timebar-wrap{
+    height:10px;
+    background:#E7EEF6;
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:14px;
+  }
+  .timebar{
+    height:100%;
+    background:linear-gradient(90deg,var(--green),var(--yellow));
+    width:100%;
+    transition:width .25s linear;
+  }
+  .img-label{
+    font-size:13px;
+    font-weight:700;
+    color:var(--navy-soft);
+    margin:10px 0 4px;
+    text-align:left;
+  }
+  .img-block{
+    position:relative;
+    width:100%;
+    aspect-ratio:300/220;
+    border-radius:16px;
+    overflow:hidden;
+    background:#fff;
+    border:2px solid var(--chip-bg);
+  }
+  .img-block svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .hotspot-layer{ position:absolute; inset:0; }
+  .hotspot{
+    position:absolute;
+    width:15%;
+    height:15%;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:transparent;
+    border:none;
+    padding:0;
+    cursor:pointer;
+  }
+  .hotspot.found{
+    background:rgba(43,174,102,0.22);
+    border:3px solid var(--green);
+    pointer-events:none;
+  }
+  .hotspot.found::after{
+    content:"✓";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--green);
+    font-size:13px;
+    font-weight:900;
+  }
+  .overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.97);
+    border-radius:32px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .overlay.show{ opacity:1; pointer-events:all; }
+  .overlay .ov-title{
+    font-size:32px;
+    font-weight:900;
+    color:var(--navy);
+    margin-bottom:8px;
+  }
+  .overlay .ov-sub{
+    font-size:14px;
+    color:var(--navy-soft);
+  }
+  /* ---- result screen ---- */
+  .result-score{
+    font-size:54px;
+    font-weight:900;
+    color:var(--blue);
+    margin:6px 0 0;
+  }
+  .result-label{
+    font-size:14px;
+    color:var(--navy-soft);
+    margin-bottom:20px;
+  }
+  .stat-row{
+    display:flex;
+    justify-content:space-around;
+    margin-bottom:24px;
+  }
+  .stat{ text-align:center; }
+  .stat .num{ font-size:23px; font-weight:900; }
+  .stat .num.ok{ color:var(--green); }
+  .stat .lab{ font-size:12px; color:var(--navy-soft); margin-top:2px; }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- スタート画面 -->
+  <div class="card" id="screen-start">
+    <h1>間違い探しタップ</h1>
+    <p class="sub">よく似た2枚のイラストから<br>違う場所を見つけてタップ！</p>
+    <div class="rule-box">
+      上と下、よく似た2枚のイラストの中に<br>
+      <b>6つ</b>の違いが隠れています。<br>
+      見つけた場所をどちらの絵でもタップしてください。<br>
+      60秒以内に全部見つけられるかな？
+    </div>
+    <button class="btn btn-start" id="btn-start">スタート</button>
+  </div>
+
+  <!-- ゲーム画面 -->
+  <div class="card hidden" id="screen-game">
+    <div class="hud">
+      <div class="hud-item">
+        <div class="hud-label">残り時間</div>
+        <div class="hud-val"><span id="time-val">60</span>秒</div>
+      </div>
+      <div class="hud-item right">
+        <div class="hud-label">発見数</div>
+        <div class="hud-val"><span id="found-val">0</span> / 6</div>
+      </div>
+    </div>
+    <div class="timebar-wrap"><div class="timebar" id="timebar"></div></div>
+
+    <div class="img-label">① イラストA</div>
+    <div class="img-block" id="block-a">
+      <!-- SVG A は JS で挿入 -->
+      <div class="hotspot-layer" id="layer-a"></div>
+    </div>
+
+    <div class="img-label">② イラストB</div>
+    <div class="img-block" id="block-b">
+      <!-- SVG B は JS で挿入 -->
+      <div class="hotspot-layer" id="layer-b"></div>
+    </div>
+
+    <div class="overlay" id="overlay-clear">
+      <div class="ov-title">全部見つけた！</div>
+      <div class="ov-sub">結果を集計しています…</div>
+    </div>
+    <div class="overlay" id="overlay-timeup">
+      <div class="ov-title">タイムアップ！</div>
+      <div class="ov-sub">結果を集計しています…</div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div class="card hidden" id="screen-result">
+    <h1 id="result-title">結果</h1>
+    <div class="result-score" id="final-score">0</div>
+    <div class="result-label">点</div>
+    <div class="stat-row">
+      <div class="stat"><div class="num ok" id="final-found">0</div><div class="lab">見つけた数</div></div>
+      <div class="stat"><div class="num" id="final-time">0秒</div><div class="lab">残り時間</div></div>
+    </div>
+    <button class="btn btn-start" id="btn-retry">もう一度プレイ</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var GAME_SECONDS = 60;
+  var TOTAL_DIFFS = 6;
+
+  // SVG A（元のイラスト）
+  var SVG_A =
+    '<svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="300" height="220" fill="#EAF4FB"/>' +
+    '<rect x="0" y="200" width="300" height="20" fill="#CFEAD9"/>' +
+    '<circle cx="250" cy="35" r="20" fill="#E8B400"/>' +
+    '<g fill="#ffffff" stroke="#BCD9EC" stroke-width="1">' +
+      '<circle cx="38" cy="48" r="10"/><circle cx="50" cy="38" r="12"/><circle cx="62" cy="48" r="10"/><circle cx="50" cy="52" r="9"/>' +
+      '<circle cx="78" cy="33" r="8"/><circle cx="90" cy="25" r="9"/><circle cx="102" cy="33" r="8"/><circle cx="90" cy="36" r="7"/>' +
+    '</g>' +
+    '<rect x="35" y="160" width="10" height="40" fill="#8B5E3C"/>' +
+    '<circle cx="40" cy="150" r="24" fill="#2BAE66"/>' +
+    '<rect x="90" y="110" width="110" height="90" fill="#FBEFD9" stroke="#1F3A5F" stroke-width="2"/>' +
+    '<polygon points="85,110 145,58 205,110" fill="#E74C3C"/>' +
+    '<rect x="168" y="70" width="16" height="32" fill="#B85C3C"/>' +
+    '<circle cx="176" cy="62" r="6" fill="#ffffff" opacity="0.85"/>' +
+    '<circle cx="182" cy="50" r="8" fill="#ffffff" opacity="0.8"/>' +
+    '<circle cx="176" cy="36" r="10" fill="#ffffff" opacity="0.75"/>' +
+    '<rect x="155" y="128" width="30" height="30" fill="#9FD8EF" stroke="#5C7693" stroke-width="2"/>' +
+    '<line x1="170" y1="128" x2="170" y2="158" stroke="#5C7693" stroke-width="2"/>' +
+    '<line x1="155" y1="143" x2="185" y2="143" stroke="#5C7693" stroke-width="2"/>' +
+    '<rect x="130" y="150" width="30" height="50" fill="#8B5E3C" stroke="#1F3A5F" stroke-width="2"/>' +
+    '<circle cx="152" cy="178" r="3" fill="#E8B400"/>' +
+    '<circle cx="110" cy="205" r="5" fill="#E74C3C"/>' +
+    '<circle cx="140" cy="205" r="5" fill="#E8B400"/>' +
+    '<circle cx="170" cy="205" r="5" fill="#3B82F6"/>' +
+    '</svg>';
+
+  // SVG B（6か所が違う）
+  var SVG_B =
+    '<svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect width="300" height="220" fill="#EAF4FB"/>' +
+    '<rect x="0" y="200" width="300" height="20" fill="#CFEAD9"/>' +
+    '<circle cx="250" cy="35" r="20" fill="#E8B400"/>' +
+    '<g fill="#ffffff" stroke="#BCD9EC" stroke-width="1">' +
+      '<circle cx="38" cy="48" r="10"/><circle cx="50" cy="38" r="12"/><circle cx="62" cy="48" r="10"/><circle cx="50" cy="52" r="9"/>' +
+    '</g>' +
+    '<rect x="35" y="160" width="10" height="40" fill="#8B5E3C"/>' +
+    '<circle cx="40" cy="150" r="24" fill="#2BAE66"/>' +
+    '<rect x="90" y="110" width="110" height="90" fill="#FBEFD9" stroke="#1F3A5F" stroke-width="2"/>' +
+    '<polygon points="85,110 145,58 205,110" fill="#F0985A"/>' +
+    '<rect x="168" y="70" width="16" height="32" fill="#B85C3C"/>' +
+    '<circle cx="176" cy="62" r="6" fill="#ffffff" opacity="0.85"/>' +
+    '<circle cx="182" cy="50" r="8" fill="#ffffff" opacity="0.8"/>' +
+    '<rect x="155" y="128" width="30" height="30" fill="#E8B400" stroke="#5C7693" stroke-width="2"/>' +
+    '<line x1="170" y1="128" x2="170" y2="158" stroke="#5C7693" stroke-width="2"/>' +
+    '<line x1="155" y1="143" x2="185" y2="143" stroke="#5C7693" stroke-width="2"/>' +
+    '<rect x="130" y="150" width="30" height="50" fill="#8B5E3C" stroke="#1F3A5F" stroke-width="2"/>' +
+    '<circle cx="110" cy="205" r="5" fill="#E74C3C"/>' +
+    '<circle cx="170" cy="205" r="5" fill="#3B82F6"/>' +
+    '</svg>';
+
+  var DIFFS = [
+    { id:1, x:30.0,  y:14.5 },  // 雲がひとつ少ない
+    { id:2, x:48.3,  y:43.2 },  // 屋根の色
+    { id:3, x:58.7,  y:16.4 },  // 煙の数
+    { id:4, x:56.7,  y:65.0 },  // 窓の色
+    { id:5, x:50.7,  y:80.9 },  // ドアノブ
+    { id:6, x:46.7,  y:93.2 }   // 花の数
+  ];
+
+  var screenStart = document.getElementById('screen-start');
+  var screenGame = document.getElementById('screen-game');
+  var screenResult = document.getElementById('screen-result');
+
+  var blockA = document.getElementById('block-a');
+  var blockB = document.getElementById('block-b');
+  var layerA = document.getElementById('layer-a');
+  var layerB = document.getElementById('layer-b');
+
+  var timeVal = document.getElementById('time-val');
+  var foundVal = document.getElementById('found-val');
+  var timebar = document.getElementById('timebar');
+  var overlayClear = document.getElementById('overlay-clear');
+  var overlayTimeup = document.getElementById('overlay-timeup');
+
+  var btnStart = document.getElementById('btn-start');
+  var btnRetry = document.getElementById('btn-retry');
+
+  var timeLeft, timer, foundCount, gameEnded, hotspotPairs;
+
+  function buildScene(){
+    blockA.insertAdjacentHTML('afterbegin', SVG_A);
+    blockB.insertAdjacentHTML('afterbegin', SVG_B);
+  }
+
+  function buildHotspots(){
+    layerA.innerHTML = '';
+    layerB.innerHTML = '';
+    hotspotPairs = {};
+    DIFFS.forEach(function(d){
+      var hA = document.createElement('button');
+      hA.className = 'hotspot';
+      hA.style.left = d.x + '%';
+      hA.style.top = d.y + '%';
+      var hB = hA.cloneNode(true);
+
+      hA.addEventListener('click', function(){ markFound(d.id); });
+      hB.addEventListener('click', function(){ markFound(d.id); });
+
+      layerA.appendChild(hA);
+      layerB.appendChild(hB);
+      hotspotPairs[d.id] = [hA, hB];
+    });
+  }
+
+  function markFound(id){
+    if (gameEnded) return;
+    var pair = hotspotPairs[id];
+    if (!pair || pair[0].classList.contains('found')) return;
+    pair[0].classList.add('found');
+    pair[1].classList.add('found');
+    foundCount++;
+    foundVal.textContent = foundCount;
+    if (foundCount >= TOTAL_DIFFS){
+      finishGame(true);
+    }
+  }
+
+  function startGame(){
+    timeLeft = GAME_SECONDS;
+    foundCount = 0;
+    gameEnded = false;
+
+    timeVal.textContent = timeLeft;
+    foundVal.textContent = foundCount;
+    timebar.style.width = '100%';
+    overlayClear.classList.remove('show');
+    overlayTimeup.classList.remove('show');
+
+    screenStart.classList.add('hidden');
+    screenResult.classList.add('hidden');
+    screenGame.classList.remove('hidden');
+
+    blockA.innerHTML = '<div class="hotspot-layer" id="layer-a"></div>';
+    blockB.innerHTML = '<div class="hotspot-layer" id="layer-b"></div>';
+    layerA = document.getElementById('layer-a');
+    layerB = document.getElementById('layer-b');
+    buildScene();
+    buildHotspots();
+
+    clearInterval(timer);
+    timer = setInterval(function(){
+      timeLeft -= 1;
+      timeVal.textContent = Math.max(timeLeft, 0);
+      timebar.style.width = (Math.max(timeLeft, 0) / GAME_SECONDS * 100) + '%';
+      if (timeLeft <= 0){
+        clearInterval(timer);
+        finishGame(false);
+      }
+    }, 1000);
+  }
+
+  function finishGame(allFound){
+    if (gameEnded) return;
+    gameEnded = true;
+    clearInterval(timer);
+    if (allFound){
+      overlayClear.classList.add('show');
+    } else {
+      overlayTimeup.classList.add('show');
+    }
+    setTimeout(function(){ showResult(allFound); }, allFound ? 1800 : 2500);
+  }
+
+  function showResult(allFound){
+    overlayClear.classList.remove('show');
+    overlayTimeup.classList.remove('show');
+    screenGame.classList.add('hidden');
+    screenResult.classList.remove('hidden');
+
+    var remaining = Math.max(timeLeft, 0);
+    var score = allFound
+      ? TOTAL_DIFFS * 20 + remaining * 3
+      : foundCount * 20;
+    score = Math.max(0, score);
+
+    document.getElementById('result-title').textContent = allFound ? '全部見つけた！' : 'タイムアップ';
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('final-found').textContent = foundCount + '/' + TOTAL_DIFFS;
+    document.getElementById('final-time').textContent = remaining + '秒';
+  }
+
+  btnStart.addEventListener('click', startGame);
+  btnRetry.addEventListener('click', startGame);
+})();
+</script>
+</body>
+</html>

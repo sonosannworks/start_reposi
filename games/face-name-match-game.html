@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>顔と名前マッチング - 脳トレゲーム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-top:#EAF4FB;
+    --bg-bottom:#D7E9F7;
+    --card:#FFFFFF;
+    --navy:#1F3A5F;
+    --navy-soft:#5C7693;
+    --blue:#3B82F6;
+    --green:#2BAE66;
+    --red:#E74C3C;
+    --yellow:#E8B400;
+    --chip-bg:#F3F8FD;
+    --shadow:0 12px 30px rgba(31,58,95,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:"M PLUS Rounded 1c", sans-serif;
+    background:linear-gradient(160deg,var(--bg-top),var(--bg-bottom));
+    color:var(--navy);
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior:none;
+  }
+  #app{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .card{
+    width:100%;
+    max-width:400px;
+    background:var(--card);
+    border-radius:32px;
+    box-shadow:var(--shadow);
+    padding:28px 20px 26px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:10px;
+    background:linear-gradient(90deg,var(--blue) 0 33%,var(--green) 33% 66%,var(--yellow) 66% 100%);
+  }
+  h1{
+    font-size:24px;
+    font-weight:900;
+    margin:6px 0 4px;
+  }
+  .sub{
+    font-size:14px;
+    color:var(--navy-soft);
+    margin:0 0 18px;
+    line-height:1.7;
+  }
+  .rule-box{
+    background:var(--chip-bg);
+    border-radius:18px;
+    padding:16px 18px;
+    margin-bottom:20px;
+    text-align:left;
+    font-size:14px;
+    line-height:1.8;
+  }
+  .rule-box b{color:var(--blue);}
+  .btn{
+    border:none;
+    border-radius:20px;
+    font-family:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .08s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn-start{
+    width:100%;
+    padding:20px 0;
+    font-size:22px;
+    color:#fff;
+    background:linear-gradient(135deg,var(--blue),#2563EB);
+    box-shadow:0 10px 22px rgba(59,130,246,0.35);
+  }
+  /* ---- game screen ---- */
+  #screen-game{ position:relative; }
+  .phase-label{
+    font-size:13px;
+    font-weight:700;
+    color:var(--blue);
+    margin-bottom:10px;
+  }
+  .hud{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:10px;
+  }
+  .hud-item{ text-align:left; }
+  .hud-item.right{ text-align:right; }
+  .hud-label{
+    font-size:12px;
+    color:var(--navy-soft);
+    font-weight:700;
+  }
+  .hud-val{
+    font-size:20px;
+    font-weight:900;
+    line-height:1.2;
+  }
+  .timebar-wrap{
+    height:10px;
+    background:#E7EEF6;
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+  .timebar{
+    height:100%;
+    background:linear-gradient(90deg,var(--green),var(--yellow));
+    width:100%;
+    transition:width .25s linear;
+  }
+  /* memorize phase */
+  .memo-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .memo-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--chip-bg);
+    border-radius:16px;
+    padding:8px 14px;
+    text-align:left;
+  }
+  .memo-row .avatar{ width:54px; height:54px; flex-shrink:0; }
+  .memo-row .pname{ font-size:19px; font-weight:900; color:var(--navy); }
+  /* matching phase */
+  .section-label{
+    font-size:12px;
+    font-weight:700;
+    color:var(--navy-soft);
+    text-align:left;
+    margin:10px 0 6px;
+  }
+  .face-grid{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:6px;
+    margin-bottom:6px;
+  }
+  .face-btn{
+    background:#fff;
+    border:3px solid var(--chip-bg);
+    border-radius:14px;
+    padding:4px;
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .face-btn .avatar{ width:100%; height:100%; }
+  .face-btn.selected{ border-color:var(--blue); box-shadow:0 0 0 3px rgba(59,130,246,0.25); }
+  .face-btn.solved{ border-color:var(--green); background:#EAFBF1; opacity:.55; pointer-events:none; }
+  .name-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    margin-bottom:18px;
+  }
+  .name-btn{
+    padding:12px 16px;
+    font-size:16px;
+    border-radius:16px;
+    background:#fff;
+    border:2.5px solid var(--chip-bg);
+    color:var(--navy);
+  }
+  .name-btn.solved{ border-color:var(--green); background:#EAFBF1; color:var(--green); opacity:.55; pointer-events:none; }
+  .name-btn.wrong{ border-color:var(--red); background:#FDEDEB; animation:shake .3s; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-4px); }
+    75%{ transform:translateX(4px); }
+  }
+  .overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.97);
+    border-radius:32px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .overlay.show{ opacity:1; pointer-events:all; }
+  .overlay .ov-title{
+    font-size:32px;
+    font-weight:900;
+    color:var(--navy);
+    margin-bottom:8px;
+  }
+  .overlay .ov-sub{
+    font-size:14px;
+    color:var(--navy-soft);
+  }
+  /* ---- result screen ---- */
+  .result-score{
+    font-size:54px;
+    font-weight:900;
+    color:var(--blue);
+    margin:6px 0 0;
+  }
+  .result-label{
+    font-size:14px;
+    color:var(--navy-soft);
+    margin-bottom:20px;
+  }
+  .stat-row{
+    display:flex;
+    justify-content:space-around;
+    margin-bottom:24px;
+  }
+  .stat{ text-align:center; }
+  .stat .num{ font-size:23px; font-weight:900; }
+  .stat .num.ok{ color:var(--green); }
+  .stat .num.ng{ color:var(--red); }
+  .stat .lab{ font-size:12px; color:var(--navy-soft); margin-top:2px; }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- スタート画面 -->
+  <div class="card" id="screen-start">
+    <h1>顔と名前マッチング</h1>
+    <p class="sub">5人のイラストと名前を覚えて<br>あとからマッチングしよう！</p>
+    <div class="rule-box">
+      まず<b>8秒間</b>で5人の顔と名前を覚えます。<br>
+      その後、シャッフルされた顔と名前を<br>
+      正しい組み合わせでタップしてつなげてください。<br>
+      30秒以内に5人全員をマッチングできるかな？
+    </div>
+    <button class="btn btn-start" id="btn-start">スタート</button>
+  </div>
+
+  <!-- ゲーム画面 -->
+  <div class="card hidden" id="screen-game">
+
+    <!-- 記憶フェーズ -->
+    <div id="phase-memorize">
+      <div class="phase-label">おぼえてください</div>
+      <div class="hud">
+        <div class="hud-item">
+          <div class="hud-label">残り時間</div>
+          <div class="hud-val"><span id="memo-time-val">8</span>秒</div>
+        </div>
+      </div>
+      <div class="timebar-wrap"><div class="timebar" id="memo-timebar"></div></div>
+      <div class="memo-list" id="memo-list"></div>
+    </div>
+
+    <!-- マッチングフェーズ -->
+    <div id="phase-match" class="hidden">
+      <div class="phase-label">マッチングしてください</div>
+      <div class="hud">
+        <div class="hud-item">
+          <div class="hud-label">残り時間</div>
+          <div class="hud-val"><span id="time-val">30</span>秒</div>
+        </div>
+        <div class="hud-item right">
+          <div class="hud-label">正解</div>
+          <div class="hud-val"><span id="correct-val">0</span> / 5</div>
+        </div>
+      </div>
+      <div class="timebar-wrap"><div class="timebar" id="timebar"></div></div>
+
+      <div class="section-label">① まず顔をタップ</div>
+      <div class="face-grid" id="face-grid"></div>
+
+      <div class="section-label">② 名前をタップしてつなげる</div>
+      <div class="name-grid" id="name-grid"></div>
+    </div>
+
+    <div class="overlay" id="overlay-clear">
+      <div class="ov-title">全部マッチ！</div>
+      <div class="ov-sub">結果を集計しています…</div>
+    </div>
+    <div class="overlay" id="overlay-timeup">
+      <div class="ov-title">タイムアップ！</div>
+      <div class="ov-sub">結果を集計しています…</div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div class="card hidden" id="screen-result">
+    <h1 id="result-title">結果</h1>
+    <div class="result-score" id="final-score">0</div>
+    <div class="result-label">点</div>
+    <div class="stat-row">
+      <div class="stat"><div class="num ok" id="final-correct">0</div><div class="lab">正解数</div></div>
+      <div class="stat"><div class="num ng" id="final-wrong">0</div><div class="lab">間違い</div></div>
+      <div class="stat"><div class="num" id="final-time">0秒</div><div class="lab">残り時間</div></div>
+    </div>
+    <button class="btn btn-start" id="btn-retry">もう一度プレイ</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var MEMORIZE_SECONDS = 8;
+  var MATCH_SECONDS = 30;
+  var TOTAL_PEOPLE = 5;
+
+  function avatarSVG(inner){
+    return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+  }
+
+  var PEOPLE = [
+    {
+      id: 1, name: "たろう",
+      svg: avatarSVG(
+        '<circle cx="50" cy="58" r="30" fill="#FCE3C6"/>' +
+        '<path d="M19,46 Q19,12 50,12 Q81,12 81,46 Q81,27 50,25 Q19,27 19,46 Z" fill="#2B2B2B"/>' +
+        '<circle cx="38" cy="55" r="4" fill="#2B2B2B"/>' +
+        '<circle cx="62" cy="55" r="4" fill="#2B2B2B"/>' +
+        '<rect x="39" y="62" width="22" height="5" rx="2.5" fill="#2B2B2B"/>' +
+        '<path d="M40,74 Q50,80 60,74" stroke="#7A4B2E" stroke-width="3" fill="none" stroke-linecap="round"/>'
+      )
+    },
+    {
+      id: 2, name: "はなこ",
+      svg: avatarSVG(
+        '<ellipse cx="18" cy="68" rx="10" ry="26" fill="#6B4226"/>' +
+        '<ellipse cx="82" cy="68" rx="10" ry="26" fill="#6B4226"/>' +
+        '<circle cx="50" cy="58" r="30" fill="#F6D9B8"/>' +
+        '<path d="M19,46 Q19,10 50,10 Q81,10 81,46 Q81,26 50,24 Q19,26 19,46 Z" fill="#6B4226"/>' +
+        '<circle cx="38" cy="56" r="4" fill="#2B2B2B"/>' +
+        '<circle cx="62" cy="56" r="4" fill="#2B2B2B"/>' +
+        '<circle cx="32" cy="66" r="5" fill="#F2A9A9" opacity="0.6"/>' +
+        '<circle cx="68" cy="66" r="5" fill="#F2A9A9" opacity="0.6"/>' +
+        '<path d="M38,74 Q50,84 62,74" stroke="#C1546B" stroke-width="3" fill="none" stroke-linecap="round"/>'
+      )
+    },
+    {
+      id: 3, name: "けんじ",
+      svg: avatarSVG(
+        '<circle cx="50" cy="58" r="30" fill="#E8B98A"/>' +
+        '<path d="M19,52 Q15,38 22,30" stroke="#8C8C8C" stroke-width="7" fill="none" stroke-linecap="round"/>' +
+        '<path d="M81,52 Q85,38 78,30" stroke="#8C8C8C" stroke-width="7" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="38" cy="56" r="9" fill="none" stroke="#1F3A5F" stroke-width="3"/>' +
+        '<circle cx="62" cy="56" r="9" fill="none" stroke="#1F3A5F" stroke-width="3"/>' +
+        '<line x1="47" y1="56" x2="53" y2="56" stroke="#1F3A5F" stroke-width="3"/>' +
+        '<circle cx="38" cy="56" r="3" fill="#2B2B2B"/>' +
+        '<circle cx="62" cy="56" r="3" fill="#2B2B2B"/>' +
+        '<path d="M42,76 Q50,80 58,76" stroke="#7A4B2E" stroke-width="3" fill="none" stroke-linecap="round"/>'
+      )
+    },
+    {
+      id: 4, name: "ゆきこ",
+      svg: avatarSVG(
+        '<ellipse cx="17" cy="70" rx="9" ry="28" fill="#D9D9D9"/>' +
+        '<ellipse cx="83" cy="70" rx="9" ry="28" fill="#D9D9D9"/>' +
+        '<circle cx="50" cy="58" r="30" fill="#FCE3C6"/>' +
+        '<path d="M19,46 Q19,12 50,12 Q81,12 81,46 Q81,28 50,26 Q19,28 19,46 Z" fill="#D9D9D9"/>' +
+        '<line x1="50" y1="13" x2="50" y2="27" stroke="#bbb" stroke-width="2"/>' +
+        '<circle cx="38" cy="56" r="8" fill="none" stroke="#1F3A5F" stroke-width="3"/>' +
+        '<circle cx="62" cy="56" r="8" fill="none" stroke="#1F3A5F" stroke-width="3"/>' +
+        '<line x1="46" y1="56" x2="54" y2="56" stroke="#1F3A5F" stroke-width="3"/>' +
+        '<circle cx="38" cy="56" r="3" fill="#2B2B2B"/>' +
+        '<circle cx="62" cy="56" r="3" fill="#2B2B2B"/>' +
+        '<path d="M40,75 Q50,82 60,75" stroke="#C1546B" stroke-width="3" fill="none" stroke-linecap="round"/>'
+      )
+    },
+    {
+      id: 5, name: "みどり",
+      svg: avatarSVG(
+        '<circle cx="70" cy="20" r="11" fill="#2B2B2B"/>' +
+        '<circle cx="50" cy="58" r="30" fill="#F0C49B"/>' +
+        '<path d="M19,48 Q19,12 50,12 Q81,12 81,48 Q81,26 50,24 Q19,26 19,48 Z" fill="#2B2B2B"/>' +
+        '<circle cx="38" cy="56" r="4" fill="#2B2B2B"/>' +
+        '<circle cx="62" cy="56" r="4" fill="#2B2B2B"/>' +
+        '<circle cx="32" cy="66" r="5" fill="#F2A9A9" opacity="0.6"/>' +
+        '<circle cx="68" cy="66" r="5" fill="#F2A9A9" opacity="0.6"/>' +
+        '<path d="M36,72 Q50,88 64,72" stroke="#C1546B" stroke-width="3" fill="none" stroke-linecap="round"/>'
+      )
+    }
+  ];
+
+  var screenStart = document.getElementById('screen-start');
+  var screenGame = document.getElementById('screen-game');
+  var screenResult = document.getElementById('screen-result');
+
+  var phaseMemorize = document.getElementById('phase-memorize');
+  var phaseMatch = document.getElementById('phase-match');
+  var memoList = document.getElementById('memo-list');
+  var memoTimeVal = document.getElementById('memo-time-val');
+  var memoTimebar = document.getElementById('memo-timebar');
+
+  var faceGrid = document.getElementById('face-grid');
+  var nameGrid = document.getElementById('name-grid');
+  var timeVal = document.getElementById('time-val');
+  var correctVal = document.getElementById('correct-val');
+  var timebar = document.getElementById('timebar');
+
+  var overlayClear = document.getElementById('overlay-clear');
+  var overlayTimeup = document.getElementById('overlay-timeup');
+
+  var btnStart = document.getElementById('btn-start');
+  var btnRetry = document.getElementById('btn-retry');
+
+  var memoTimer, matchTimer, memoTimeLeft, matchTimeLeft;
+  var correctCount, wrongCount, gameEnded, selectedFaceId;
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function buildMemorizeList(){
+    memoList.innerHTML = '';
+    PEOPLE.forEach(function(p){
+      var row = document.createElement('div');
+      row.className = 'memo-row';
+      row.innerHTML = '<div class="avatar">' + p.svg + '</div><div class="pname">' + p.name + 'さん</div>';
+      memoList.appendChild(row);
+    });
+  }
+
+  function buildMatchBoards(){
+    faceGrid.innerHTML = '';
+    nameGrid.innerHTML = '';
+    var shuffledFaces = shuffle(PEOPLE);
+    var shuffledNames = shuffle(PEOPLE);
+
+    shuffledFaces.forEach(function(p){
+      var btn = document.createElement('button');
+      btn.className = 'btn face-btn';
+      btn.dataset.id = p.id;
+      btn.innerHTML = '<div class="avatar">' + p.svg + '</div>';
+      btn.addEventListener('click', function(){ onFaceTap(p.id, btn); });
+      faceGrid.appendChild(btn);
+    });
+
+    shuffledNames.forEach(function(p){
+      var btn = document.createElement('button');
+      btn.className = 'btn name-btn';
+      btn.dataset.id = p.id;
+      btn.textContent = p.name;
+      btn.addEventListener('click', function(){ onNameTap(p.id, btn); });
+      nameGrid.appendChild(btn);
+    });
+  }
+
+  function onFaceTap(id, btnEl){
+    if (gameEnded || btnEl.classList.contains('solved')) return;
+    faceGrid.querySelectorAll('.face-btn').forEach(function(b){ b.classList.remove('selected'); });
+    btnEl.classList.add('selected');
+    selectedFaceId = id;
+  }
+
+  function onNameTap(id, btnEl){
+    if (gameEnded || btnEl.classList.contains('solved')) return;
+    if (selectedFaceId == null) return;
+
+    if (id === selectedFaceId){
+      btnEl.classList.add('solved');
+      var faceEl = faceGrid.querySelector('.face-btn[data-id="' + selectedFaceId + '"]');
+      if (faceEl){ faceEl.classList.remove('selected'); faceEl.classList.add('solved'); }
+      correctCount++;
+      correctVal.textContent = correctCount;
+      selectedFaceId = null;
+      if (correctCount >= TOTAL_PEOPLE){
+        finishMatch(true);
+      }
+    } else {
+      wrongCount++;
+      btnEl.classList.add('wrong');
+      setTimeout(function(){ btnEl.classList.remove('wrong'); }, 300);
+    }
+  }
+
+  function startGame(){
+    correctCount = 0; wrongCount = 0; gameEnded = false; selectedFaceId = null;
+    correctVal.textContent = 0;
+    overlayClear.classList.remove('show');
+    overlayTimeup.classList.remove('show');
+
+    screenStart.classList.add('hidden');
+    screenResult.classList.add('hidden');
+    screenGame.classList.remove('hidden');
+    phaseMemorize.classList.remove('hidden');
+    phaseMatch.classList.add('hidden');
+
+    buildMemorizeList();
+    memoTimeLeft = MEMORIZE_SECONDS;
+    memoTimeVal.textContent = memoTimeLeft;
+    memoTimebar.style.width = '100%';
+
+    clearInterval(memoTimer);
+    memoTimer = setInterval(function(){
+      memoTimeLeft -= 1;
+      memoTimeVal.textContent = Math.max(memoTimeLeft, 0);
+      memoTimebar.style.width = (Math.max(memoTimeLeft, 0) / MEMORIZE_SECONDS * 100) + '%';
+      if (memoTimeLeft <= 0){
+        clearInterval(memoTimer);
+        startMatchPhase();
+      }
+    }, 1000);
+  }
+
+  function startMatchPhase(){
+    phaseMemorize.classList.add('hidden');
+    phaseMatch.classList.remove('hidden');
+    buildMatchBoards();
+
+    matchTimeLeft = MATCH_SECONDS;
+    timeVal.textContent = matchTimeLeft;
+    timebar.style.width = '100%';
+
+    clearInterval(matchTimer);
+    matchTimer = setInterval(function(){
+      matchTimeLeft -= 1;
+      timeVal.textContent = Math.max(matchTimeLeft, 0);
+      timebar.style.width = (Math.max(matchTimeLeft, 0) / MATCH_SECONDS * 100) + '%';
+      if (matchTimeLeft <= 0){
+        clearInterval(matchTimer);
+        finishMatch(false);
+      }
+    }, 1000);
+  }
+
+  function finishMatch(allCorrect){
+    if (gameEnded) return;
+    gameEnded = true;
+    clearInterval(matchTimer);
+    if (allCorrect){
+      overlayClear.classList.add('show');
+    } else {
+      overlayTimeup.classList.add('show');
+    }
+    setTimeout(function(){ showResult(allCorrect); }, allCorrect ? 1800 : 2500);
+  }
+
+  function showResult(allCorrect){
+    overlayClear.classList.remove('show');
+    overlayTimeup.classList.remove('show');
+    screenGame.classList.add('hidden');
+    screenResult.classList.remove('hidden');
+
+    var remaining = Math.max(matchTimeLeft, 0);
+    var score = allCorrect
+      ? TOTAL_PEOPLE * 20 + remaining * 3 - wrongCount * 2
+      : correctCount * 20 - wrongCount * 2;
+    score = Math.max(0, score);
+
+    document.getElementById('result-title').textContent = allCorrect ? '全部マッチ！' : 'タイムアップ';
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('final-correct').textContent = correctCount + '/' + TOTAL_PEOPLE;
+    document.getElementById('final-wrong').textContent = wrongCount;
+    document.getElementById('final-time').textContent = remaining + '秒';
+  }
+
+  btnStart.addEventListener('click', startGame);
+  btnRetry.addEventListener('click', startGame);
+})();
+</script>
+</body>
+</html>
