@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>色当てタップ - 脳トレゲーム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-top:#EAF4FB;
+    --bg-bottom:#D7E9F7;
+    --card:#FFFFFF;
+    --navy:#1F3A5F;
+    --navy-soft:#5C7693;
+    --red:#E74C3C;
+    --blue:#3B82F6;
+    --green:#2BAE66;
+    --yellow:#E8B400;
+    --ok:#2BAE66;
+    --ng:#E74C3C;
+    --shadow:0 12px 30px rgba(31,58,95,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    font-family:"M PLUS Rounded 1c", sans-serif;
+    background:linear-gradient(160deg,var(--bg-top),var(--bg-bottom));
+    color:var(--navy);
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior:none;
+  }
+  #app{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .card{
+    width:100%;
+    max-width:420px;
+    background:var(--card);
+    border-radius:32px;
+    box-shadow:var(--shadow);
+    padding:36px 28px 32px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:10px;
+    background:linear-gradient(90deg,var(--red) 0 25%,var(--yellow) 25% 50%,var(--green) 50% 75%,var(--blue) 75% 100%);
+  }
+  h1{
+    font-size:26px;
+    font-weight:900;
+    margin:6px 0 4px;
+    letter-spacing:.02em;
+  }
+  .sub{
+    font-size:14px;
+    color:var(--navy-soft);
+    margin:0 0 22px;
+    line-height:1.7;
+  }
+  .rule-box{
+    background:#F3F8FD;
+    border-radius:18px;
+    padding:16px 18px;
+    margin-bottom:24px;
+    text-align:left;
+    font-size:14px;
+    line-height:1.8;
+    color:var(--navy);
+  }
+  .rule-box b{color:var(--blue);}
+  .btn{
+    border:none;
+    border-radius:20px;
+    font-family:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn-start{
+    width:100%;
+    padding:20px 0;
+    font-size:22px;
+    color:#fff;
+    background:linear-gradient(135deg,var(--blue),#2563EB);
+    box-shadow:0 10px 22px rgba(59,130,246,0.35);
+  }
+  /* ---- game screen ---- */
+  .hud{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    font-size:15px;
+    font-weight:700;
+    color:var(--navy-soft);
+  }
+  .hud .val{
+    font-size:22px;
+    color:var(--navy);
+    margin-left:6px;
+  }
+  .timebar-wrap{
+    height:10px;
+    background:#E7EEF6;
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:28px;
+  }
+  .timebar{
+    height:100%;
+    background:linear-gradient(90deg,var(--green),var(--yellow));
+    width:100%;
+    transition:width .25s linear;
+  }
+  .word-stage{
+    height:150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:30px;
+    position:relative;
+  }
+  .word{
+    font-size:78px;
+    font-weight:900;
+    line-height:1;
+    user-select:none;
+  }
+  .flash{
+    position:absolute;
+    inset:0;
+    border-radius:24px;
+    opacity:0;
+    pointer-events:none;
+  }
+  .flash.show-ok{background:rgba(43,174,102,0.18);opacity:1;transition:opacity .15s;}
+  .flash.show-ng{background:rgba(231,76,60,0.18);opacity:1;transition:opacity .15s;}
+  .answer-row{
+    display:flex;
+    gap:14px;
+  }
+  .answer-btn{
+    flex:1;
+    padding:24px 0;
+    font-size:19px;
+    border-radius:22px;
+    color:#fff;
+  }
+  .answer-btn.match{background:linear-gradient(135deg,#34C77B,var(--green));box-shadow:0 8px 18px rgba(43,174,102,0.35);}
+  .answer-btn.nomatch{background:linear-gradient(135deg,#F0685A,var(--red));box-shadow:0 8px 18px rgba(231,76,60,0.35);}
+  .answer-btn:disabled{
+    opacity:.4;
+    box-shadow:none;
+    pointer-events:none;
+  }
+  #screen-game{ position:relative; }
+  .timeup-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.97);
+    border-radius:32px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .timeup-overlay.show{
+    opacity:1;
+    pointer-events:all;
+  }
+  .timeup-overlay .tu-title{
+    font-size:36px;
+    font-weight:900;
+    color:var(--navy);
+    margin-bottom:10px;
+  }
+  .timeup-overlay .tu-sub{
+    font-size:14px;
+    color:var(--navy-soft);
+  }
+  /* ---- result screen ---- */
+  .result-score{
+    font-size:58px;
+    font-weight:900;
+    color:var(--blue);
+    margin:6px 0 0;
+  }
+  .result-label{
+    font-size:14px;
+    color:var(--navy-soft);
+    margin-bottom:22px;
+  }
+  .stat-row{
+    display:flex;
+    justify-content:space-around;
+    margin-bottom:26px;
+  }
+  .stat{
+    text-align:center;
+  }
+  .stat .num{
+    font-size:24px;
+    font-weight:900;
+  }
+  .stat .num.ok{color:var(--green);}
+  .stat .num.ng{color:var(--red);}
+  .stat .lab{
+    font-size:12px;
+    color:var(--navy-soft);
+    margin-top:2px;
+  }
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- スタート画面 -->
+  <div class="card" id="screen-start">
+    <h1>色当てタップ</h1>
+    <p class="sub">表示される文字の「色」と「意味」が<br>一致しているかをすばやく判断！</p>
+    <div class="rule-box">
+      文字の<b>色</b>と、書かれている<b>言葉の意味</b>が<br>
+      同じなら「<b style="color:#2BAE66">○ 一致</b>」を、<br>
+      違うなら「<b style="color:#E74C3C">✗ 不一致</b>」をタップ。<br>
+      60秒間でできるだけ多く正解しよう！
+    </div>
+    <button class="btn btn-start" id="btn-start">スタート</button>
+  </div>
+
+  <!-- ゲーム画面 -->
+  <div class="card hidden" id="screen-game">
+    <div class="hud">
+      <div>残り時間<span class="val" id="time-val">60</span>秒</div>
+      <div>得点<span class="val" id="score-val">0</span></div>
+    </div>
+    <div class="timebar-wrap"><div class="timebar" id="timebar"></div></div>
+    <div class="word-stage">
+      <div class="flash" id="flash"></div>
+      <div class="word" id="word-display">赤</div>
+    </div>
+    <div class="answer-row">
+      <button class="btn answer-btn match" id="btn-match">○ 一致</button>
+      <button class="btn answer-btn nomatch" id="btn-nomatch">✗ 不一致</button>
+    </div>
+    <div class="timeup-overlay" id="timeup-overlay">
+      <div class="tu-title">タイムアップ！</div>
+      <div class="tu-sub">結果を集計しています…</div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div class="card hidden" id="screen-result">
+    <h1>タイムアップ！</h1>
+    <div class="result-score" id="final-score">0</div>
+    <div class="result-label">点</div>
+    <div class="stat-row">
+      <div class="stat"><div class="num ok" id="final-ok">0</div><div class="lab">正解</div></div>
+      <div class="stat"><div class="num ng" id="final-ng">0</div><div class="lab">間違い</div></div>
+      <div class="stat"><div class="num" id="final-rate">0%</div><div class="lab">正解率</div></div>
+    </div>
+    <button class="btn btn-start" id="btn-retry">もう一度プレイ</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var COLORS = [
+    {name:"赤", value:"#E74C3C"},
+    {name:"青", value:"#3B82F6"},
+    {name:"緑", value:"#2BAE66"},
+    {name:"黄", value:"#E8B400"}
+  ];
+  var GAME_SECONDS = 60;
+
+  var screenStart = document.getElementById('screen-start');
+  var screenGame = document.getElementById('screen-game');
+  var screenResult = document.getElementById('screen-result');
+
+  var wordDisplay = document.getElementById('word-display');
+  var flashEl = document.getElementById('flash');
+  var timeVal = document.getElementById('time-val');
+  var scoreVal = document.getElementById('score-val');
+  var timebar = document.getElementById('timebar');
+
+  var btnStart = document.getElementById('btn-start');
+  var btnRetry = document.getElementById('btn-retry');
+  var btnMatch = document.getElementById('btn-match');
+  var btnNomatch = document.getElementById('btn-nomatch');
+  var timeupOverlay = document.getElementById('timeup-overlay');
+
+  var score, correctCount, wrongCount, timeLeft, timer, currentIsMatch, locked, gameEnded;
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function newRound(){
+    if (gameEnded) return;
+    locked = false;
+    flashEl.className = 'flash';
+    var meaning = pick(COLORS);
+    var displayColor;
+    // 約45%の確率で一致させる
+    if (Math.random() < 0.45){
+      displayColor = meaning;
+    } else {
+      var others = COLORS.filter(function(c){ return c.name !== meaning.name; });
+      displayColor = pick(others);
+    }
+    currentIsMatch = (meaning.name === displayColor.name);
+    wordDisplay.textContent = meaning.name;
+    wordDisplay.style.color = displayColor.value;
+  }
+
+  function judge(userSaysMatch){
+    if (gameEnded || locked) return;
+    locked = true;
+    var correct = (userSaysMatch === currentIsMatch);
+    if (correct){
+      score += 1;
+      correctCount += 1;
+      flashEl.className = 'flash show-ok';
+    } else {
+      score = Math.max(0, score - 1);
+      wrongCount += 1;
+      flashEl.className = 'flash show-ng';
+    }
+    scoreVal.textContent = score;
+    setTimeout(function(){
+      if (!gameEnded){ newRound(); }
+    }, 150);
+  }
+
+  function setButtonsDisabled(disabled){
+    btnMatch.disabled = disabled;
+    btnNomatch.disabled = disabled;
+  }
+
+  function startGame(){
+    score = 0; correctCount = 0; wrongCount = 0; timeLeft = GAME_SECONDS;
+    gameEnded = false; locked = false;
+    scoreVal.textContent = 0;
+    timeVal.textContent = timeLeft;
+    timebar.style.width = '100%';
+    timeupOverlay.classList.remove('show');
+    setButtonsDisabled(false);
+    screenStart.classList.add('hidden');
+    screenResult.classList.add('hidden');
+    screenGame.classList.remove('hidden');
+    newRound();
+    clearInterval(timer);
+    timer = setInterval(function(){
+      timeLeft -= 1;
+      timeVal.textContent = Math.max(timeLeft, 0);
+      timebar.style.width = (Math.max(timeLeft, 0) / GAME_SECONDS * 100) + '%';
+      if (timeLeft <= 0){
+        clearInterval(timer);
+        timeUpSequence();
+      }
+    }, 1000);
+  }
+
+  function timeUpSequence(){
+    // タイムアップした瞬間、即座に操作を無効化してループを防ぐ
+    gameEnded = true;
+    locked = true;
+    setButtonsDisabled(true);
+    timeupOverlay.classList.add('show');
+    // 3秒間「タイムアップ」を表示してから結果画面へ
+    setTimeout(function(){
+      endGame();
+    }, 3000);
+  }
+
+  function endGame(){
+    timeupOverlay.classList.remove('show');
+    screenGame.classList.add('hidden');
+    screenResult.classList.remove('hidden');
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('final-ok').textContent = correctCount;
+    document.getElementById('final-ng').textContent = wrongCount;
+    var total = correctCount + wrongCount;
+    var rate = total > 0 ? Math.round(correctCount / total * 100) : 0;
+    document.getElementById('final-rate').textContent = rate + '%';
+  }
+
+  btnStart.addEventListener('click', startGame);
+  btnRetry.addEventListener('click', startGame);
+  btnMatch.addEventListener('click', function(){ judge(true); });
+  btnNomatch.addEventListener('click', function(){ judge(false); });
+})();
+</script>
+</body>
+</html>

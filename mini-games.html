@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PX15S7HJLN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PX15S7HJLN');
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiniGame | Designer sonosann Portfolio</title>
+  <meta name="description" content="認知症予防・脳トレを意識したスマホ向けミニゲーム集。タップ・スワイプで遊べる無料の脳トレゲームをまとめています。">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="blog-style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ===== MiniGame ページ専用スタイル ===== */
+    .minigame-hero {
+      padding: 7rem 1.5rem 2rem;
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .game-thumb {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+    }
+    .game-thumb .time-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      background: rgba(0,0,0,0.35);
+      color: #fff;
+      font-size: .72rem;
+      letter-spacing: .05em;
+      padding: .2rem .6rem;
+      border-radius: 999px;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    .web-card.is-soon .web-card-thumb,
+    .web-card.is-soon .game-thumb {
+      filter: grayscale(0.4);
+      opacity: .75;
+    }
+    .web-card-soon-text {
+      display: inline-block;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .82rem;
+      color: #9a9488;
+      letter-spacing: .05em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ナビゲーション -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="./index.html">sonosann</a>
+      <button class="nav-toggle" id="navToggle" aria-label="メニュー">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#youtube">YouTube</a></li>
+        <li><a href="index.html#ai-works">AI Works</a></li>
+        <li><a href="index.html#competition">Competition</a></li>
+        <li><a href="index.html#html-works">Web Design</a></li>
+        <li><a href="mini-games.html">MiniGame</a></li>
+        <li><a href="index.html#skills">Skills</a></li>
+        <li><a href="blog.html">BLOG</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ページ見出し -->
+  <div class="minigame-hero">
+    <h1 class="section-title" style="margin-bottom:.75rem;">MiniGame</h1>
+    <p class="section-sub">タップ・スワイプで遊べる、認知症予防・脳トレを意識したミニゲーム集です。<br>すきま時間に頭の体操をどうぞ。</p>
+  </div>
+
+  <!-- ゲーム一覧 -->
+  <section class="section section-light" id="minigame-list">
+    <div class="container">
+
+      <h2 class="section-title" style="font-size:1.4rem;">Play Now</h2>
+      <p class="section-sub">公開中のゲーム(5種類)</p>
+      <div class="web-grid">
+
+        <!-- 1. 色当てタップ -->
+        <div class="web-card">
+          <div class="web-card-thumb game-thumb" style="background:linear-gradient(135deg,#FDEDEB,#E9F8EF);">
+            🎨
+            <span class="time-badge">60秒</span>
+          </div>
+          <div class="web-card-body">
+            <h3>色当てタップ</h3>
+            <p>表示される文字の「色」と「意味」が一致しているかをすばやく判断してタップ。ストループ課題で注意力を鍛えます。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>タップ</span><span>60秒</span></div>
+            <a href="games/color-tap-game.html" class="web-card-link" target="_blank" rel="noopener">プレイする →</a>
+          </div>
+        </div>
+
+        <!-- 2. 数字消しゲーム -->
+        <div class="web-card">
+          <div class="web-card-thumb game-thumb" style="background:linear-gradient(135deg,#EAF4FB,#FFF7E0);">
+            🔢
+            <span class="time-badge">60秒</span>
+          </div>
+          <div class="web-card-body">
+            <h3>数字消しゲーム</h3>
+            <p>バラバラに散らばった1〜30の数字を、小さい順に見つけてタップ。探索力と集中力を同時に鍛えます。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>タップ</span><span>60秒</span></div>
+            <a href="games/number-clear-game.html" class="web-card-link" target="_blank" rel="noopener">プレイする →</a>
+          </div>
+        </div>
+
+        <!-- 3. 記憶めくりカード -->
+        <div class="web-card">
+          <div class="web-card-thumb game-thumb" style="background:linear-gradient(135deg,#EAF4FB,#E9F8EF);">
+            🧠
+            <span class="time-badge">90秒</span>
+          </div>
+          <div class="web-card-body">
+            <h3>記憶めくりカード</h3>
+            <p>4×4のカードをめくって同じ絵柄のペアを探す、定番の記憶力トレーニング。90秒以内に全8ペアを見つけられるかな？</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>記憶力</span><span>90秒</span></div>
+            <a href="games/memory-match-game.html" class="web-card-link" target="_blank" rel="noopener">プレイする →</a>
+          </div>
+        </div>
+
+        <!-- 4. 左右スワイプ判定 -->
+        <div class="web-card">
+          <div class="web-card-thumb game-thumb" style="background:linear-gradient(135deg,#FDEDEB,#E9F8EF);">
+            👉
+            <span class="time-badge">30秒</span>
+          </div>
+          <div class="web-card-body">
+            <h3>左右スワイプ判定</h3>
+            <p>表示された言葉が「くだもの」か「やさい」かをすばやく判断してスワイプ。とっさの判断力を鍛えます。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>スワイプ</span><span>30秒</span></div>
+            <a href="games/swipe-category-game.html" class="web-card-link" target="_blank" rel="noopener">プレイする →</a>
+          </div>
+        </div>
+
+        <!-- 5. 計算スワイプ -->
+        <div class="web-card">
+          <div class="web-card-thumb game-thumb" style="background:linear-gradient(135deg,#FDEDEB,#E9F8EF);">
+            ➗
+            <span class="time-badge">30秒</span>
+          </div>
+          <div class="web-card-body">
+            <h3>計算スワイプ</h3>
+            <p>計算した答えが奇数か偶数かをすばやく判断してスワイプ。簡単な四則演算で頭の回転を速くします。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>計算</span><span>30秒</span></div>
+            <a href="games/calc-swipe-game.html" class="web-card-link" target="_blank" rel="noopener">プレイする →</a>
+          </div>
+        </div>
+
+      </div>
+
+      <h2 class="section-title" style="font-size:1.4rem; margin-top:3.5rem;">Coming Soon</h2>
+      <p class="section-sub">公開準備中のゲーム</p>
+      <div class="web-grid">
+
+        <!-- 6. 間違い探しタップ -->
+        <div class="web-card is-soon">
+          <div class="web-card-thumb">
+            <span class="web-card-label">🔜 Coming Soon</span>
+          </div>
+          <div class="web-card-body">
+            <h3>間違い探しタップ</h3>
+            <p>似た2枚の絵から異なる箇所をタップで見つける、観察力トレーニング。公開準備中です。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>観察力</span></div>
+            <span class="web-card-soon-text">公開準備中</span>
+          </div>
+        </div>
+
+        <!-- 7. 矢印逆方向タップ -->
+        <div class="web-card is-soon">
+          <div class="web-card-thumb">
+            <span class="web-card-label">🔜 Coming Soon</span>
+          </div>
+          <div class="web-card-body">
+            <h3>矢印逆方向タップ</h3>
+            <p>矢印が示す方向と「逆」のボタンをタップする干渉抑制課題。公開準備中です。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>反応力</span></div>
+            <span class="web-card-soon-text">公開準備中</span>
+          </div>
+        </div>
+
+        <!-- 8. しりとりタップ -->
+        <div class="web-card is-soon">
+          <div class="web-card-thumb">
+            <span class="web-card-label">🔜 Coming Soon</span>
+          </div>
+          <div class="web-card-body">
+            <h3>しりとりタップ</h3>
+            <p>表示単語の最後の文字から始まる単語を選んでタップする、言葉のつながりゲーム。公開準備中です。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>言語</span></div>
+            <span class="web-card-soon-text">公開準備中</span>
+          </div>
+        </div>
+
+        <!-- 9. 増える数字スワイプ -->
+        <div class="web-card is-soon">
+          <div class="web-card-thumb">
+            <span class="web-card-label">🔜 Coming Soon</span>
+          </div>
+          <div class="web-card-body">
+            <h3>増える数字スワイプ</h3>
+            <p>連続して大きくなる数字の並びを正しい順にスワイプでなぞるゲーム。公開準備中です。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>スワイプ</span></div>
+            <span class="web-card-soon-text">公開準備中</span>
+          </div>
+        </div>
+
+        <!-- 10. 顔と名前マッチング -->
+        <div class="web-card is-soon">
+          <div class="web-card-thumb">
+            <span class="web-card-label">🔜 Coming Soon</span>
+          </div>
+          <div class="web-card-body">
+            <h3>顔と名前マッチング</h3>
+            <p>表示された顔写真と名前を一定時間記憶してから一致させる記憶ゲーム。公開準備中です。</p>
+            <div class="web-card-tags"><span>脳トレ</span><span>記憶力</span></div>
+            <span class="web-card-soon-text">公開準備中</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+<footer class="footer">
+  <p>© 2026 sonosann. All rights reserved.</p>
+  <p style="margin-top:.6rem;">
+    <a href="./tokushoho.html"
+       style="font-size:.75rem; color:#b4a078; text-decoration:none; letter-spacing:.1em;">
+      特定商取引法に基づく表記
+    </a>
+  </p>
+</footer>
+<script src="script.js?v=2"></script>
+</body>
+</html>

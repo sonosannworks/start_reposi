@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(git -C \"C:\\\\Users\\\\Owner\\\\AppData\\\\Local\\\\Temp\\\\persona-noindex\\\\cake\" clone https://github.com/sonosannworks/Home-nursing-care.git \"C:\\\\Users\\\\Owner\\\\AppData\\\\Local\\\\Temp\\\\persona-noindex\\\\Home-nursing-care\")",
+      "PowerShell(git clone https://github.com/sonosannworks/accountant.git \"C:\\\\Users\\\\Owner\\\\AppData\\\\Local\\\\Temp\\\\persona-noindex\\\\accountant\")",
+      "PowerShell(git clone https://github.com/sonosannworks/smile-wp.git \"C:\\\\Users\\\\Owner\\\\AppData\\\\Local\\\\Temp\\\\persona-noindex\\\\smile-wp\")",
+      "PowerShell(git clone https://github.com/sonosannworks/valo.git \"C:\\\\Users\\\\Owner\\\\AppData\\\\Local\\\\Temp\\\\persona-noindex\\\\valo\")",
+      "Read(//c/Users/Owner/AppData/Local/Temp/persona-noindex/Home-nursing-care/**)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Owner\\AppData\\Local\\Temp\\persona-noindex\\accountant"
+    ]
+  }
+}
