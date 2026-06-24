@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>間違い探しタップ - 脳トレゲーム</title>
+<title>間違い探しタップ（5ステージ版） - 脳トレゲーム</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -55,7 +55,7 @@
     background:linear-gradient(90deg,var(--blue) 0 33%,var(--green) 33% 66%,var(--yellow) 66% 100%);
   }
   h1{
-    font-size:24px;
+    font-size:23px;
     font-weight:900;
     margin:6px 0 4px;
   }
@@ -101,6 +101,7 @@
     margin-bottom:10px;
   }
   .hud-item{ text-align:left; }
+  .hud-item.mid{ text-align:center; }
   .hud-item.right{ text-align:right; }
   .hud-label{
     font-size:12px;
@@ -108,7 +109,7 @@
     font-weight:700;
   }
   .hud-val{
-    font-size:20px;
+    font-size:19px;
     font-weight:900;
     line-height:1.2;
   }
@@ -190,7 +191,7 @@
   }
   .overlay.show{ opacity:1; pointer-events:all; }
   .overlay .ov-title{
-    font-size:32px;
+    font-size:30px;
     font-weight:900;
     color:var(--navy);
     margin-bottom:8px;
@@ -228,13 +229,14 @@
 
   <!-- スタート画面 -->
   <div class="card" id="screen-start">
-    <h1>間違い探しタップ</h1>
+    <h1>間違い探しタップ<br>（5ステージ版）</h1>
     <p class="sub">よく似た2枚のイラストから<br>違う場所を見つけてタップ！</p>
     <div class="rule-box">
-      上と下、よく似た2枚のイラストの中に<br>
-      <b>6つ</b>の違いが隠れています。<br>
-      見つけた場所をどちらの絵でもタップしてください。<br>
-      60秒以内に全部見つけられるかな？
+      テーマの違う<b>5つのステージ</b>があります。<br>
+      各ステージに<b>5か所</b>の違いが隠れています。<br>
+      見つけた場所をどちらの絵でもタップ。<br>
+      5か所見つけたら次のステージへ進みます。<br>
+      120秒以内に全ステージクリアを目指そう！
     </div>
     <button class="btn btn-start" id="btn-start">スタート</button>
   </div>
@@ -244,29 +246,35 @@
     <div class="hud">
       <div class="hud-item">
         <div class="hud-label">残り時間</div>
-        <div class="hud-val"><span id="time-val">60</span>秒</div>
+        <div class="hud-val"><span id="time-val">120</span>秒</div>
+      </div>
+      <div class="hud-item mid">
+        <div class="hud-label">ステージ</div>
+        <div class="hud-val"><span id="stage-val">1</span> / 5</div>
       </div>
       <div class="hud-item right">
         <div class="hud-label">発見数</div>
-        <div class="hud-val"><span id="found-val">0</span> / 6</div>
+        <div class="hud-val"><span id="found-val">0</span> / 5</div>
       </div>
     </div>
     <div class="timebar-wrap"><div class="timebar" id="timebar"></div></div>
 
     <div class="img-label">① イラストA</div>
     <div class="img-block" id="block-a">
-      <!-- SVG A は JS で挿入 -->
       <div class="hotspot-layer" id="layer-a"></div>
     </div>
 
     <div class="img-label">② イラストB</div>
     <div class="img-block" id="block-b">
-      <!-- SVG B は JS で挿入 -->
       <div class="hotspot-layer" id="layer-b"></div>
     </div>
 
+    <div class="overlay" id="overlay-stage">
+      <div class="ov-title" id="overlay-stage-title">ステージクリア！</div>
+      <div class="ov-sub">次のステージへ進みます…</div>
+    </div>
     <div class="overlay" id="overlay-clear">
-      <div class="ov-title">全部見つけた！</div>
+      <div class="ov-title">全ステージクリア！</div>
       <div class="ov-sub">結果を集計しています…</div>
     </div>
     <div class="overlay" id="overlay-timeup">
@@ -281,7 +289,8 @@
     <div class="result-score" id="final-score">0</div>
     <div class="result-label">点</div>
     <div class="stat-row">
-      <div class="stat"><div class="num ok" id="final-found">0</div><div class="lab">見つけた数</div></div>
+      <div class="stat"><div class="num ok" id="final-stages">0</div><div class="lab">クリアステージ</div></div>
+      <div class="stat"><div class="num ok" id="final-found">0</div><div class="lab">総発見数</div></div>
       <div class="stat"><div class="num" id="final-time">0秒</div><div class="lab">残り時間</div></div>
     </div>
     <button class="btn btn-start" id="btn-retry">もう一度プレイ</button>
@@ -291,12 +300,16 @@
 
 <script>
 (function(){
-  var GAME_SECONDS = 60;
-  var TOTAL_DIFFS = 6;
+  var GAME_SECONDS = 120;
+  var DIFFS_PER_STAGE = 5;
+  var TOTAL_STAGES = 5;
 
-  // SVG A（元のイラスト）
-  var SVG_A =
-    '<svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">' +
+  function svg(inner){
+    return '<svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+  }
+
+  // ===== ステージ1：おうち =====
+  var stage1A = svg(
     '<rect width="300" height="220" fill="#EAF4FB"/>' +
     '<rect x="0" y="200" width="300" height="20" fill="#CFEAD9"/>' +
     '<circle cx="250" cy="35" r="20" fill="#E8B400"/>' +
@@ -319,17 +332,15 @@
     '<circle cx="152" cy="178" r="3" fill="#E8B400"/>' +
     '<circle cx="110" cy="205" r="5" fill="#E74C3C"/>' +
     '<circle cx="140" cy="205" r="5" fill="#E8B400"/>' +
-    '<circle cx="170" cy="205" r="5" fill="#3B82F6"/>' +
-    '</svg>';
-
-  // SVG B（6か所が違う）
-  var SVG_B =
-    '<svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">' +
+    '<circle cx="170" cy="205" r="5" fill="#3B82F6"/>'
+  );
+  var stage1B = svg(
     '<rect width="300" height="220" fill="#EAF4FB"/>' +
     '<rect x="0" y="200" width="300" height="20" fill="#CFEAD9"/>' +
     '<circle cx="250" cy="35" r="20" fill="#E8B400"/>' +
     '<g fill="#ffffff" stroke="#BCD9EC" stroke-width="1">' +
       '<circle cx="38" cy="48" r="10"/><circle cx="50" cy="38" r="12"/><circle cx="62" cy="48" r="10"/><circle cx="50" cy="52" r="9"/>' +
+      '<circle cx="78" cy="33" r="8"/><circle cx="90" cy="25" r="9"/><circle cx="102" cy="33" r="8"/><circle cx="90" cy="36" r="7"/>' +
     '</g>' +
     '<rect x="35" y="160" width="10" height="40" fill="#8B5E3C"/>' +
     '<circle cx="40" cy="150" r="24" fill="#2BAE66"/>' +
@@ -343,16 +354,168 @@
     '<line x1="155" y1="143" x2="185" y2="143" stroke="#5C7693" stroke-width="2"/>' +
     '<rect x="130" y="150" width="30" height="50" fill="#8B5E3C" stroke="#1F3A5F" stroke-width="2"/>' +
     '<circle cx="110" cy="205" r="5" fill="#E74C3C"/>' +
-    '<circle cx="170" cy="205" r="5" fill="#3B82F6"/>' +
-    '</svg>';
+    '<circle cx="170" cy="205" r="5" fill="#3B82F6"/>'
+  );
+  var stage1Diffs = [
+    { x:48.3, y:43.2 }, { x:58.7, y:16.4 }, { x:56.7, y:65.0 }, { x:50.7, y:80.9 }, { x:46.7, y:93.2 }
+  ];
 
-  var DIFFS = [
-    { id:1, x:30.0,  y:14.5 },  // 雲がひとつ少ない
-    { id:2, x:48.3,  y:43.2 },  // 屋根の色
-    { id:3, x:58.7,  y:16.4 },  // 煙の数
-    { id:4, x:56.7,  y:65.0 },  // 窓の色
-    { id:5, x:50.7,  y:80.9 },  // ドアノブ
-    { id:6, x:46.7,  y:93.2 }   // 花の数
+  // ===== ステージ2：うみ =====
+  var stage2A = svg(
+    '<rect width="300" height="220" fill="#EAF4FB"/>' +
+    '<rect x="0" y="140" width="300" height="50" fill="#7EC8E3"/>' +
+    '<rect x="0" y="190" width="300" height="30" fill="#F4E1B5"/>' +
+    '<circle cx="250" cy="35" r="20" fill="#E8B400"/>' +
+    '<path d="M70,160 Q90,150 110,160" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>' +
+    '<path d="M150,170 Q170,160 190,170" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>' +
+    '<path d="M200,155 Q220,145 240,155" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>' +
+    '<rect x="86" y="120" width="6" height="55" fill="#8B5E3C"/>' +
+    '<path d="M55,120 Q90,85 125,120 Z" fill="#E74C3C"/>' +
+    '<polygon points="60,205 60,195 50,200" fill="#F2C9A0"/>' +
+    '<circle cx="60" cy="205" r="6" fill="#F2C9A0"/>' +
+    '<ellipse cx="220" cy="205" rx="14" ry="9" fill="#E74C3C"/>' +
+    '<circle cx="212" cy="200" r="3" fill="#1F3A5F"/>' +
+    '<circle cx="228" cy="200" r="3" fill="#1F3A5F"/>' +
+    '<rect x="145" y="180" width="12" height="18" fill="#E8C98A"/>' +
+    '<polygon points="151,168 151,180 162,174" fill="#3B82F6"/>'
+  );
+  var stage2B = svg(
+    '<rect width="300" height="220" fill="#EAF4FB"/>' +
+    '<rect x="0" y="140" width="300" height="50" fill="#7EC8E3"/>' +
+    '<rect x="0" y="190" width="300" height="30" fill="#F4E1B5"/>' +
+    '<circle cx="250" cy="35" r="20" fill="#E8B400"/>' +
+    '<path d="M70,160 Q90,150 110,160" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>' +
+    '<path d="M150,170 Q170,160 190,170" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>' +
+    '<rect x="86" y="120" width="6" height="55" fill="#8B5E3C"/>' +
+    '<path d="M55,120 Q90,85 125,120 Z" fill="#2BAE66"/>' +
+    '<rect x="145" y="180" width="12" height="18" fill="#E8C98A"/>'
+  );
+  var stage2Diffs = [
+    { x:30.0, y:50.0 }, { x:66.7, y:75.0 }, { x:20.0, y:93.2 }, { x:73.3, y:93.2 }, { x:50.0, y:89.5 }
+  ];
+
+  // ===== ステージ3：こうえん =====
+  var stage3A = svg(
+    '<rect width="300" height="220" fill="#EAF4FB"/>' +
+    '<rect x="0" y="180" width="300" height="40" fill="#BFE3C9"/>' +
+    '<circle cx="250" cy="35" r="18" fill="#E8B400"/>' +
+    '<circle cx="210" cy="50" r="9" fill="#5C7693"/>' +
+    '<polygon points="210,50 218,55 210,58" fill="#5C7693"/>' +
+    '<rect x="40" y="140" width="10" height="40" fill="#8B5E3C"/>' +
+    '<circle cx="45" cy="125" r="26" fill="#2BAE66"/>' +
+    '<rect x="115" y="190" width="40" height="6" fill="#B5835A"/>' +
+    '<rect x="118" y="196" width="5" height="14" fill="#8B5E3C"/>' +
+    '<rect x="148" y="196" width="5" height="14" fill="#8B5E3C"/>' +
+    '<rect x="115" y="178" width="40" height="6" fill="#B5835A"/>' +
+    '<circle cx="190" cy="205" r="12" fill="#E74C3C"/>' +
+    '<ellipse cx="232" cy="200" rx="20" ry="13" fill="#E8C98A"/>' +
+    '<circle cx="250" cy="190" r="10" fill="#E8C98A"/>' +
+    '<polygon points="216,198 226,192 226,204" fill="#E8C98A"/>' +
+    '<circle cx="65" cy="205" r="4" fill="#E74C3C"/>' +
+    '<circle cx="75" cy="208" r="4" fill="#E8B400"/>' +
+    '<circle cx="85" cy="205" r="4" fill="#3B82F6"/>'
+  );
+  var stage3B = svg(
+    '<rect width="300" height="220" fill="#EAF4FB"/>' +
+    '<rect x="0" y="180" width="300" height="40" fill="#BFE3C9"/>' +
+    '<circle cx="250" cy="35" r="18" fill="#E8B400"/>' +
+    '<rect x="40" y="140" width="10" height="40" fill="#8B5E3C"/>' +
+    '<circle cx="45" cy="125" r="26" fill="#2BAE66"/>' +
+    '<rect x="118" y="196" width="5" height="14" fill="#8B5E3C"/>' +
+    '<rect x="148" y="196" width="5" height="14" fill="#8B5E3C"/>' +
+    '<rect x="115" y="178" width="40" height="6" fill="#B5835A"/>' +
+    '<circle cx="190" cy="205" r="12" fill="#3B82F6"/>' +
+    '<ellipse cx="232" cy="200" rx="20" ry="13" fill="#E8C98A"/>' +
+    '<circle cx="250" cy="190" r="10" fill="#E8C98A"/>' +
+    '<circle cx="65" cy="205" r="4" fill="#E74C3C"/>' +
+    '<circle cx="85" cy="205" r="4" fill="#3B82F6"/>'
+  );
+  var stage3Diffs = [
+    { x:43.3, y:84.1 }, { x:63.3, y:93.2 }, { x:77.3, y:88.6 }, { x:70.0, y:22.7 }, { x:23.3, y:93.2 }
+  ];
+
+  // ===== ステージ4：テーブル =====
+  var stage4A = svg(
+    '<rect width="300" height="220" fill="#FBEFD9"/>' +
+    '<rect x="0" y="150" width="300" height="70" fill="#B5835A"/>' +
+    '<circle cx="120" cy="172" r="30" fill="#ffffff" stroke="#5C7693" stroke-width="2"/>' +
+    '<circle cx="120" cy="148" r="3" fill="#9FD8EF"/>' +
+    '<circle cx="106" cy="155" r="3" fill="#9FD8EF"/>' +
+    '<circle cx="134" cy="155" r="3" fill="#9FD8EF"/>' +
+    '<rect x="190" y="150" width="26" height="24" rx="4" fill="#3B82F6"/>' +
+    '<path d="M216,156 q10,0 10,8 q0,8 -10,8" stroke="#3B82F6" stroke-width="3" fill="none"/>' +
+    '<circle cx="55" cy="165" r="9" fill="#E74C3C"/>' +
+    '<circle cx="75" cy="170" r="9" fill="#E74C3C"/>' +
+    '<rect x="157" y="178" width="6" height="30" fill="#9CA3AF"/>' +
+    '<rect x="155" y="178" width="3" height="14" fill="#9CA3AF"/>' +
+    '<rect x="160" y="178" width="3" height="14" fill="#9CA3AF"/>' +
+    '<rect x="165" y="178" width="3" height="14" fill="#9CA3AF"/>' +
+    '<line x1="240" y1="155" x2="240" y2="215" stroke="#8B5E3C" stroke-width="3"/>' +
+    '<line x1="255" y1="155" x2="255" y2="215" stroke="#8B5E3C" stroke-width="3"/>' +
+    '<line x1="270" y1="155" x2="270" y2="215" stroke="#8B5E3C" stroke-width="3"/>'
+  );
+  var stage4B = svg(
+    '<rect width="300" height="220" fill="#FBEFD9"/>' +
+    '<rect x="0" y="150" width="300" height="70" fill="#B5835A"/>' +
+    '<circle cx="120" cy="172" r="30" fill="#ffffff" stroke="#5C7693" stroke-width="2"/>' +
+    '<circle cx="120" cy="148" r="3" fill="#9FD8EF"/>' +
+    '<circle cx="106" cy="155" r="3" fill="#9FD8EF"/>' +
+    '<rect x="190" y="150" width="26" height="24" rx="4" fill="#E74C3C"/>' +
+    '<path d="M216,156 q10,0 10,8 q0,8 -10,8" stroke="#E74C3C" stroke-width="3" fill="none"/>' +
+    '<circle cx="55" cy="165" r="9" fill="#E74C3C"/>' +
+    '<line x1="240" y1="155" x2="240" y2="215" stroke="#8B5E3C" stroke-width="3"/>' +
+    '<line x1="255" y1="155" x2="255" y2="215" stroke="#8B5E3C" stroke-width="3"/>'
+  );
+  var stage4Diffs = [
+    { x:40.0, y:67.3 }, { x:66.7, y:72.7 }, { x:25.0, y:77.3 }, { x:53.3, y:86.4 }, { x:83.3, y:90.9 }
+  ];
+
+  // ===== ステージ5：にわ =====
+  var stage5A = svg(
+    '<rect width="300" height="220" fill="#EAF4FB"/>' +
+    '<rect x="0" y="150" width="300" height="70" fill="#CFEAD9"/>' +
+    '<g fill="#ffffff" stroke="#BCD9EC" stroke-width="1">' +
+      '<circle cx="208" cy="42" r="8"/><circle cx="220" cy="34" r="9"/><circle cx="232" cy="42" r="8"/><circle cx="220" cy="45" r="7"/>' +
+    '</g>' +
+    '<rect x="200" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<rect x="220" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<rect x="240" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<rect x="260" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<rect x="280" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<circle cx="70" cy="205" r="6" fill="#E74C3C"/>' +
+    '<circle cx="88" cy="205" r="6" fill="#E8B400"/>' +
+    '<circle cx="106" cy="205" r="6" fill="#3B82F6"/>' +
+    '<circle cx="124" cy="205" r="6" fill="#2BAE66"/>' +
+    '<ellipse cx="148" cy="88" rx="12" ry="7" fill="#F2A9A9" transform="rotate(-20 148 88)"/>' +
+    '<ellipse cx="158" cy="92" rx="12" ry="7" fill="#F2A9A9" transform="rotate(20 158 92)"/>' +
+    '<rect x="55" y="155" width="22" height="20" fill="#3B82F6"/>' +
+    '<line x1="77" y1="160" x2="95" y2="150" stroke="#3B82F6" stroke-width="4"/>'
+  );
+  var stage5B = svg(
+    '<rect width="300" height="220" fill="#EAF4FB"/>' +
+    '<rect x="0" y="150" width="300" height="70" fill="#CFEAD9"/>' +
+    '<rect x="200" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<rect x="220" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<rect x="240" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<rect x="260" y="170" width="6" height="40" fill="#8B5E3C"/>' +
+    '<circle cx="70" cy="205" r="6" fill="#E74C3C"/>' +
+    '<circle cx="88" cy="205" r="6" fill="#E8B400"/>' +
+    '<circle cx="106" cy="205" r="6" fill="#3B82F6"/>' +
+    '<ellipse cx="148" cy="88" rx="12" ry="7" fill="#B89AE0" transform="rotate(-20 148 88)"/>' +
+    '<ellipse cx="158" cy="92" rx="12" ry="7" fill="#B89AE0" transform="rotate(20 158 92)"/>' +
+    '<rect x="55" y="155" width="22" height="20" fill="#2BAE66"/>' +
+    '<line x1="77" y1="160" x2="95" y2="150" stroke="#2BAE66" stroke-width="4"/>'
+  );
+  var stage5Diffs = [
+    { x:73.3, y:18.2 }, { x:83.3, y:81.8 }, { x:30.0, y:93.2 }, { x:50.0, y:40.9 }, { x:20.0, y:77.3 }
+  ];
+
+  var STAGES = [
+    { name:"おうち",   svgA: stage1A, svgB: stage1B, diffs: stage1Diffs },
+    { name:"うみ",     svgA: stage2A, svgB: stage2B, diffs: stage2Diffs },
+    { name:"こうえん", svgA: stage3A, svgB: stage3B, diffs: stage3Diffs },
+    { name:"テーブル", svgA: stage4A, svgB: stage4B, diffs: stage4Diffs },
+    { name:"にわ",     svgA: stage5A, svgB: stage5B, diffs: stage5Diffs }
   ];
 
   var screenStart = document.getElementById('screen-start');
@@ -361,42 +524,46 @@
 
   var blockA = document.getElementById('block-a');
   var blockB = document.getElementById('block-b');
-  var layerA = document.getElementById('layer-a');
-  var layerB = document.getElementById('layer-b');
 
   var timeVal = document.getElementById('time-val');
+  var stageVal = document.getElementById('stage-val');
   var foundVal = document.getElementById('found-val');
   var timebar = document.getElementById('timebar');
+  var overlayStage = document.getElementById('overlay-stage');
+  var overlayStageTitle = document.getElementById('overlay-stage-title');
   var overlayClear = document.getElementById('overlay-clear');
   var overlayTimeup = document.getElementById('overlay-timeup');
 
   var btnStart = document.getElementById('btn-start');
   var btnRetry = document.getElementById('btn-retry');
 
-  var timeLeft, timer, foundCount, gameEnded, hotspotPairs;
+  var timeLeft, timer, gameEnded;
+  var stageIndex, foundInStage, totalFound, stagesCleared;
+  var hotspotPairs, layerA, layerB;
 
-  function buildScene(){
-    blockA.insertAdjacentHTML('afterbegin', SVG_A);
-    blockB.insertAdjacentHTML('afterbegin', SVG_B);
-  }
+  function loadStage(){
+    var stage = STAGES[stageIndex];
+    foundInStage = 0;
+    foundVal.textContent = foundInStage;
+    stageVal.textContent = stageIndex + 1;
 
-  function buildHotspots(){
-    layerA.innerHTML = '';
-    layerB.innerHTML = '';
+    blockA.innerHTML = stage.svgA + '<div class="hotspot-layer" id="layer-a"></div>';
+    blockB.innerHTML = stage.svgB + '<div class="hotspot-layer" id="layer-b"></div>';
+    layerA = document.getElementById('layer-a');
+    layerB = document.getElementById('layer-b');
+
     hotspotPairs = {};
-    DIFFS.forEach(function(d){
+    stage.diffs.forEach(function(d, i){
       var hA = document.createElement('button');
       hA.className = 'hotspot';
       hA.style.left = d.x + '%';
       hA.style.top = d.y + '%';
       var hB = hA.cloneNode(true);
-
-      hA.addEventListener('click', function(){ markFound(d.id); });
-      hB.addEventListener('click', function(){ markFound(d.id); });
-
+      hA.addEventListener('click', function(){ markFound(i); });
+      hB.addEventListener('click', function(){ markFound(i); });
       layerA.appendChild(hA);
       layerB.appendChild(hB);
-      hotspotPairs[d.id] = [hA, hB];
+      hotspotPairs[i] = [hA, hB];
     });
   }
 
@@ -406,21 +573,42 @@
     if (!pair || pair[0].classList.contains('found')) return;
     pair[0].classList.add('found');
     pair[1].classList.add('found');
-    foundCount++;
-    foundVal.textContent = foundCount;
-    if (foundCount >= TOTAL_DIFFS){
-      finishGame(true);
+    foundInStage++;
+    totalFound++;
+    foundVal.textContent = foundInStage;
+
+    if (foundInStage >= DIFFS_PER_STAGE){
+      onStageCleared();
     }
+  }
+
+  function onStageCleared(){
+    stagesCleared++;
+    if (stageIndex >= TOTAL_STAGES - 1){
+      finishGame(true);
+      return;
+    }
+    overlayStageTitle.textContent = 'ステージ' + (stageIndex + 1) + 'クリア！';
+    overlayStage.classList.add('show');
+    setTimeout(function(){
+      overlayStage.classList.remove('show');
+      if (!gameEnded){
+        stageIndex++;
+        loadStage();
+      }
+    }, 1300);
   }
 
   function startGame(){
     timeLeft = GAME_SECONDS;
-    foundCount = 0;
+    stageIndex = 0;
+    totalFound = 0;
+    stagesCleared = 0;
     gameEnded = false;
 
     timeVal.textContent = timeLeft;
-    foundVal.textContent = foundCount;
     timebar.style.width = '100%';
+    overlayStage.classList.remove('show');
     overlayClear.classList.remove('show');
     overlayTimeup.classList.remove('show');
 
@@ -428,12 +616,7 @@
     screenResult.classList.add('hidden');
     screenGame.classList.remove('hidden');
 
-    blockA.innerHTML = '<div class="hotspot-layer" id="layer-a"></div>';
-    blockB.innerHTML = '<div class="hotspot-layer" id="layer-b"></div>';
-    layerA = document.getElementById('layer-a');
-    layerB = document.getElementById('layer-b');
-    buildScene();
-    buildHotspots();
+    loadStage();
 
     clearInterval(timer);
     timer = setInterval(function(){
@@ -447,33 +630,33 @@
     }, 1000);
   }
 
-  function finishGame(allFound){
+  function finishGame(allCleared){
     if (gameEnded) return;
     gameEnded = true;
     clearInterval(timer);
-    if (allFound){
+    overlayStage.classList.remove('show');
+    if (allCleared){
       overlayClear.classList.add('show');
     } else {
       overlayTimeup.classList.add('show');
     }
-    setTimeout(function(){ showResult(allFound); }, allFound ? 1800 : 2500);
+    setTimeout(function(){ showResult(allCleared); }, allCleared ? 1800 : 2500);
   }
 
-  function showResult(allFound){
+  function showResult(allCleared){
     overlayClear.classList.remove('show');
     overlayTimeup.classList.remove('show');
     screenGame.classList.add('hidden');
     screenResult.classList.remove('hidden');
 
     var remaining = Math.max(timeLeft, 0);
-    var score = allFound
-      ? TOTAL_DIFFS * 20 + remaining * 3
-      : foundCount * 20;
+    var score = totalFound * 10 + stagesCleared * 15 + (allCleared ? remaining * 3 : 0);
     score = Math.max(0, score);
 
-    document.getElementById('result-title').textContent = allFound ? '全部見つけた！' : 'タイムアップ';
+    document.getElementById('result-title').textContent = allCleared ? '全ステージクリア！' : 'タイムアップ';
     document.getElementById('final-score').textContent = score;
-    document.getElementById('final-found').textContent = foundCount + '/' + TOTAL_DIFFS;
+    document.getElementById('final-stages').textContent = stagesCleared + '/' + TOTAL_STAGES;
+    document.getElementById('final-found').textContent = totalFound + '/' + (TOTAL_STAGES * DIFFS_PER_STAGE);
     document.getElementById('final-time').textContent = remaining + '秒';
   }
 
