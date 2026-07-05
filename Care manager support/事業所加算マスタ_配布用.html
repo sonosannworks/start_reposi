@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>事業所加算マスタ</title>
+<style>
+  :root {
+    --ink: #1c2b27;
+    --ink-soft: #4b5c57;
+    --paper: #f7f6f2;
+    --panel: #ffffff;
+    --line: #dfe3e0;
+    --brand: #1f6f5c;
+    --brand-deep: #16463a;
+    --brand-soft: #e6efec;
+    --amber: #c99b1f;
+    --danger: #b3432f;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    background: var(--brand-deep);
+    color: #eef4f2;
+    padding: 22px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+  }
+  .sidebar .brand {
+    font-size: 15px;
+    font-weight: 700;
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+  .sidebar .brand small {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+  .tab-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: #dfeae6;
+    padding: 12px 20px;
+    font-size: 13.5px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    font-family: inherit;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.06); }
+  .tab-btn.active {
+    background: rgba(255,255,255,0.1);
+    border-left: 3px solid #6fcfb2;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .sidebar-guide {
+    margin: 0 12px 10px 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+  }
+  .sidebar-guide summary {
+    padding: 10px 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #eef4f2;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  .sidebar-guide summary::-webkit-details-marker { display: none; }
+  .sidebar-guide summary::after {
+    content: "▼";
+    font-size: 9px;
+    opacity: 0.7;
+    transition: transform 0.2s ease;
+  }
+  .sidebar-guide[open] summary::after { transform: rotate(180deg); }
+  .sidebar-guide summary:hover { background: rgba(255,255,255,0.06); border-radius: 8px; }
+  .sidebar-guide-body {
+    padding: 0 12px 12px 12px;
+    font-size: 11px;
+    line-height: 1.75;
+    color: rgba(238,244,242,0.88);
+  }
+  .sidebar-guide-body p { margin: 0 0 8px 0; }
+  .sidebar-guide-body p:last-child { margin-bottom: 0; }
+
+  .sidebar-footer {
+    padding: 16px 20px 4px 20px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+  .sidebar-footer-notice {
+    font-size: 9.5px;
+    line-height: 1.6;
+    color: rgba(238,244,242,0.65);
+    margin-bottom: 8px;
+  }
+  .sidebar-footer-brand {
+    font-size: 11px;
+    font-weight: 700;
+    color: #a9dcc9;
+    letter-spacing: 0.5px;
+  }
+
+  /* Main */
+  .main { flex: 1; padding: 30px 40px; max-width: 980px; }
+  h1 { font-size: 20px; margin: 0 0 4px 0; color: var(--brand-deep); }
+  .subtitle { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 24px; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+  .panel h2 {
+    font-size: 14px;
+    margin: 0 0 14px 0;
+    color: var(--brand-deep);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  label { font-size: 12px; color: var(--ink-soft); display: block; margin-bottom: 4px; }
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13.5px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ink);
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-soft);
+  }
+
+  .row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .row > div { flex: 1; }
+
+  .addon-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr 1fr auto;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: start;
+  }
+  .addon-row input { font-size: 12.5px; }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 13px;
+    border: none;
+    padding: 8px 14px;
+  }
+  .btn-primary { background: var(--brand); color: #fff; font-weight: 700; }
+  .btn-primary:hover { background: var(--brand-deep); }
+  .btn-ghost { background: none; border: 1px solid var(--line); color: var(--ink-soft); }
+  .btn-ghost:hover { background: #f1f1ee; }
+  .btn-icon {
+    background: none; border: none; color: var(--danger);
+    font-size: 16px; padding: 4px 8px;
+  }
+  .btn-add-row {
+    background: var(--brand-soft); color: var(--brand-deep);
+    font-size: 12px; padding: 6px 10px; margin-top: 4px;
+  }
+
+  .provider-list { display: flex; flex-direction: column; gap: 8px; }
+  .provider-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fdfdfc;
+  }
+  .provider-card .name { font-weight: 700; font-size: 13.5px; color: var(--brand-deep); }
+  .provider-card .meta { font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; }
+  .provider-card .actions { display: flex; gap: 6px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
+  /* Plan builder */
+  .provider-select-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--brand-soft);
+    color: var(--brand-deep);
+    border-radius: 20px;
+    padding: 5px 12px 5px 12px;
+    font-size: 12.5px;
+    margin: 4px 6px 4px 0;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .provider-select-chip.selected { border-color: var(--brand); background: var(--brand); color: #fff; }
+
+  .addon-check-list { margin-top: 14px; }
+  .addon-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 13px;
+  }
+  .addon-check-item:last-child { border-bottom: none; }
+  .addon-check-item input { width: auto; margin-top: 3px; }
+  .addon-check-item .a-name { font-weight: 700; }
+  .addon-check-item .a-note { color: var(--ink-soft); font-size: 12px; }
+
+  .output-box {
+    background: #f4f8f6;
+    border: 1px solid #cfe2da;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    white-space: pre-wrap;
+    line-height: 1.7;
+    min-height: 60px;
+  }
+  .output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--brand-deep);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 50;
+  }
+  .toast.show { opacity: 1; }
+
+  .hint { font-size: 11.5px; color: var(--ink-soft); margin-top: 6px; }
+  .section-divider { height: 1px; background: var(--line); margin: 18px 0; }
+  .badge { font-size: 10.5px; background: var(--brand-soft); color: var(--brand-deep); padding: 2px 8px; border-radius: 10px; }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .filter-cat-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .cat-btn {
+    background: #fff;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 16px;
+  }
+  .cat-btn:hover { background: #f1f1ee; }
+  .cat-btn.active {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+    font-weight: 700;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 160px;
+    max-width: 260px;
+    padding: 7px 12px;
+    font-size: 12.5px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-soft);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="sidebar">
+    <div>
+      <div class="brand">事業所加算マスタ<small>ケアプラン作成支援ツール</small></div>
+      <details class="sidebar-guide">
+        <summary>はじめに:使い方</summary>
+        <div class="sidebar-guide-body">
+          <p>① まず「① 事業所マスタ管理」で、よく使う事業所を登録します(加算名・単位数・算定要件のメモ・確認日)。</p>
+          <p>② 「② プラン作成補助」で、利用者ごとに事業所を選び、該当する加算にチェックすると、コピー用の文章が自動で作られます。</p>
+          <p>③ このデータはこのブラウザの中だけに保存されます。パソコンを買い替える時や、他の端末でも使いたい時は、「バックアップを書き出す」でファイルに保存し、新しい端末で「バックアップを読み込む」から読み込んでください。</p>
+          <p>④ 加算の単位数や算定要件は介護報酬改定で変わることがあります。「確認日」から1年以上経った項目には目印が付きますので、定期的に見直してください。</p>
+        </div>
+      </details>
+      <button class="tab-btn active" data-tab="master">① 事業所マスタ管理</button>
+      <button class="tab-btn" data-tab="build">② プラン作成補助</button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-notice">本ツールの無断複製・再配布・転売を禁じます。ご購入者様ご本人の業務利用に限ります。</div>
+      <div class="sidebar-footer-brand">sonosann Web&amp;AIサポート</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- ============ TAB: MASTER ============ -->
+    <div id="tab-master">
+      <h1>事業所マスタ管理</h1>
+      <div class="subtitle">事業所ごとの加算情報を一度登録しておけば、別の利用者のプラン作成時にも使い回せます。</div>
+
+      <div class="panel">
+        <h2>データのバックアップ</h2>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="btn-primary" onclick="exportBackup()">バックアップを書き出す(.json)</button>
+          <button class="btn-ghost" onclick="document.getElementById('import-file').click()">バックアップを読み込む</button>
+          <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importBackup(event)">
+        </div>
+        <div class="hint">定期的に書き出しておくと、パソコンの故障やブラウザのデータ消去があっても安心です。</div>
+      </div>
+
+      <div class="panel">
+        <h2 id="form-title">事業所を登録する</h2>
+        <div class="row">
+          <div>
+            <label>事業所名</label>
+            <input type="text" id="p-name" placeholder="例:○○デイサービスセンター">
+          </div>
+          <div>
+            <label>サービス種別</label>
+            <input type="text" id="p-type" placeholder="例:通所介護" list="service-types">
+            <datalist id="service-types">
+              <option value="訪問介護"></option>
+              <option value="訪問看護"></option>
+              <option value="通所介護"></option>
+              <option value="通所リハビリテーション"></option>
+              <option value="福祉用具貸与"></option>
+              <option value="短期入所生活介護"></option>
+              <option value="居宅療養管理指導"></option>
+            </datalist>
+          </div>
+        </div>
+
+        <label>加算リスト</label>
+        <div class="addon-row" style="margin-bottom:4px;">
+          <div class="hint" style="margin:0;">加算名</div>
+          <div class="hint" style="margin:0;">単位数</div>
+          <div class="hint" style="margin:0;">算定要件・メモ</div>
+          <div class="hint" style="margin:0;">確認日</div>
+          <div></div>
+        </div>
+        <div id="addon-rows"></div>
+        <button class="btn-add-row" onclick="addAddonRow()">＋ 加算を追加</button>
+
+        <div class="section-divider"></div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn-primary" onclick="saveProvider()">この内容で保存</button>
+          <button class="btn-ghost" onclick="resetForm()">クリア</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>登録済み事業所 <span class="badge" id="provider-count">0件</span></h2>
+        <div class="filter-bar">
+          <div class="filter-cat-group" id="master-cat-filter"></div>
+          <input type="text" id="master-search" class="search-input" placeholder="事業所名で検索(頭文字でも可)" oninput="renderProviderList()">
+        </div>
+        <div class="provider-list" id="provider-list"></div>
+      </div>
+    </div>
+
+    <!-- ============ TAB: BUILD ============ -->
+    <div id="tab-build" style="display:none;">
+      <h1>プラン作成補助</h1>
+      <div class="subtitle">利用する事業所を選び、該当する加算にチェックを入れると、コピー用の文章が自動で作られます。</div>
+
+      <div class="panel">
+        <h2>① 事業所を選択(複数選択可)</h2>
+        <div class="filter-bar">
+          <div class="filter-cat-group" id="build-cat-filter"></div>
+          <input type="text" id="build-search" class="search-input" placeholder="事業所名で検索(頭文字でも可)" oninput="renderProviderChips()">
+        </div>
+        <div id="provider-chips"></div>
+        <div class="hint">事業所名をタップして選択・解除できます。事業所マスタが未登録の場合は「①事業所マスタ管理」から登録してください。</div>
+      </div>
+
+      <div class="panel" id="addon-selection-panel" style="display:none;">
+        <h2>② 加算をチェック</h2>
+        <div id="addon-selection"></div>
+      </div>
+
+      <div class="panel">
+        <div class="output-header">
+          <h2 style="margin:0;">③ コピー用テキスト</h2>
+          <button class="btn-primary" onclick="copyOutput()">コピーする</button>
+        </div>
+        <div class="output-box" id="output-text">事業所と加算を選択すると、ここに文章が表示されます。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let providers = [];
+let editingId = null;
+let selectedProviderIds = new Set();
+let selectedAddonIds = new Set();
+
+const STORAGE_KEY = 'addon_master_providers_v1';
+
+function loadProviders() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    providers = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    providers = [];
+  }
+  renderProviderList();
+  renderProviderChips();
+}
+
+function persistProviders() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(providers));
+  } catch (e) {
+    showToast('保存に失敗しました。ブラウザの空き容量をご確認ください。');
+  }
+}
+
+function exportBackup() {
+  const blob = new Blob([JSON.stringify(providers, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const today = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `事業所加算マスタ_バックアップ_${today}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('バックアップファイルを書き出しました');
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('形式が不正です');
+      const merge = confirm('現在のデータに追加しますか？\n「OK」で追加、「キャンセル」で全て置き換えます。');
+      if (merge) {
+        providers = providers.concat(imported);
+      } else {
+        providers = imported;
+      }
+      persistProviders();
+      renderProviderList();
+      renderProviderChips();
+      showToast('読み込みました');
+    } catch (err) {
+      showToast('ファイルの読み込みに失敗しました');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ---------- Tab switching ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('tab-master').style.display = tab === 'master' ? 'block' : 'none';
+    document.getElementById('tab-build').style.display = tab === 'build' ? 'block' : 'none';
+    if (tab === 'build') { renderProviderChips(); }
+  });
+});
+
+// ---------- Addon row builder (form) ----------
+function addAddonRow(values) {
+  const wrap = document.getElementById('addon-rows');
+  const row = document.createElement('div');
+  row.className = 'addon-row';
+  const today = new Date().toISOString().slice(0, 10);
+  row.innerHTML = `
+    <input type="text" class="a-name" placeholder="加算名(例:個別機能訓練加算Ⅰ)" value="${values?.name ? escapeHtml(values.name) : ''}">
+    <input type="text" class="a-unit" placeholder="単位数(任意)" value="${values?.unit ? escapeHtml(values.unit) : ''}">
+    <input type="text" class="a-note" placeholder="算定要件・メモ(任意)" value="${values?.note ? escapeHtml(values.note) : ''}">
+    <input type="date" class="a-updated" title="この情報の確認日" value="${values?.updated || today}">
+    <button class="btn-icon" onclick="this.parentElement.remove()" title="この加算を削除">✕</button>
+  `;
+  wrap.appendChild(row);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function resetForm() {
+  editingId = null;
+  document.getElementById('form-title').textContent = '事業所を登録する';
+  document.getElementById('p-name').value = '';
+  document.getElementById('p-type').value = '';
+  document.getElementById('addon-rows').innerHTML = '';
+  addAddonRow();
+}
+
+// ---------- Save provider ----------
+function saveProvider() {
+  const name = document.getElementById('p-name').value.trim();
+  const type = document.getElementById('p-type').value.trim();
+  if (!name) {
+    showToast('事業所名を入力してください');
+    return;
+  }
+  const rows = document.querySelectorAll('#addon-rows .addon-row');
+  const addons = [];
+  rows.forEach(row => {
+    const aName = row.querySelector('.a-name').value.trim();
+    const aUnit = row.querySelector('.a-unit').value.trim();
+    const aNote = row.querySelector('.a-note').value.trim();
+    const aUpdated = row.querySelector('.a-updated').value;
+    if (aName) addons.push({ id: 'a_' + Math.random().toString(36).slice(2, 9), name: aName, unit: aUnit, note: aNote, updated: aUpdated });
+  });
+
+  if (editingId) {
+    const idx = providers.findIndex(p => p.id === editingId);
+    if (idx > -1) providers[idx] = { ...providers[idx], name, type, addons };
+  } else {
+    providers.push({ id: 'p_' + Math.random().toString(36).slice(2, 9), name, type, addons });
+  }
+
+  persistProviders();
+  renderProviderList();
+  renderProviderChips();
+  resetForm();
+  showToast('保存しました');
+}
+
+function editProvider(id) {
+  const p = providers.find(x => x.id === id);
+  if (!p) return;
+  editingId = id;
+  document.getElementById('form-title').textContent = '事業所を編集する';
+  document.getElementById('p-name').value = p.name;
+  document.getElementById('p-type').value = p.type || '';
+  document.getElementById('addon-rows').innerHTML = '';
+  if (p.addons.length === 0) { addAddonRow(); }
+  else { p.addons.forEach(a => addAddonRow(a)); }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteProvider(id) {
+  providers = providers.filter(p => p.id !== id);
+  selectedProviderIds.delete(id);
+  persistProviders();
+  renderProviderList();
+  renderProviderChips();
+  renderAddonSelection();
+  showToast('削除しました');
+}
+
+function renderProviderList() {
+  const list = document.getElementById('provider-list');
+  document.getElementById('provider-count').textContent = providers.length + '件';
+  renderCatFilter('master-cat-filter', masterCatFilter, 'setMasterCatFilter');
+
+  if (providers.length === 0) {
+    list.innerHTML = '<div class="empty-state">まだ事業所が登録されていません。上のフォームから最初の1件を登録してください。</div>';
+    return;
+  }
+
+  const searchValue = document.getElementById('master-search') ? document.getElementById('master-search').value : '';
+  const filtered = applyFilter(providers, masterCatFilter, searchValue);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state">条件に一致する事業所がありません。絞り込みや検索語を変えてみてください。</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(p => `
+    <div class="provider-card">
+      <div>
+        <div class="name">${escapeHtml(p.name)}</div>
+        <div class="meta">${escapeHtml(p.type || 'サービス種別未設定')}・加算${p.addons.length}件</div>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" onclick="editProvider('${p.id}')">編集</button>
+        <button class="btn-icon" onclick="deleteProvider('${p.id}')" title="削除">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ---------- Plan builder tab ----------
+function renderProviderChips() {
+  const wrap = document.getElementById('provider-chips');
+  renderCatFilter('build-cat-filter', buildCatFilter, 'setBuildCatFilter');
+
+  if (providers.length === 0) {
+    wrap.innerHTML = '<div class="empty-state">登録済みの事業所がありません。</div>';
+    return;
+  }
+
+  const searchValue = document.getElementById('build-search') ? document.getElementById('build-search').value : '';
+  const filtered = applyFilter(providers, buildCatFilter, searchValue);
+
+  if (filtered.length === 0) {
+    wrap.innerHTML = '<div class="empty-state">条件に一致する事業所がありません。</div>';
+    return;
+  }
+
+  wrap.innerHTML = filtered.map(p => `
+    <span class="provider-select-chip ${selectedProviderIds.has(p.id) ? 'selected' : ''}" onclick="toggleProvider('${p.id}')">${escapeHtml(p.name)}</span>
+  `).join('');
+}
+
+function toggleProvider(id) {
+  if (selectedProviderIds.has(id)) selectedProviderIds.delete(id);
+  else selectedProviderIds.add(id);
+  renderProviderChips();
+  renderAddonSelection();
+}
+
+function renderAddonSelection() {
+  const panel = document.getElementById('addon-selection-panel');
+  const wrap = document.getElementById('addon-selection');
+  const selected = providers.filter(p => selectedProviderIds.has(p.id));
+
+  if (selected.length === 0) {
+    panel.style.display = 'none';
+    updateOutput();
+    return;
+  }
+  panel.style.display = 'block';
+
+  wrap.innerHTML = selected.map(p => `
+    <div style="margin-bottom:16px;">
+      <div style="font-weight:700; font-size:13px; color:var(--brand-deep); margin-bottom:6px;">${escapeHtml(p.name)}</div>
+      <div class="addon-check-list">
+        ${p.addons.length === 0
+          ? '<div class="hint">この事業所には加算が登録されていません。</div>'
+          : p.addons.map(a => {
+              const stale = isStale(a.updated);
+              return `
+            <label class="addon-check-item">
+              <input type="checkbox" data-provider="${p.id}" data-addon="${a.id}"
+                ${selectedAddonIds.has(a.id) ? 'checked' : ''}
+                onchange="toggleAddon('${a.id}')">
+              <span>
+                <span class="a-name">${escapeHtml(a.name)}</span>${a.unit ? ' <span class="a-note">(' + escapeHtml(a.unit) + ')</span>' : ''}
+                ${stale ? ' <span class="badge" style="background:#f3e3d0; color:#8a5a1f;">要確認:1年以上前の情報</span>' : ''}
+                ${a.note ? '<br><span class="a-note">' + escapeHtml(a.note) + '</span>' : ''}
+                ${a.updated ? '<br><span class="a-note">確認日:' + a.updated + '</span>' : ''}
+              </span>
+            </label>
+          `;}).join('')
+        }
+      </div>
+    </div>
+  `).join('');
+  updateOutput();
+}
+
+function isStale(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  return d < oneYearAgo;
+}
+
+// ---------- Category classification & filtering ----------
+const CATEGORIES = [
+  { key: 'all', label: 'すべて' },
+  { key: 'visit', label: '訪問系' },
+  { key: 'day', label: '通所系' },
+  { key: 'stay', label: '入所・短期入所系' },
+  { key: 'other', label: 'その他' },
+];
+
+function categorize(type) {
+  const t = type || '';
+  if (t.includes('訪問')) return 'visit';
+  if (t.includes('通所')) return 'day';
+  if (t.includes('入所') || t.includes('施設') || t.includes('短期入所')) return 'stay';
+  return 'other';
+}
+
+let masterCatFilter = 'all';
+let buildCatFilter = 'all';
+
+function renderCatFilter(containerId, current, onSelect) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = CATEGORIES.map(c => `
+    <button class="cat-btn ${current === c.key ? 'active' : ''}" onclick="${onSelect}('${c.key}')">${c.label}</button>
+  `).join('');
+}
+
+function setMasterCatFilter(key) {
+  masterCatFilter = key;
+  renderProviderList();
+}
+
+function setBuildCatFilter(key) {
+  buildCatFilter = key;
+  renderProviderChips();
+}
+
+function applyFilter(list, catFilter, searchValue) {
+  const q = (searchValue || '').trim().toLowerCase();
+  return list.filter(p => {
+    const catOk = catFilter === 'all' || categorize(p.type) === catFilter;
+    const nameOk = !q || p.name.toLowerCase().includes(q);
+    return catOk && nameOk;
+  });
+}
+
+function toggleAddon(addonId) {
+  if (selectedAddonIds.has(addonId)) selectedAddonIds.delete(addonId);
+  else selectedAddonIds.add(addonId);
+  updateOutput();
+}
+
+function updateOutput() {
+  const out = document.getElementById('output-text');
+  const selected = providers.filter(p => selectedProviderIds.has(p.id));
+  if (selected.length === 0) {
+    out.textContent = '事業所と加算を選択すると、ここに文章が表示されます。';
+    return;
+  }
+
+  let text = '';
+  selected.forEach(p => {
+    const checkedAddons = p.addons.filter(a => selectedAddonIds.has(a.id));
+    if (checkedAddons.length === 0) return;
+    text += `【${p.name}】\n`;
+    checkedAddons.forEach(a => {
+      text += `・${a.name}`;
+      if (a.unit) text += `(${a.unit})`;
+      text += '\n';
+      if (a.note) text += `　${a.note}\n`;
+    });
+    text += '\n';
+  });
+
+  out.textContent = text.trim() || '加算を1つ以上選択してください。';
+}
+
+function copyOutput() {
+  const text = document.getElementById('output-text').textContent;
+  if (!text || text.includes('選択すると')) {
+    showToast('コピーする内容がありません');
+    return;
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('コピーしました');
+  }).catch(() => {
+    showToast('コピーに失敗しました');
+  });
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+// ---------- init ----------
+addAddonRow();
+loadProviders();
+</script>
+</body>
+</html>
