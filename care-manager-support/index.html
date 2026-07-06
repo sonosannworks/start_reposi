@@ -326,9 +326,69 @@
     border-color: var(--brand);
     box-shadow: 0 0 0 3px var(--brand-soft);
   }
+
+  /* Demo banner */
+  .demo-banner {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--brand-deep);
+    color: #eef4f2;
+    font-size: 12.5px;
+    text-align: center;
+    padding: 8px 14px;
+    letter-spacing: 0.3px;
+  }
+  .demo-banner a {
+    color: #a9dcc9;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  .demo-banner a:hover { color: #ffffff; }
+
+  /* Demo limit modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28,43,39,0.55);
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: var(--panel);
+    border-radius: var(--radius);
+    max-width: 420px;
+    width: 100%;
+    padding: 26px 26px 22px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+  .modal-box h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: var(--brand-deep);
+  }
+  .modal-box p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+    margin: 0 0 20px 0;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
 </style>
 </head>
 <body>
+
+<div class="demo-banner">🔍 デモ版（13件まで）｜フル版のご相談は<a href="../consultation.html" target="_blank" rel="noopener">こちら</a></div>
+
 <div class="app">
 
   <div class="sidebar">
@@ -410,7 +470,7 @@
       </div>
 
       <div class="panel">
-        <h2>登録済み事業所 <span class="badge" id="provider-count">0件</span></h2>
+        <h2>登録済み事業所 <span class="badge" id="provider-count">0 / 13件</span></h2>
         <div class="filter-bar">
           <div class="filter-cat-group" id="master-cat-filter"></div>
           <input type="text" id="master-search" class="search-input" placeholder="事業所名で検索(頭文字でも可)" oninput="renderProviderList()">
@@ -453,6 +513,17 @@
 
 <div class="toast" id="toast"></div>
 
+<div class="modal-overlay" id="demo-limit-modal">
+  <div class="modal-box">
+    <h3>デモ版の登録上限です</h3>
+    <p id="demo-limit-modal-text">デモ版でご登録いただけるのは13件までです。<br>事業所の実運用に合わせた件数無制限のフル版をご希望の方はお気軽にご相談ください。</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeDemoLimitModal()">閉じる</button>
+      <a href="../consultation.html" class="btn-primary" style="text-decoration:none; display:inline-block;" target="_blank" rel="noopener">フル版について相談する</a>
+    </div>
+  </div>
+</div>
+
 <script>
 let providers = [];
 let editingId = null;
@@ -460,13 +531,79 @@ let selectedProviderIds = new Set();
 let selectedAddonIds = new Set();
 
 const STORAGE_KEY = 'addon_master_providers_v1';
+const DEMO_LIMIT = 13;
+const DEMO_LIMIT_MESSAGE_REGISTER = `デモ版でご登録いただけるのは${DEMO_LIMIT}件までです。<br>事業所の実運用に合わせた件数無制限のフル版をご希望の方はお気軽にご相談ください。`;
+const DEMO_LIMIT_MESSAGE_IMPORT = `デモ版の上限(${DEMO_LIMIT}件)を超えるため取り込めません。<br>事業所の実運用に合わせた件数無制限のフル版をご希望の方はお気軽にご相談ください。`;
+
+const DEMO_PROVIDERS = [
+  { "id": "p_demo01", "name": "陽だまりデイサービス", "type": "通所介護", "addons": [
+    { "id": "a_d01a", "name": "個別機能訓練加算(Ⅰ)イ", "unit": "56単位/日", "note": "機能訓練指導員を配置し、個別機能訓練計画を作成", "updated": "2026-06-15" },
+    { "id": "a_d01b", "name": "入浴介助加算(Ⅱ)", "unit": "55単位/日", "note": "個別入浴計画を作成、訪問による浴室環境の評価が必要", "updated": "2026-06-15" },
+    { "id": "a_d01c", "name": "サービス提供体制強化加算(Ⅰ)", "unit": "22単位/日", "note": "介護福祉士60%以上配置", "updated": "2026-05-01" }
+  ]},
+  { "id": "p_demo02", "name": "けやき通所センター", "type": "通所介護", "addons": [
+    { "id": "a_d02a", "name": "認知症加算", "unit": "60単位/日", "note": "認知症高齢者の日常生活自立度Ⅲ以上の利用者が定員の20%以上", "updated": "2026-04-10" },
+    { "id": "a_d02b", "name": "栄養アセスメント加算", "unit": "50単位/月", "note": "管理栄養士を配置し、利用者ごとの栄養状態を評価", "updated": "2024-02-20" },
+    { "id": "a_d02c", "name": "科学的介護推進体制加算(Ⅰ)", "unit": "40単位/月", "note": "LIFEへのデータ提出とフィードバック活用", "updated": "2026-05-20" }
+  ]},
+  { "id": "p_demo03", "name": "さくら通所リハビリテーション", "type": "通所リハビリテーション", "addons": [
+    { "id": "a_d03a", "name": "リハビリテーションマネジメント加算(A)イ", "unit": "560単位/月", "note": "医師がリハビリ計画の内容を利用者に説明", "updated": "2026-06-01" },
+    { "id": "a_d03b", "name": "短期集中個別リハビリテーション実施加算", "unit": "110単位/日", "note": "退院・退所直後3ヶ月以内、個別リハを週2回以上", "updated": "2026-06-01" }
+  ]},
+  { "id": "p_demo04", "name": "みのり訪問介護ステーション", "type": "訪問介護", "addons": [
+    { "id": "a_d04a", "name": "特定事業所加算(Ⅰ)", "unit": "所定単位数の20%", "note": "体制要件・重度対応要件・人材要件を満たす", "updated": "2026-05-10" },
+    { "id": "a_d04b", "name": "緊急時訪問介護加算", "unit": "100単位/回", "note": "ケアプランに位置付けのない緊急訪問を行った場合", "updated": "2026-05-10" },
+    { "id": "a_d04c", "name": "サービス提供体制強化加算(Ⅱ)", "unit": "6単位/回", "note": "勤続10年以上の介護福祉士が一定割合以上", "updated": "2025-11-01" }
+  ]},
+  { "id": "p_demo05", "name": "ひまわりホームケア", "type": "訪問介護", "addons": [
+    { "id": "a_d05a", "name": "初回加算", "unit": "200単位/月", "note": "新規利用開始月、サービス提供責任者が訪問", "updated": "2026-06-20" },
+    { "id": "a_d05b", "name": "生活機能向上連携加算(Ⅱ)", "unit": "100単位/月", "note": "リハ職・医師等と連携しADL評価を反映", "updated": "2026-06-20" }
+  ]},
+  { "id": "p_demo06", "name": "あすなろ訪問看護ステーション", "type": "訪問看護", "addons": [
+    { "id": "a_d06a", "name": "緊急時訪問看護加算", "unit": "574単位/月", "note": "24時間連絡体制を確保", "updated": "2026-06-05" },
+    { "id": "a_d06b", "name": "特別管理加算(Ⅰ)", "unit": "500単位/月", "note": "重度の医療処置(気管切開・中心静脈栄養等)が必要な利用者", "updated": "2026-06-05" },
+    { "id": "a_d06c", "name": "ターミナルケア加算", "unit": "2000単位", "note": "死亡月に算定、ターミナルケアの記録が必要", "updated": "2024-08-01" }
+  ]},
+  { "id": "p_demo07", "name": "セーフティ福祉用具サービス", "type": "福祉用具貸与", "addons": [
+    { "id": "a_d07a", "name": "特別地域福祉用具貸与加算", "unit": "所定単位数の15%", "note": "中山間地域等、対象地域の利用者のみ", "updated": "2026-03-15" }
+  ]},
+  { "id": "p_demo08", "name": "やすらぎショートステイ", "type": "短期入所生活介護", "addons": [
+    { "id": "a_d08a", "name": "在宅中重度者受入加算", "unit": "421単位/日", "note": "看護・介護職員を手厚く配置", "updated": "2026-05-25" },
+    { "id": "a_d08b", "name": "個別機能訓練加算", "unit": "12単位/日", "note": "機能訓練指導員による個別計画に基づく訓練", "updated": "2026-05-25" },
+    { "id": "a_d08c", "name": "送迎加算", "unit": "184単位/回", "note": "利用者の心身の状況により送迎が必要と認められる場合", "updated": "2026-05-25" }
+  ]},
+  { "id": "p_demo09", "name": "みなみ苑(介護老人福祉施設)", "type": "介護老人福祉施設", "addons": [
+    { "id": "a_d09a", "name": "日常生活継続支援加算", "unit": "36単位/日", "note": "介護福祉士を一定割合以上配置、重度者の入所割合要件あり", "updated": "2026-04-01" },
+    { "id": "a_d09b", "name": "看取り介護加算(Ⅱ)", "unit": "死亡日1,280単位(段階制)", "note": "看取り指針の整備、多職種連携体制が必要", "updated": "2026-04-01" },
+    { "id": "a_d09c", "name": "褥瘡マネジメント加算(Ⅱ)", "unit": "13単位/月", "note": "褥瘡管理指導、計画に基づくケアの実施", "updated": "2024-01-10" }
+  ]},
+  { "id": "p_demo10", "name": "はなみずき苑(介護老人保健施設)", "type": "介護老人保健施設", "addons": [
+    { "id": "a_d10a", "name": "在宅復帰・在宅療養支援機能加算(Ⅰ)", "unit": "34単位/日", "note": "在宅復帰率・ベッド回転率等の要件を満たす", "updated": "2026-06-10" },
+    { "id": "a_d10b", "name": "認知症ケア加算", "unit": "76単位/日", "note": "認知症専門棟等での専門的ケア体制", "updated": "2026-06-10" },
+    { "id": "a_d10c", "name": "リハビリテーションマネジメント計画書情報加算", "unit": "33単位/月", "note": "リハビリ計画書をLIFEに提出", "updated": "2026-06-10" }
+  ]}
+];
+
+function openDemoLimitModal(message) {
+  document.getElementById('demo-limit-modal-text').innerHTML = message || DEMO_LIMIT_MESSAGE_REGISTER;
+  document.getElementById('demo-limit-modal').classList.add('show');
+}
+
+function closeDemoLimitModal() {
+  document.getElementById('demo-limit-modal').classList.remove('show');
+}
 
 function loadProviders() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    providers = raw ? JSON.parse(raw) : [];
+    if (raw) {
+      providers = JSON.parse(raw);
+    } else {
+      providers = JSON.parse(JSON.stringify(DEMO_PROVIDERS));
+      persistProviders();
+    }
   } catch (e) {
-    providers = [];
+    providers = JSON.parse(JSON.stringify(DEMO_PROVIDERS));
   }
   renderProviderList();
   renderProviderChips();
@@ -503,11 +640,12 @@ function importBackup(event) {
       const imported = JSON.parse(e.target.result);
       if (!Array.isArray(imported)) throw new Error('形式が不正です');
       const merge = confirm('現在のデータに追加しますか？\n「OK」で追加、「キャンセル」で全て置き換えます。');
-      if (merge) {
-        providers = providers.concat(imported);
-      } else {
-        providers = imported;
+      const resultCount = merge ? providers.length + imported.length : imported.length;
+      if (resultCount > DEMO_LIMIT) {
+        openDemoLimitModal(DEMO_LIMIT_MESSAGE_IMPORT);
+        return;
       }
+      providers = merge ? providers.concat(imported) : imported;
       persistProviders();
       renderProviderList();
       renderProviderChips();
@@ -571,6 +709,10 @@ function saveProvider() {
     showToast('事業所名を入力してください');
     return;
   }
+  if (!editingId && providers.length >= DEMO_LIMIT) {
+    openDemoLimitModal();
+    return;
+  }
   const rows = document.querySelectorAll('#addon-rows .addon-row');
   const addons = [];
   rows.forEach(row => {
@@ -620,7 +762,7 @@ function deleteProvider(id) {
 
 function renderProviderList() {
   const list = document.getElementById('provider-list');
-  document.getElementById('provider-count').textContent = providers.length + '件';
+  document.getElementById('provider-count').textContent = providers.length + ' / ' + DEMO_LIMIT + '件';
   renderCatFilter('master-cat-filter', masterCatFilter, 'setMasterCatFilter');
 
   if (providers.length === 0) {
