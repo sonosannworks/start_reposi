@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script src="../redirect-to-vercel.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>課題整理総括表 転記アシスト | sonosann Web&AIサポート</title>
+<style>
+  :root{
+    --paper:#F5F4EF; --card:#FFFFFF;
+    --ink:#22302C; --ink-2:#5C6B66; --ink-3:#8A968F;
+    --teal:#0E6B5C; --teal-deep:#0A5044; --teal-pale:#E4F0EC;
+    --form-green:#E7EDDA; --form-green-line:#B9C79B; --form-green-ink:#3E4A2C;
+    --amber:#9A5B0B; --amber-bg:#FBF1DC; --amber-line:#E4C077;
+    --done:#0F6E56; --done-bg:#E1F5EE;
+    --line:#DAD8CF; --line-2:#C4C2B8;
+    --mincho:"Yu Mincho","YuMincho","Hiragino Mincho ProN",serif;
+    --gothic:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--gothic); font-size:15px; line-height:1.7;}
+  .wrap{max-width:900px; margin:0 auto; padding:20px 16px 60px;}
+
+  header.app{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 14px; padding:6px 2px 14px; border-bottom:2px solid var(--teal);}
+  header.app h1{font-family:var(--mincho); font-size:24px; font-weight:600; color:var(--teal-deep); letter-spacing:.04em;}
+  .ver{font-size:12px; color:var(--ink-3); letter-spacing:.06em;}
+  .badge-local{margin-left:auto; font-size:12px; background:var(--done-bg); color:var(--teal-deep); border:1px solid #BFE3D6; border-radius:999px; padding:3px 12px;}
+
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin-top:16px;}
+  .panel h2{font-size:15px; font-weight:600; color:var(--teal-deep); margin-bottom:10px;}
+  .step-num{display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; font-size:13px; align-items:center; justify-content:center; margin-right:8px; font-family:var(--gothic);}
+  textarea#src{width:100%; min-height:190px; border:1px solid var(--line-2); border-radius:8px; padding:12px; font-family:"MS Gothic","Osaka-Mono",monospace; font-size:13px; line-height:1.7; color:var(--ink); background:#FCFCFA; resize:vertical;}
+  textarea#src:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;}
+  button{font-family:var(--gothic); font-size:14px; border-radius:8px; border:1px solid var(--line-2); background:#fff; color:var(--ink); padding:8px 16px; cursor:pointer;}
+  button:hover{background:#F3F2EC;}
+  button.primary{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600;}
+  button.primary:hover{background:var(--teal-deep);}
+  button:focus-visible{outline:2px solid var(--teal-deep); outline-offset:2px;}
+  .hint{font-size:12.5px; color:var(--ink-2); margin-top:10px;}
+
+  details.howto{margin-top:16px; background:var(--card); border:1px solid var(--line); border-radius:10px;}
+  details.howto summary{padding:12px 18px; font-size:14px; font-weight:600; color:var(--teal-deep); cursor:pointer; list-style-position:inside;}
+  details.howto .body{padding:0 18px 16px; font-size:13.5px; color:var(--ink-2);}
+  details.howto ol{padding-left:1.4em;}
+  details.howto li{margin:4px 0;}
+
+  #warn{display:none; margin-top:16px; background:var(--amber-bg); border:1px solid var(--amber-line); border-radius:10px; padding:12px 16px; font-size:13.5px; color:var(--amber);}
+
+  #progressbar{display:none; position:sticky; top:0; z-index:5; margin-top:16px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 16px; align-items:center; gap:12px;}
+  #progressbar .track{flex:1; height:8px; background:#ECEAE2; border-radius:4px; overflow:hidden;}
+  #progressbar .fill{height:100%; width:0%; background:var(--teal); transition:width .25s;}
+  #progressbar .num{font-size:13px; color:var(--ink-2); white-space:nowrap;}
+
+  .sheet{background:var(--card); border:1px solid var(--line-2); border-radius:10px; margin-top:20px; overflow:hidden;}
+  .sheet-head{background:var(--form-green); border-bottom:1px solid var(--form-green-line); padding:10px 18px; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
+  .sheet-head .tno{font-family:var(--mincho); font-size:14px; border:1px solid var(--form-green-ink); color:var(--form-green-ink); padding:1px 8px; background:#fff;}
+  .sheet-head h3{font-family:var(--mincho); font-size:18px; font-weight:600; color:var(--form-green-ink); letter-spacing:.08em;}
+  .sheet-body{padding:14px 18px 18px;}
+
+  .field{border:1px solid var(--line); border-radius:8px; margin-top:12px; overflow:hidden; background:#fff;}
+  .field.copied{border-color:#BFE3D6; background:var(--done-bg);}
+  .field-head{display:flex; align-items:center; gap:8px; padding:8px 12px; background:#F4F6EE; border-bottom:1px solid var(--line);}
+  .field.copied .field-head{background:#D5EEE4; border-color:#BFE3D6;}
+  .field-label{font-size:13px; font-weight:600; color:var(--form-green-ink); flex:1;}
+  .chip-warn{font-size:11.5px; background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-line); border-radius:999px; padding:1px 9px; white-space:nowrap;}
+  .btn-copy{font-size:12.5px; padding:4px 12px; white-space:nowrap;}
+  .btn-copy.done{background:var(--done-bg); border-color:#BFE3D6; color:var(--teal-deep);}
+  .field-text{padding:10px 14px; font-size:14px; white-space:pre-wrap; overflow-wrap:anywhere;}
+  mark.tag{background:var(--amber-bg); color:var(--amber); border-radius:4px; padding:0 4px; font-weight:600;}
+  mark.blank{background:var(--amber-bg); color:var(--amber); border-bottom:2px solid var(--amber); border-radius:0; padding:0 10px; letter-spacing:2px;}
+
+  .svc{margin-top:12px; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .svc-title{font-size:13px; font-weight:600; color:var(--form-green-ink); background:#F4F6EE; padding:8px 12px; border-bottom:1px solid var(--line);}
+  .svc-scroll{overflow-x:auto;}
+  table.svc-tbl{width:100%; border-collapse:collapse; font-size:13px; min-width:640px;}
+  table.svc-tbl th{background:var(--form-green); color:var(--form-green-ink); font-weight:600; font-size:12px; padding:6px 8px; border:1px solid var(--form-green-line); white-space:nowrap;}
+  table.svc-tbl td{border:1px solid var(--line); padding:6px 8px; vertical-align:top;}
+  td.cell{cursor:pointer;}
+  td.cell:hover{background:#F3F7F0;}
+  td.cell.copied{background:var(--done-bg);}
+  td.rowbtn{white-space:nowrap; text-align:center; background:#FAFAF7;}
+  .svc-note{font-size:12.5px; color:var(--amber); background:var(--amber-bg); border-top:1px solid var(--amber-line); padding:6px 12px;}
+  .pill{display:inline-block; font-size:11px; font-weight:700; padding:1px 9px; border-radius:999px; margin-right:4px;}
+  .pill.ok{background:var(--done-bg); color:var(--teal-deep);}
+  .pill.warn{background:var(--amber-bg); color:var(--amber);}
+  .pill.bad{background:#F8E9E7; color:#96351D;}
+  .pill.gray{background:#EEF0F1; color:var(--ink-2);}
+
+  .locked{border:1px dashed var(--line-2); border-radius:10px; margin-top:16px; padding:18px; color:var(--ink-2); background:repeating-linear-gradient(-45deg,#FAFAF7,#FAFAF7 12px,#F2F1EA 12px,#F2F1EA 24px); font-size:13.5px;}
+  .locked b{color:var(--ink);}
+
+  .checks{background:var(--card); border:1px solid var(--line-2); border-radius:10px; margin-top:20px; overflow:hidden;}
+  .checks-head{background:var(--amber-bg); border-bottom:1px solid var(--amber-line); padding:10px 18px; font-family:var(--mincho); font-size:16px; font-weight:600; color:var(--amber);}
+  .checks-body{padding:8px 18px 14px;}
+  .checks label{display:flex; gap:10px; align-items:flex-start; padding:7px 4px; font-size:14px; border-bottom:1px dashed var(--line); cursor:pointer;}
+  .checks label:last-child{border-bottom:none;}
+  .checks input{width:17px; height:17px; margin-top:4px; accent-color:var(--teal); flex-shrink:0;}
+  .checks label.done span{color:var(--ink-3); text-decoration:line-through;}
+
+  .closing{margin-top:20px; border-left:4px solid var(--teal); background:var(--card); border-radius:0 10px 10px 0; border-top:1px solid var(--line); border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:14px 18px; font-size:13.5px; color:var(--ink-2);}
+
+  footer.app{margin-top:40px; text-align:center; font-size:12px; color:var(--ink-3); line-height:2;}
+  .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--teal-deep); color:#fff; font-size:13.5px; padding:9px 20px; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:20;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+  @media (max-width:600px){ header.app h1{font-size:20px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app">
+    <h1>課題整理総括表 転記アシスト</h1>
+    <span class="ver">対応形式: issue-summary-v1</span>
+    <span class="badge-local">ローカル完結 ・ データは保存されません</span>
+  </header>
+
+  <details class="howto">
+    <summary>はじめての方へ(使い方)</summary>
+    <div class="body">
+      <ol>
+        <li>Claudeで認定調査票・主治医意見書などを提示し「課題整理総括表を作って」と依頼します(「課題整理総括表 作成Skill」が24項目の評価下書きを作成します)。</li>
+        <li>返ってきた <code>[issue-summary-v1]</code> から始まる出力を、そのまま全部コピーします。</li>
+        <li>下の入力欄に貼り付けて「様式に反映」を押します。</li>
+        <li>公式の課題整理総括表と同じ並び順で24項目が整理されるので、マス目をクリックしてその部分だけコピーするか、行ごと「行コピー」ボタンでコピーし、お使いの介護ソフトの同じ欄に貼り付けます。</li>
+        <li>「見通し」「生活全般の解決すべき課題(ニーズ)」「優先順位」欄は、面談を経てケアマネジャーが判断する項目のためこのツールでは空欄です。下部の「面談で確認すべき事項」を参考に、面談後にお使いの介護ソフト上で直接入力してください。</li>
+      </ol>
+      <p style="margin-top:8px;">このページはお使いのパソコンの中だけで動作します。貼り付けた内容がインターネットに送信されることはなく、ページを閉じると消えます。個人情報を含む内容は、匿名化した状態での利用を推奨します。</p>
+    </div>
+  </details>
+
+  <section class="panel">
+    <h2><span class="step-num">1</span>Claudeの出力を貼り付け</h2>
+    <textarea id="src" placeholder="[issue-summary-v1] から始まるSkillの出力を、ここに貼り付けてください" aria-label="Skill出力の貼り付け欄"></textarea>
+    <div class="btnrow">
+      <button class="primary" id="btnParse">様式に反映</button>
+      <button id="btnSample">サンプルを読み込む</button>
+      <button id="btnClear">クリア</button>
+    </div>
+    <p class="hint">※ 出力の1行目にある [issue-summary-v1] も含めて、全文を貼り付けてください。</p>
+  </section>
+
+  <div id="warn" role="alert"></div>
+
+  <div id="progressbar">
+    <span class="num" style="font-weight:600; color:var(--teal-deep);">転記の進み具合</span>
+    <div class="track"><div class="fill" id="pfill"></div></div>
+    <span class="num" id="pnum">0 / 0</span>
+  </div>
+
+  <div id="output"></div>
+
+  <footer class="app">
+    課題整理総括表 転記アシスト v1.0 ｜ sonosann Web&amp;AIサポート<br>
+    AIは情報、動くのは人。下書きの確定・本人家族への説明と同意は、必ずケアマネジャーご自身が行ってください。
+  </footer>
+</div>
+<div class="toast" id="toast" aria-live="polite">コピーしました</div>
+
+<script>
+'use strict';
+
+/* ===== 24項目の公式並び順(課題整理総括表の様式に準拠) ===== */
+const CANON = [
+  {group:'移動', items:['室内移動','屋外移動']},
+  {group:'食事', items:['食事内容','食事摂取','調理']},
+  {group:'排泄', items:['排尿・排便','排泄動作']},
+  {group:'口腔', items:['口腔衛生','口腔ケア']},
+  {group:'服薬', items:['服薬']},
+  {group:'入浴', items:['入浴']},
+  {group:'更衣', items:['更衣']},
+  {group:'掃除', items:['掃除']},
+  {group:'洗濯', items:['洗濯']},
+  {group:'整理・物品の管理', items:['整理・物品の管理']},
+  {group:'金銭管理', items:['金銭管理']},
+  {group:'買物', items:['買物']},
+  {group:'コミュニケーション能力', items:['コミュニケーション能力']},
+  {group:'認知', items:['認知']},
+  {group:'社会との関わり', items:['社会との関わり']},
+  {group:'褥瘡・皮膚の問題', items:['褥瘡・皮膚の問題']},
+  {group:'行動・心理症状(BPSD)', items:['行動・心理症状(BPSD)']},
+  {group:'介護力(家族関係含む)', items:['介護力(家族関係含む)']},
+  {group:'居住環境', items:['居住環境']},
+];
+
+/* ===== サンプル(架空ペルソナ・テスト用仮設定) ===== */
+const SAMPLE = `[issue-summary-v1]
+【課題整理総括表 下書き ※認定情報のみに基づく評価案です。面談での確認が必要な項目があります】
+
+▼自立した日常生活の阻害要因
+①認知機能の低下(中等度の認知症、見当識障害あり)
+②変形性膝関節症による下肢筋力低下
+③独居で家事経験が乏しい
+
+▼利用者及び家族の生活に対する意向
+本人の意向は認定情報からは確認できないため、面談での確認が必要。
+(長男)できるだけ自宅で今の生活を続けてほしい(概況調査特記事項より)
+
+■移動
+・室内移動/見守り/①②/維持/伝い歩きだが時折ふらつきあり
+・屋外移動/一部介助/①②/悪化のおそれ/屋外は付き添いが必要
+
+■食事
+・食事摂取/自立//維持/
+・調理/全介助/①③/維持/同居家族なし、配食サービス利用中(要確認:利用頻度)
+・食事内容/支障あり/①/維持/栄養バランスに偏りの可能性、情報不足のため確認要
+
+■排泄
+・排泄動作/一部介助/①②/維持/夜間はポータブルトイレ使用
+・排尿・排便/支障なし///
+
+■口腔
+・口腔ケア/見守り/①/維持/声かけで実施可能
+・口腔衛生/支障なし///
+
+■服薬
+・服薬/一部介助/①/維持/一包化・訪問薬剤管理指導を検討(要確認)
+
+■入浴
+・入浴/一部介助/①②/維持/デイサービスにて入浴
+
+■更衣
+・更衣/見守り/②/維持/
+
+■掃除
+・掃除/全介助/①③/維持/訪問介護利用中
+
+■洗濯
+・洗濯/全介助/①③/維持/訪問介護利用中
+
+■整理・物品の管理
+・整理・物品の管理/一部介助/①/維持/
+
+■金銭管理
+・金銭管理/全介助/①/維持/長男が管理
+
+■買物
+・買物/全介助/①②/維持/長男が週末に代行
+
+■コミュニケーション能力
+・コミュニケーション能力/支障なし///
+
+■認知
+・認知/支障あり/①/悪化のおそれ/長谷川式18点(要精査)
+
+■社会との関わり
+・社会との関わり/支障あり/①③/維持/近隣との交流が減少傾向
+
+■褥瘡・皮膚の問題
+・褥瘡・皮膚の問題/支障なし///
+
+■行動・心理症状(BPSD)
+・行動・心理症状(BPSD)/支障なし///情報不足のため確認要
+
+■介護力
+・介護力/支障あり/③/維持/長男は遠方在住、主介護者不在(要確認:緊急時対応)
+
+■居住環境
+・居住環境/支障あり/②/維持/浴室に段差あり、手すり未設置(要確認:住宅改修の希望)
+
+――――――――――――――――
+【面談で確認すべき事項】
+・本人自身の生活に対する意向
+・専門医(認知症)への受診状況
+・浴室改修の希望有無
+・買物代行以外の生活支援サービス利用意向
+
+――――――――――――――――
+見通し・生活全般の解決すべき課題(ニーズ)・優先順位は、本人・家族との面談を経てケアマネジャーが判断すべき項目のため、あえて空欄にしています。`;
+
+/* ===== パーサー (issue-summary-v1) ===== */
+function normalize(str){ return (str||'').replace(/[()（）・\s]/g,''); }
+
+function parseIssueSummary(text){
+  const result = {version:null, factors:[], wish:'', flatItems:[], interviewChecklist:[], closing:''};
+  if (text.indexOf('[issue-summary-v1]') !== -1){ result.version='v1'; }
+  const body = text.slice(text.indexOf('[issue-summary-v1]') + '[issue-summary-v1]'.length);
+
+  const factorsMatch = body.match(/▼自立した日常生活の阻害要因([\s\S]*?)▼利用者及び家族の生活に対する意向/);
+  result.factors = factorsMatch ? factorsMatch[1].split('\n').map(s=>s.trim()).filter(Boolean) : [];
+
+  const wishMatch = body.match(/▼利用者及び家族の生活に対する意向([\s\S]*?)(?=■)/);
+  result.wish = wishMatch ? wishMatch[1].trim() : '';
+
+  const groupRegex = /■([^\n]+)\n((?:・[^\n]*\n?)+)/g;
+  let gm;
+  while ((gm = groupRegex.exec(body)) !== null){
+    const lines = gm[2].split('\n').map(s=>s.trim()).filter(s=>s.startsWith('・'));
+    lines.forEach(line=>{
+      const parts = line.slice(1).split('/');
+      result.flatItems.push({
+        name:(parts[0]||'').trim(),
+        status:(parts[1]||'').trim(),
+        factor:(parts[2]||'').trim(),
+        outlook:(parts[3]||'').trim(),
+        remark:(parts[4]||'').trim(),
+      });
+    });
+  }
+
+  const interviewMatch = body.match(/【面談で確認すべき事項】([\s\S]*?)――――/);
+  result.interviewChecklist = interviewMatch ? interviewMatch[1].split('\n').map(s=>s.trim()).filter(s=>s.startsWith('・')).map(s=>s.slice(1)) : [];
+
+  const closingMatch = body.match(/――――――――――――――――\s*\n見通し[\s\S]*$/);
+  result.closing = closingMatch ? closingMatch[0].replace(/^――+\s*\n/,'').trim() : '見通し・生活全般の解決すべき課題(ニーズ)・優先順位は、本人・家族との面談を経てケアマネジャーが判断すべき項目のため、あえて空欄にしています。';
+
+  return result;
+}
+
+function findMatch(flatItems, canonName){
+  const nCanon = normalize(canonName);
+  let hit = flatItems.find(it => normalize(it.name) === nCanon);
+  if (hit) return hit;
+  hit = flatItems.find(it => nCanon.includes(normalize(it.name)) || normalize(it.name).includes(nCanon));
+  return hit || null;
+}
+
+function statusPillClass(status){
+  if (/自立|支障なし/.test(status)) return 'ok';
+  if (/見守り|一部介助/.test(status)) return 'warn';
+  if (/全介助|支障あり|悪化/.test(status)) return 'bad';
+  return 'gray';
+}
+
+/* ===== 描画(既存のケアプラン転記アシストと共通のUX) ===== */
+const $ = id => document.getElementById(id);
+const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function decorate(s){
+  let h = esc(s);
+  h = h.replace(/_{4,}/g, m=>'<mark class="blank">'+m+'</mark>');
+  h = h.replace(/\((要確認|要精査|仮置き)[^)<]*\)/g, m=>'<mark class="tag">'+m+'</mark>');
+  return h;
+}
+
+let totalUnits=0, doneUnits=0;
+function updateProgress(){
+  $('pnum').textContent = doneUnits+' / '+totalUnits;
+  $('pfill').style.width = (totalUnits?Math.round(doneUnits/totalUnits*100):0)+'%';
+}
+
+function fieldEl(f){
+  totalUnits++;
+  const div=document.createElement('div'); div.className='field';
+  div.innerHTML='<div class="field-head"><span class="field-label">'+esc(f.label)+'</span>'+
+    '<button class="btn-copy">コピー</button></div>'+
+    '<div class="field-text">'+decorate(f.text)+'</div>';
+  const btn=div.querySelector('.btn-copy');
+  btn.addEventListener('click',()=>copyText(f.text,()=>{
+    if (!div.classList.contains('copied')){ doneUnits++; }
+    div.classList.add('copied'); btn.classList.add('done'); btn.textContent='✓ コピー済';
+    updateProgress();
+  }));
+  return div;
+}
+
+function svcEl(svc){
+  const wrap=document.createElement('div'); wrap.className='svc';
+  wrap.innerHTML='<div class="svc-title">状況の事実 24項目(マス目クリックでその部分をコピー)</div>';
+  const sc=document.createElement('div'); sc.className='svc-scroll';
+  const tbl=document.createElement('table'); tbl.className='svc-tbl';
+  const thead=document.createElement('tr');
+  svc.header.forEach(h=>{ const th=document.createElement('th'); th.textContent=h; thead.appendChild(th); });
+  const thb=document.createElement('th'); thb.textContent='行'; thead.appendChild(thb);
+  tbl.appendChild(thead);
+  svc.rows.forEach(row=>{
+    totalUnits++;
+    const remark=row[svc.header.length-1]!==undefined?row[svc.header.length-1]:'';
+    const tr=document.createElement('tr');
+    for (let c=0;c<svc.header.length;c++){
+      const td=document.createElement('td'); td.className='cell';
+      const val=row[c]!==undefined?row[c]:'';
+      if (c===2 && row._pillClass){
+        td.innerHTML='<span class="pill '+row._pillClass+'">'+decorate(val)+'</span>';
+      } else {
+        td.innerHTML=decorate(val);
+      }
+      td.title='クリックでコピー(備考欄の内容)';
+      td.addEventListener('click',()=>copyText(remark,()=>td.classList.add('copied')));
+      tr.appendChild(td);
+    }
+    const tdb=document.createElement('td'); tdb.className='rowbtn';
+    const b=document.createElement('button'); b.className='btn-copy'; b.textContent='行コピー';
+    b.addEventListener('click',()=>copyText(remark,()=>{
+      if (!b.classList.contains('done')){ doneUnits++; }
+      b.classList.add('done'); b.textContent='✓ 済';
+      tr.querySelectorAll('td.cell').forEach(td=>td.classList.add('copied'));
+      updateProgress();
+    }));
+    tdb.appendChild(b); tr.appendChild(tdb);
+    tbl.appendChild(tr);
+  });
+  sc.appendChild(tbl); wrap.appendChild(sc);
+  svc.notes.forEach(n=>{ const d=document.createElement('div'); d.className='svc-note'; d.innerHTML=decorate(n); wrap.appendChild(d); });
+  return wrap;
+}
+
+function render(data){
+  const out=$('output'); out.innerHTML=''; totalUnits=0; doneUnits=0;
+
+  const sheet=document.createElement('section'); sheet.className='sheet';
+  sheet.innerHTML='<div class="sheet-head"><span class="tno">様式</span><h3>課題整理総括表</h3></div>';
+  const body=document.createElement('div'); body.className='sheet-body'; sheet.appendChild(body);
+
+  const nums=['①','②','③','④','⑤','⑥'];
+  const factorText = data.factors.length
+    ? data.factors.map((f,i)=> f.match(/^[①②③④⑤⑥]/) ? f : nums[i]+f).join('\n')
+    : '(記載なし。面談での確認が必要です)';
+  body.appendChild(fieldEl({label:'自立した日常生活の阻害要因(心身の状態、環境等)', text:factorText}));
+  body.appendChild(fieldEl({label:'利用者及び家族の生活に対する意向', text:data.wish || '(記載なし。面談での確認が必要です)'}));
+
+  const rows=[];
+  CANON.forEach(g=>{
+    g.items.forEach(name=>{
+      const hit=findMatch(data.flatItems, name);
+      const status = hit ? hit.status : '';
+      const factor = hit ? hit.factor : '';
+      const outlook = hit ? hit.outlook : '';
+      const remark = hit ? (hit.remark || (hit.status?'':'')) : '(該当項目が見つかりませんでした。手入力してください)';
+      const row=[g.group, name, status, factor, outlook, remark];
+      row._pillClass = statusPillClass(status);
+      rows.push(row);
+    });
+  });
+  body.appendChild(svcEl({
+    header:['大項目','小項目','現在','要因','改善/維持の可能性','備考(状況・支援内容等)'],
+    rows: rows,
+    notes: []
+  }));
+
+  out.appendChild(sheet);
+
+  const locked=document.createElement('div'); locked.className='locked';
+  locked.innerHTML='<b>「見通し」「生活全般の解決すべき課題(ニーズ)【案】」「優先順位」欄</b><br>本人・家族との面談を経てケアマネジャーが判断すべき項目のため、このツールではあえて下書きを作成していません。下の「面談で確認すべき事項」を参考に、面談後にお使いの介護ソフト上で直接入力してください。';
+  out.appendChild(locked);
+
+  if (data.interviewChecklist.length){
+    const ck=document.createElement('section'); ck.className='checks';
+    ck.innerHTML='<div class="checks-head">面談で確認すべき事項</div>';
+    const cb=document.createElement('div'); cb.className='checks-body';
+    data.interviewChecklist.forEach(item=>{
+      const lb=document.createElement('label');
+      lb.innerHTML='<input type="checkbox"><span>'+decorate(item)+'</span>';
+      lb.querySelector('input').addEventListener('change',e=>lb.classList.toggle('done',e.target.checked));
+      cb.appendChild(lb);
+    });
+    ck.appendChild(cb); out.appendChild(ck);
+  }
+
+  if (data.closing){
+    const cl=document.createElement('div'); cl.className='closing'; cl.textContent=data.closing; out.appendChild(cl);
+  }
+
+  updateProgress();
+  $('progressbar').style.display = totalUnits ? 'flex' : 'none';
+}
+
+/* ===== コピー ===== */
+function copyText(t,cb){
+  const done=()=>{cb(); toast();};
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(t).then(done,()=>legacyCopy(t,done));
+  } else legacyCopy(t,done);
+}
+function legacyCopy(t,cb){
+  const ta=document.createElement('textarea');
+  ta.value=t; ta.style.cssText='position:fixed;opacity:0;';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try{ document.execCommand('copy'); cb(); }
+  catch(e){ alert('自動コピーに失敗しました。テキストを選択して手動でコピーしてください。'); }
+  ta.remove();
+}
+let toastTimer=null;
+function toast(){
+  const el=$('toast'); el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),1400);
+}
+
+/* ===== イベント ===== */
+$('btnParse').addEventListener('click',()=>{
+  const text=$('src').value;
+  const warn=$('warn'); warn.style.display='none'; warn.textContent='';
+  if (!text.trim()){ warn.style.display='block'; warn.textContent='入力が空です。Skillの出力を貼り付けてから「様式に反映」を押してください。'; $('output').innerHTML=''; $('progressbar').style.display='none'; return; }
+  const data=parseIssueSummary(text);
+  if (data.version!=='v1'){
+    warn.style.display='block';
+    warn.textContent='注意: バージョンタグ [issue-summary-v1] が見つかりません。Skillの出力を1行目から全文貼り付けてください。';
+  }
+  if (!data.flatItems.length){
+    warn.style.display='block';
+    warn.textContent='状況の事実(■移動 など)が見つかりませんでした。課題整理総括表 作成Skillの出力をそのまま貼り付けているかご確認ください。';
+    $('output').innerHTML=''; $('progressbar').style.display='none'; return;
+  }
+  render(data);
+});
+$('btnSample').addEventListener('click',()=>{ $('src').value=SAMPLE; $('btnParse').click(); });
+$('btnClear').addEventListener('click',()=>{ $('src').value=''; $('output').innerHTML=''; $('warn').style.display='none'; $('progressbar').style.display='none'; });
+</script>
+</body>
+</html>
