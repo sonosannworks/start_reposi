@@ -16,6 +16,251 @@
   <meta name="description" content="ケアマネジャー向け業務支援ツール一覧。事業所加算マスタ、ケアプラン転記アシストなど、看護師・ケアマネ経験とAI活用から生まれた現場目線のツールを提供します。">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="cmsupport-style.css">
+  <style>
+    /* ===== おたすけガイドブック プライシング表 ===== */
+    .pricing-wrap {
+      margin: 0 0 2.2rem;
+    }
+    .pricing-header {
+      text-align: center;
+      margin-bottom: 1.4rem;
+    }
+    .pricing-section-badge {
+      display: inline-block;
+      background: #b4a078;
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      padding: .2em .9em;
+      border-radius: 20px;
+      margin-bottom: .7rem;
+    }
+    .pricing-title {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #1a1a2e;
+      letter-spacing: .06em;
+      margin-bottom: .5rem;
+    }
+    .pricing-desc {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .78rem;
+      font-weight: 300;
+      color: #4a4540;
+      line-height: 1.9;
+      letter-spacing: .05em;
+    }
+    .pricing-set-card {
+      background: linear-gradient(135deg, #fdfaf4 0%, #f5f0e4 100%);
+      border: 2px solid #b4a078;
+      border-radius: 10px;
+      padding: 1.6rem 1.8rem;
+      position: relative;
+      text-align: center;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .pricing-set-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #b4a078, #d4b878, #b4a078);
+    }
+    .pricing-recommended-badge {
+      display: inline-block;
+      background: #b4a078;
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      padding: .25rem .9rem;
+      border-radius: 20px;
+      margin-bottom: .8rem;
+    }
+    .pricing-set-name {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .95rem;
+      font-weight: 500;
+      color: #1a1a2e;
+      letter-spacing: .06em;
+      margin-bottom: .6rem;
+    }
+    .pricing-set-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: #1a1a2e;
+      letter-spacing: .05em;
+      line-height: 1.3;
+      margin-bottom: .4rem;
+    }
+    .pricing-set-price s {
+      font-size: 1.1rem;
+      color: #9a8870;
+      margin-right: .3rem;
+    }
+    .pricing-set-discount {
+      display: inline-block;
+      background: #2d7a4f;
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      padding: .15rem .6rem;
+      border-radius: 3px;
+      margin-left: .4rem;
+      vertical-align: middle;
+    }
+    .pricing-set-includes {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .78rem;
+      color: #7a7060;
+      letter-spacing: .04em;
+      margin-bottom: 1.2rem;
+    }
+    .pricing-set-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: #b4a078;
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      padding: .85rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .pricing-set-btn:hover { background: #9a8860; }
+    .pricing-singles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .8rem;
+      margin-bottom: 1rem;
+    }
+    .pricing-single-card {
+      background: #fff;
+      border: 1px solid #e8e0d0;
+      border-radius: 8px;
+      overflow: hidden;
+      padding: 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .pricing-single-cover {
+      width: 100%;
+      aspect-ratio: 1870 / 841;
+      object-fit: contain;
+      display: block;
+    }
+    .pricing-single-body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .45rem;
+      width: 100%;
+      flex: 1;
+      box-sizing: border-box;
+    }
+    .pricing-single-title {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: .04em;
+      line-height: 1.5;
+    }
+    .pricing-intro-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .3rem;
+      width: 100%;
+      background: none;
+      border: 1px solid #b4a078;
+      color: #7a6c52;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      padding: .45rem .8rem;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+    .pricing-intro-btn:hover { background: #b4a078; color: #fff; }
+    .pricing-intro-chevron {
+      display: inline-block;
+      transition: transform .25s;
+    }
+    .pricing-intro-btn[aria-expanded="true"] .pricing-intro-chevron {
+      transform: rotate(90deg);
+    }
+    .pricing-intro-body {
+      display: none;
+      text-align: left;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 13px;
+      color: #6b6b6b;
+      line-height: 1.8;
+      width: 100%;
+    }
+    .pricing-intro-body.is-open { display: block; }
+    .pricing-single-name {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .8rem;
+      font-weight: 500;
+      color: #1a1a2e;
+      letter-spacing: .04em;
+      line-height: 1.5;
+    }
+    .pricing-single-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: #1a1a2e;
+    }
+    .pricing-single-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      background: #b4a078;
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .75rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      padding: .5rem 1rem;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: background .2s;
+      margin-top: auto;
+    }
+    .pricing-single-btn:hover { background: #9a8860; }
+    .pricing-note {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .72rem;
+      color: #9a8870;
+      letter-spacing: .05em;
+      line-height: 1.8;
+      text-align: center;
+    }
+    @media (max-width: 560px) {
+      .pricing-singles { grid-template-columns: 1fr; }
+      .pricing-set-btn { width: 100%; justify-content: center; }
+    }
+  </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
@@ -133,6 +378,106 @@
       ツールはすべてブラウザ上で動作し、入力内容が外部に送信されることはありません。<br>
       ケアプランの最終判断・本人家族への説明と同意は、必ずケアマネジャーご自身が行ってください。
     </p>
+
+    <!-- おたすけガイドブック プライシング表 -->
+    <div class="pricing-wrap">
+      <div class="pricing-header">
+        <span class="pricing-section-badge">📄 PDF販売中</span>
+        <h3 class="pricing-title">おたすけガイドブックシリーズ</h3>
+        <p class="pricing-desc">
+          病気・ケガ・退職……いざというときに知っておきたい給付金・手続きをわかりやすく解説。<br>
+          看護師・ケアマネ30年の現場経験 × AI活用で作った実践ガイドです。
+        </p>
+      </div>
+
+      <!-- セットカード（おすすめ） -->
+      <div class="pricing-set-card">
+        <div class="pricing-recommended-badge">⭐ おすすめ</div>
+        <p class="pricing-set-name">おたすけガイドブック（お金編）3冊セット</p>
+        <p class="pricing-set-price">
+          <s>¥300</s>¥200<span class="pricing-set-discount">50% OFF</span>
+        </p>
+        <p class="pricing-set-includes">🏥 傷病手当金編 ・ 🦽 障害年金編 ・ 📋 退職編　3冊全て含む</p>
+        <a href="https://buy.stripe.com/aFa6oH7e81fc46wgTa7bW05" class="pricing-set-btn" target="_blank" rel="noopener">
+          🛒 3冊セットを購入する（¥200）
+        </a>
+      </div>
+
+      <!-- 単品3カラム -->
+      <div class="pricing-singles">
+        <!-- 傷病手当金編 -->
+        <div class="pricing-single-card">
+          <img class="pricing-single-cover" src="images/cover-shobyo.jpg" alt="傷病手当金申請ガイドブック 表紙">
+          <div class="pricing-single-body">
+            <p class="pricing-single-title">傷病手当金申請ガイドブック</p>
+            <span class="pricing-single-price">¥100</span>
+            <button class="pricing-intro-btn" aria-expanded="false" onclick="toggleIntro(this)">はじめにを見る <span class="pricing-intro-chevron">›</span></button>
+            <div class="pricing-intro-body">
+              <strong>このガイドブックを作ったわけ</strong><br><br>
+              50代まで会社員として懸命に働いてきたのに、ある日突然、体が動かなくなる。<br>
+              職場の人間関係、積み重なったストレス、思いがけない怪我――<br>
+              そんなとき、「来月の生活費、どうしよう」という不安が頭をよぎります。<br><br>
+              私自身、妻の体調の変化をきっかけに、この制度と出会いました。<br>
+              AIを活用しながら申請手続きを調べ、協会けんぽへのオンライン申請を行い、<br>
+              妻は今も毎月受給することができています。<br><br>
+              長年、健康保険料を納め続けてきた。<br>
+              その積み重ねが、いざというとき「傷病手当金」という形で<br>
+              あなたの生活を守ってくれます。<br><br>
+              知らなかったから損をした――そんな方が一人でも減るように。<br>
+              このガイドブックが、自分らしい生活を取り戻すきっかけになれば、<br>
+              こんなに嬉しいことはありません。<br><br>
+              sonosann Web&amp;AIサポート　その
+            </div>
+            <a href="https://buy.stripe.com/fZu3cvaqkaPMdH68mE7bW02" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+          </div>
+        </div>
+        <!-- 障害年金編 -->
+        <div class="pricing-single-card">
+          <img class="pricing-single-cover" src="images/cover-shogai.jpg" alt="障害年金申請ガイドブック 表紙">
+          <div class="pricing-single-body">
+            <p class="pricing-single-title">障害年金申請ガイドブック</p>
+            <span class="pricing-single-price">¥100</span>
+            <button class="pricing-intro-btn" aria-expanded="false" onclick="toggleIntro(this)">はじめにを見る <span class="pricing-intro-chevron">›</span></button>
+            <div class="pricing-intro-body">
+              「障害年金は、65歳以上がもらうもの」――違います。<br><br>
+              傷病手当金の受給を続けるなかで、なかなか体調が回復しない。<br>
+              1年6ヶ月という受給期間の終わりが近づいてきて、不安になっている方へ。<br><br>
+              障害年金は、20歳以上であれば年齢に関係なく申請できる制度です。<br>
+              30代・40代・50代で受給している方はたくさんいます。
+            </div>
+            <a href="https://buy.stripe.com/cNi3cv0PKcXUgTi0Uc7bW03" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+          </div>
+        </div>
+        <!-- 退職編 -->
+        <div class="pricing-single-card">
+          <img class="pricing-single-cover" src="images/cover-taishoku.jpg" alt="退職後にもらえるお金ガイドブック 表紙">
+          <div class="pricing-single-body">
+            <p class="pricing-single-title">退職後にもらえるお金ガイドブック</p>
+            <span class="pricing-single-price">¥100</span>
+            <button class="pricing-intro-btn" aria-expanded="false" onclick="toggleIntro(this)">はじめにを見る <span class="pricing-intro-chevron">›</span></button>
+            <div class="pricing-intro-body">
+              「退職したらどんなお金がもらえるの？」――そんな疑問を持つ方は多いのではないでしょうか。<br><br>
+              特に40年以上まじめに雇用保険を納め続けてきた方にとって、<br>
+              退職後の給付制度はあなた自身が積み上げてきた権利です。<br><br>
+              このガイドブックでは、59歳での退職を例に、<br>
+              失業手当（雇用保険の基本手当）についてわかりやすく・具体的に解説します。<br><br>
+              この1冊を読めば…<br>
+              ・自分がいくらもらえるか計算できる<br>
+              ・ハローワークで何をすればいいかわかる<br>
+              ・知らないと損する制度を3つ知れる<br><br>
+              このガイドブックが、あなたの次のステップを照らす一冊になれば。<br><br>
+              sonosann Web&amp;AIサポート　その
+            </div>
+            <a href="https://buy.stripe.com/cNi4gzfKEaPM1YobyQ7bW04" class="pricing-single-btn" target="_blank" rel="noopener">購入する</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="pricing-note">
+        クレジットカード払い・PayPay対応<br>
+        決済完了後すぐにPDFをダウンロードできます
+      </p>
+    </div>
   </section>
 
   <footer class="footer">
@@ -164,6 +509,12 @@
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 10);
     });
+
+    function toggleIntro(btn) {
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      btn.nextElementSibling.classList.toggle('is-open', !expanded);
+    }
   </script>
 </body>
 </html>
