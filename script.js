@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   navToggle.addEventListener('click', () => {
     navToggle.classList.toggle('active');
     navLinks.classList.toggle('open');
+    document.body.classList.toggle('menu-open');
   });
 
   // ナビリンクをクリックしたらメニューを閉じる
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', () => {
       navToggle.classList.remove('active');
       navLinks.classList.remove('open');
+      document.body.classList.remove('menu-open');
     });
   });
 
