@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script src="../redirect-to-vercel.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ケアプラン転記アシスト | sonosann Web&AIサポート</title>
+<style>
+  :root{
+    --paper:#F5F4EF; --card:#FFFFFF;
+    --ink:#22302C; --ink-2:#5C6B66; --ink-3:#8A968F;
+    --teal:#0E6B5C; --teal-deep:#0A5044; --teal-pale:#E4F0EC;
+    --form-green:#E7EDDA; --form-green-line:#B9C79B; --form-green-ink:#3E4A2C;
+    --amber:#9A5B0B; --amber-bg:#FBF1DC; --amber-line:#E4C077;
+    --done:#0F6E56; --done-bg:#E1F5EE;
+    --line:#DAD8CF; --line-2:#C4C2B8;
+    --mincho:"Yu Mincho","YuMincho","Hiragino Mincho ProN",serif;
+    --gothic:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--gothic); font-size:15px; line-height:1.7;}
+  .wrap{max-width:860px; margin:0 auto; padding:20px 16px 60px;}
+
+  header.app{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 14px; padding:6px 2px 14px; border-bottom:2px solid var(--teal);}
+  header.app h1{font-family:var(--mincho); font-size:24px; font-weight:600; color:var(--teal-deep); letter-spacing:.04em;}
+  .ver{font-size:12px; color:var(--ink-3); letter-spacing:.06em;}
+  .badge-local{margin-left:auto; font-size:12px; background:var(--done-bg); color:var(--teal-deep); border:1px solid #BFE3D6; border-radius:999px; padding:3px 12px;}
+  .badge-demo{font-size:12px; background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-line); border-radius:999px; padding:3px 12px;}
+
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin-top:16px;}
+  .panel h2{font-size:15px; font-weight:600; color:var(--teal-deep); margin-bottom:10px;}
+  .step-num{display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; font-size:13px; align-items:center; justify-content:center; margin-right:8px; font-family:var(--gothic);}
+  textarea#src{width:100%; min-height:180px; border:1px solid var(--line-2); border-radius:8px; padding:12px; font-family:"MS Gothic","Osaka-Mono",monospace; font-size:13px; line-height:1.7; color:var(--ink); background:#FCFCFA; resize:vertical;}
+  textarea#src:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;}
+  button{font-family:var(--gothic); font-size:14px; border-radius:8px; border:1px solid var(--line-2); background:#fff; color:var(--ink); padding:8px 16px; cursor:pointer;}
+  button:hover{background:#F3F2EC;}
+  button.primary{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600;}
+  button.primary:hover{background:var(--teal-deep);}
+  button:focus-visible{outline:2px solid var(--teal-deep); outline-offset:2px;}
+  .hint{font-size:12.5px; color:var(--ink-2); margin-top:10px;}
+
+  details.howto{margin-top:16px; background:var(--card); border:1px solid var(--line); border-radius:10px;}
+  details.howto summary{padding:12px 18px; font-size:14px; font-weight:600; color:var(--teal-deep); cursor:pointer; list-style-position:inside;}
+  details.howto .body{padding:0 18px 16px; font-size:13.5px; color:var(--ink-2);}
+  details.howto ol{padding-left:1.4em;}
+  details.howto li{margin:4px 0;}
+
+  #warn{display:none; margin-top:16px; background:var(--amber-bg); border:1px solid var(--amber-line); border-radius:10px; padding:12px 16px; font-size:13.5px; color:var(--amber);}
+
+  #progressbar{display:none; position:sticky; top:0; z-index:5; margin-top:16px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 16px; align-items:center; gap:12px;}
+  #progressbar .track{flex:1; height:8px; background:#ECEAE2; border-radius:4px; overflow:hidden;}
+  #progressbar .fill{height:100%; width:0%; background:var(--teal); transition:width .25s;}
+  #progressbar .num{font-size:13px; color:var(--ink-2); white-space:nowrap;}
+
+  .sheet{background:var(--card); border:1px solid var(--line-2); border-radius:10px; margin-top:20px; overflow:hidden;}
+  .sheet-head{background:var(--form-green); border-bottom:1px solid var(--form-green-line); padding:10px 18px; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
+  .sheet-head .tno{font-family:var(--mincho); font-size:14px; border:1px solid var(--form-green-ink); color:var(--form-green-ink); padding:1px 8px; background:#fff;}
+  .sheet-head h3{font-family:var(--mincho); font-size:18px; font-weight:600; color:var(--form-green-ink); letter-spacing:.08em;}
+  .sheet-body{padding:14px 18px 18px;}
+
+  .field{border:1px solid var(--line); border-radius:8px; margin-top:12px; overflow:hidden; background:#fff;}
+  .field.copied{border-color:#BFE3D6; background:var(--done-bg);}
+  .field-head{display:flex; align-items:center; gap:8px; padding:8px 12px; background:#F4F6EE; border-bottom:1px solid var(--line);}
+  .field.copied .field-head{background:#D5EEE4; border-color:#BFE3D6;}
+  .field-label{font-size:13px; font-weight:600; color:var(--form-green-ink); flex:1;}
+  .chip-warn{font-size:11.5px; background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-line); border-radius:999px; padding:1px 9px; white-space:nowrap;}
+  .btn-copy{font-size:12.5px; padding:4px 12px; white-space:nowrap;}
+  .btn-copy.done{background:var(--done-bg); border-color:#BFE3D6; color:var(--teal-deep);}
+  .field-text{padding:10px 14px; font-size:14px; white-space:pre-wrap; overflow-wrap:anywhere;}
+  mark.tag{background:var(--amber-bg); color:var(--amber); border-radius:4px; padding:0 4px; font-weight:600;}
+  mark.blank{background:var(--amber-bg); color:var(--amber); border-bottom:2px solid var(--amber); border-radius:0; padding:0 10px; letter-spacing:2px;}
+
+  .need{border:1px solid var(--line-2); border-radius:10px; margin-top:16px; overflow:hidden;}
+  .need-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--teal-pale); border-bottom:1px solid #BED9D1; padding:9px 14px;}
+  .need-head .nname{font-family:var(--mincho); font-size:16px; font-weight:600; color:var(--teal-deep);}
+  .pri{font-size:11.5px; border-radius:999px; padding:1px 10px; border:1px solid;}
+  .pri.p-high{background:#F8E9E7; color:#96351D; border-color:#E0A793;}
+  .pri.p-mid{background:var(--amber-bg); color:var(--amber); border-color:var(--amber-line);}
+  .pri.p-low{background:#EDF3FA; color:#1B5E96; border-color:#A9CBE8;}
+  .need-reason{font-size:12px; color:var(--ink-2); flex-basis:100%;}
+  .need-body{padding:2px 14px 14px;}
+
+  .svc{margin-top:12px; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .svc-title{font-size:13px; font-weight:600; color:var(--form-green-ink); background:#F4F6EE; padding:8px 12px; border-bottom:1px solid var(--line);}
+  .svc-scroll{overflow-x:auto;}
+  table.svc-tbl{width:100%; border-collapse:collapse; font-size:13px; min-width:560px;}
+  table.svc-tbl th{background:var(--form-green); color:var(--form-green-ink); font-weight:600; font-size:12px; padding:6px 8px; border:1px solid var(--form-green-line); white-space:nowrap;}
+  table.svc-tbl td{border:1px solid var(--line); padding:6px 8px; vertical-align:top;}
+  td.cell{cursor:pointer;}
+  td.cell:hover{background:#F3F7F0;}
+  td.cell.copied{background:var(--done-bg);}
+  td.rowbtn{white-space:nowrap; text-align:center; background:#FAFAF7;}
+  .svc-note{font-size:12.5px; color:var(--amber); background:var(--amber-bg); border-top:1px solid var(--amber-line); padding:6px 12px;}
+
+  .locked{border:1px dashed var(--line-2); border-radius:10px; margin-top:16px; padding:22px 18px; text-align:center; color:var(--ink-3); background:repeating-linear-gradient(-45deg,#FAFAF7,#FAFAF7 12px,#F2F1EA 12px,#F2F1EA 24px);}
+  .locked b{color:var(--ink-2);}
+
+  .checks{background:var(--card); border:1px solid var(--line-2); border-radius:10px; margin-top:20px; overflow:hidden;}
+  .checks-head{background:var(--amber-bg); border-bottom:1px solid var(--amber-line); padding:10px 18px; font-family:var(--mincho); font-size:16px; font-weight:600; color:var(--amber);}
+  .checks-body{padding:8px 18px 14px;}
+  .checks label{display:flex; gap:10px; align-items:flex-start; padding:7px 4px; font-size:14px; border-bottom:1px dashed var(--line); cursor:pointer;}
+  .checks label:last-child{border-bottom:none;}
+  .checks input{width:17px; height:17px; margin-top:4px; accent-color:var(--teal); flex-shrink:0;}
+  .checks label.done span{color:var(--ink-3); text-decoration:line-through;}
+
+  .closing{margin-top:20px; border-left:4px solid var(--teal); background:var(--card); border-radius:0 10px 10px 0; border-top:1px solid var(--line); border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:14px 18px; font-size:13.5px; color:var(--ink-2);}
+
+  footer.app{margin-top:40px; text-align:center; font-size:12px; color:var(--ink-3); line-height:2;}
+  .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--teal-deep); color:#fff; font-size:13.5px; padding:9px 20px; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:20;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+  @media (max-width:600px){ header.app h1{font-size:20px;} .badge-local{margin-left:0;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app">
+    <h1>ケアプラン転記アシスト</h1>
+    <span class="ver">対応形式: careplan-v1</span>
+    <span class="badge-demo" id="demoBadge" style="display:none;">デモ版</span>
+    <span class="badge-local">ローカル完結 ・ データは保存されません</span>
+  </header>
+
+  <details class="howto">
+    <summary>はじめての方へ(使い方)</summary>
+    <div class="body">
+      <ol>
+        <li>Claudeの「ケアプラン作成Skill」の出力を、そのまま全部コピーします。</li>
+        <li>下の入力欄に貼り付けて「様式に反映」を押します。</li>
+        <li>第1表・第2表の形に整理されるので、欄ごとに「コピー」ボタンを押し、お使いの介護ソフトの同じ欄に貼り付けます。表のマス目は、マス目そのものをクリックするとその部分だけコピーできます。</li>
+        <li>黄色のハイライト((要確認)・(仮置き)・空欄)は、担当者会議や調整で確定させる箇所です。最後の「要確認リスト」で確定作業をチェックしながら進めてください。</li>
+      </ol>
+      <p style="margin-top:8px;">このページはお使いのパソコンの中だけで動作します。貼り付けた内容がインターネットに送信されることはなく、ページを閉じると消えます。個人情報を含む内容は、匿名化した状態での利用を推奨します。</p>
+    </div>
+  </details>
+
+  <section class="panel">
+    <h2><span class="step-num">1</span>Claudeの出力を貼り付け</h2>
+    <textarea id="src" placeholder="[careplan-v1] から始まるSkillの出力を、ここに貼り付けてください" aria-label="Skill出力の貼り付け欄"></textarea>
+    <div class="btnrow">
+      <button class="primary" id="btnParse">様式に反映</button>
+      <button id="btnSample">サンプルを読み込む</button>
+      <button id="btnClear">クリア</button>
+    </div>
+    <p class="hint">※ 出力の1行目にある [careplan-v1] も含めて、全文を貼り付けてください。</p>
+  </section>
+
+  <div id="warn" role="alert"></div>
+
+  <div id="progressbar">
+    <span class="num" style="font-weight:600; color:var(--teal-deep);">転記の進み具合</span>
+    <div class="track"><div class="fill" id="pfill"></div></div>
+    <span class="num" id="pnum">0 / 0</span>
+  </div>
+
+  <div id="output"></div>
+
+  <footer class="app">
+    ケアプラン転記アシスト v1.0 ｜ sonosann Web&amp;AIサポート<br>
+    AIは情報、動くのは人。下書きの確定・同意の取得はケアマネジャーご自身で行ってください。
+  </footer>
+</div>
+<div class="toast" id="toast" aria-live="polite">コピーしました</div>
+
+<script>
+'use strict';
+/* ===== 設定 =====
+   DEMO_MODE を true にするとデモ版(第2表はニーズ2件まで表示)になります。 */
+const DEMO_MODE = false;
+
+/* ===== サンプル(架空ペルソナ・テスト用仮設定) ===== */
+const SAMPLE = `[careplan-v1]
+【居宅サービス計画書 下書き ※原案作成前のたたき台です。担当者会議・本人同意が必要です】
+※本人・家族の意向は「テスト用仮設定」です。実務では必ず面談で確認した意向に差し替えてください。
+
+■第1表
+▼利用者及び家族の生活に対する意向を踏まえた課題分析の結果
+(本人)言葉での意思表示は困難だが、自宅で妻と過ごしている時間は表情が穏やかである(意思の伝達が困難なため、表情・反応からの推察。※テスト用仮設定)
+(妻)できる限り自宅で一緒に暮らしたい。ただ、夜眠れないことや幻が見える時の対応で疲れており、休める時間がほしい(※テスト用仮設定)
+(長男様・週末訪問)母の体が心配。サービスを利用して、両親とも無理なく暮らしてほしい(※テスト用仮設定)
+(課題分析の結果)レビー小体型認知症の進行により、幻視・症状の変動・昼夜逆転があり、移乗・移動・排泄は全介助の状態である。寝返り・起き上がりができず、褥瘡発生のリスクが高い。一方、嚥下機能は保たれ経口摂取を続ける力があり、支えがあれば座位保持が可能である(持っている力)。主介護者の妻(76歳)に夜間対応を含む介護負担が集中しており、共倒れの恐れがある。医療との連携による症状の安定と服薬管理、福祉用具の活用による褥瘡・転倒の予防、定期的なレスパイトによる妻の負担軽減を図ることで、ご夫婦が望む在宅生活の継続が見込まれる。長男様の週末の支援という家族の力も活かせる環境にある。
+
+▼総合的な援助の方針
+ご本人が穏やかに自宅で過ごせること、妻が無理なく介護を続けられることを目標に、医療と介護が連携し、症状の安定・褥瘡と転倒の予防・介護負担の軽減を柱としてケアチーム全体で在宅生活を支援します。
+緊急時(幻視・意識レベルの変動に伴う転倒、発熱、状態の急変等)は下記へ連絡してください。
+・主治医:______(要確認)
+・訪問看護ステーション:______(24時間連絡体制の有無を要確認)
+・担当ケアマネジャー:______(要確認)
+
+▼生活援助中心型の算定理由
+該当なし(妻と同居、身体介護中心のため)。
+※今後、妻の疲労状態によっては「2.家族等が障害、疾病等」に準じたやむを得ない事情での位置付けを検討する余地あり(要確認)
+
+■第2表
+――ニーズ1(優先度:高 症状の変動・服薬管理が全課題の土台であり、レビー小体型は薬剤過敏性があるため医療連携が最優先)
+▼生活全般の解決すべき課題(ニーズ)
+幻視や体調の波があっても、病状を安定させて自宅で穏やかに過ごしたい
+▼長期目標:体調の変動が早期に把握され、症状が安定した状態で在宅生活を続けることができる(期間:12か月(仮置き・認定有効期間を確認))
+▼短期目標:週1回の看護師の訪問で体調・服薬状況が確認され、症状の変化が主治医に報告される体制ができる(期間:6か月(仮置き))
+▼サービス内容/※1/サービス種別/頻度/期間
+・病状観察、服薬管理、主治医との連携、幻視出現時の対応助言/○/訪問看護/週1回(仮置き)/6か月
+・服薬の声かけ・確認/なし/妻(インフォーマル)/毎日/6か月
+・受診同行、体調変化の共有/なし/長男様(インフォーマル)/月1回程度/6か月
+
+――ニーズ2(優先度:高 寝返り不可で褥瘡リスクが切迫しているため)
+▼生活全般の解決すべき課題(ニーズ)
+床ずれを作らず、安全に寝起き・移動ができるようになりたい
+▼長期目標:褥瘡を発生させず、介助を受けながら安全に移乗・移動ができる(期間:12か月(仮置き))
+▼短期目標:福祉用具の活用と体位変換により、皮膚トラブルなく過ごすことができる(期間:6か月(仮置き))
+▼サービス内容/※1/サービス種別/頻度/期間
+・特殊寝台・特殊寝台付属品・床ずれ防止用具・車いすの貸与/○/福祉用具貸与/常時/6か月
+・排泄介助、体位変換、移乗介助/○/訪問介護(身体介護)/1日2回(仮置き)/6か月
+・夜間の体位変換の声かけ/なし/妻(インフォーマル)/毎日/6か月
+※訪問介護の回数は区分支給限度基準額(要介護3)内かの確認が必要(要確認)
+
+――ニーズ3(優先度:中 清潔保持と全身状態の観察の機会確保のため)
+▼生活全般の解決すべき課題(ニーズ)
+体を清潔に保ち、気持ちよく過ごしたい
+▼長期目標:定期的に入浴し、清潔と皮膚の健康を保つことができる(期間:12か月(仮置き))
+▼短期目標:週2回、介助を受けて安全に入浴できる(期間:6か月(仮置き))
+▼サービス内容/※1/サービス種別/頻度/期間
+・入浴介助、皮膚状態の観察/○/訪問入浴介護/週1回(仮置き)/6か月
+・入浴、日中の活動機会の提供、妻の休息時間の確保/○/通所介護/週1回(仮置き)/6か月
+※症状の変動が大きい場合、通所は認知症対応型通所介護も選択肢(要確認)
+
+――ニーズ4(優先度:中 妻(76歳)の介護継続が在宅生活の前提条件のため)
+▼生活全般の解決すべき課題(ニーズ)
+(妻)休める時間を確保し、無理なく介護を続けたい
+▼長期目標:妻が心身の健康を保ちながら、在宅介護を継続できる(期間:12か月(仮置き))
+▼短期目標:月1回の短期入所を利用し、妻がまとまった休息を取ることができる(期間:6か月(仮置き))
+▼サービス内容/※1/サービス種別/頻度/期間
+・短期入所による介護、生活支援/○/短期入所生活介護/月1回2〜3泊(仮置き)/6か月
+・週末の見守り・話し相手/なし/長男様(インフォーマル)/週1回/6か月
+・介護者交流会等の地域資源の情報提供/なし/ケアマネジャー・地域包括(インフォーマル)/随時/6か月
+
+――――――――――――――――
+【要確認リスト(担当者会議・調整で確定してください)】
+・各サービスの事業所名(※2欄)と空き状況
+・頻度・期間の最終決定(要介護3の区分支給限度基準額内かの確認。民間介護保険の給付条件も確認するとサービス上乗せの検討材料になります)
+・緊急時連絡先の記入(訪問看護の24時間対応体制加算の有無)
+・主治医への意見照会(レビー小体型は薬剤過敏性があるため、訪問看護・通所開始時の情報共有が特に重要)
+・嚥下機能は現状保たれているが、レビー小体型は誤嚥リスクが進行しやすいため、食事場面の観察をモニタリング項目に入れることを推奨
+・本人・家族への説明と同意、交付
+
+――――――――――――――――
+この下書きはアセスメント情報をもとにした原案のたたき台です。ケアプランは利用者本人の計画であり、ニーズの優先順位や目標は本人・家族と一緒に決めるものです。サービス担当者会議での多職種の意見、事業所との調整、本人への説明と同意という一連のプロセスを経てはじめてケアプランになります。AIは文章の整理をお手伝いできますが、本人の人生の方向を決める対話と調整は、ケアマネジャー自身にしかできません。`;
+
+/* ===== パーサー (careplan-v1) ===== */
+function parsePlan(text){
+  const lines = text.replace(/\r\n?/g,'\n').split('\n');
+  const plan = {version:null, subtitle:'', notes:[], forms:[], checklist:[], closing:''};
+  let form=null, field=null, need=null, svc=null, inChecklist=false, afterSep=false, closingLines=[];
+  const isSep = s => /^―{8,}\s*$/.test(s);
+  const flushField = () => { field=null; };
+  for (let raw of lines){
+    const line = raw.replace(/\s+$/,'');
+    const t = line.trim();
+    if (!plan.version && t==='[careplan-v1]'){ plan.version='v1'; continue; }
+    if (!form && !inChecklist){
+      if (/^【居宅サービス計画書/.test(t)){ plan.subtitle=t; continue; }
+      if (t.startsWith('※') && !plan.forms.length){ plan.notes.push(t); continue; }
+    }
+    if (isSep(t)){ afterSep=true; inChecklist=false; svc=null; need=null; form=null; flushField(); continue; }
+    if (/^【要確認リスト/.test(t)){ inChecklist=true; afterSep=false; form=null; svc=null; need=null; flushField(); continue; }
+    if (inChecklist){
+      if (t.startsWith('・')) plan.checklist.push(t.slice(1).trim());
+      continue;
+    }
+    if (t.startsWith('■')){
+      form={name:t.slice(1).trim(), fields:[], needs:[]};
+      plan.forms.push(form); need=null; svc=null; flushField(); afterSep=false; continue;
+    }
+    if (afterSep && !form){
+      if (t) closingLines.push(t);
+      continue;
+    }
+    if (!form) continue;
+    const needMatch = t.match(/^――\s*(ニーズ\s*\d+)\s*(?:\((.*)\))?\s*$/) || t.match(/^――\s*(ニーズ\s*\d+)\s*\((.*)$/);
+    if (needMatch){
+      let pri='', reason='';
+      if (needMatch[2]){
+        const m = needMatch[2].replace(/\)$/,'').match(/優先度[:：]\s*(高|中|低)?\s*(.*)/);
+        if (m){ pri=m[1]||''; reason=(m[2]||'').trim(); } else { reason=needMatch[2].replace(/\)$/,''); }
+      }
+      need={name:needMatch[1].replace(/\s+/g,''), priority:pri, reason:reason, fields:[], svc:null};
+      form.needs.push(need); svc=null; flushField(); continue;
+    }
+    if (t.startsWith('▼')){
+      const body=t.slice(1).trim(); svc=null;
+      if (/^サービス内容\s*\//.test(body)){
+        svc={header:body.split('/').map(s=>s.trim()), rows:[], notes:[]};
+        if (need) need.svc=svc; else form.fields.push({label:'サービス内容', text:'', svcOnly:svc});
+        flushField(); continue;
+      }
+      const m=body.match(/^([^:：]+)[:：](.*)$/);
+      field = m ? {label:m[1].trim(), text:(m[2]||'').trim()} : {label:body, text:''};
+      (need?need.fields:form.fields).push(field);
+      continue;
+    }
+    if (svc){
+      if (t.startsWith('・')){ svc.rows.push(t.slice(1).split('/').map(s=>s.trim())); continue; }
+      if (t.startsWith('※')){ svc.notes.push(t); continue; }
+      if (!t) continue;
+    }
+    if (t.startsWith('※') && need && !field){ (need.svc?need.svc.notes:need.fields).push? (need.svc?need.svc.notes.push(t):need.fields.push({label:'注記',text:t})) : null; continue; }
+    if (field){ field.text = field.text ? field.text+'\n'+line : line.trim()==='' ? field.text : line; continue; }
+    if (t && need){ need.fields.push({label:'備考', text:t}); field=need.fields[need.fields.length-1]; }
+  }
+  plan.closing = closingLines.join('\n');
+  return plan;
+}
+
+/* ===== 描画 ===== */
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function decorate(s){
+  let h = esc(s);
+  h = h.replace(/_{4,}/g, m=>'<mark class="blank">'+m+'</mark>');
+  h = h.replace(/\((要確認|仮置き)[^)<]*\)/g, m=>'<mark class="tag">'+m+'</mark>');
+  return h;
+}
+const countWarn = s => (s.match(/\((要確認|仮置き)[^)]*\)/g)||[]).length + (s.match(/_{4,}/g)||[]).length;
+
+let totalUnits=0, doneUnits=0;
+function render(plan){
+  const out=$('output'); out.innerHTML=''; totalUnits=0; doneUnits=0;
+  const tnoOf = name => (name.match(/第(\d+)表/)||[])[0] || '';
+
+  plan.forms.forEach(form=>{
+    const sheet=document.createElement('section'); sheet.className='sheet';
+    const isT1=/第1表/.test(form.name), isT2=/第2表/.test(form.name);
+    const title=isT1?'居宅サービス計画書(1)':isT2?'居宅サービス計画書(2)':/第3表/.test(form.name)?'週間サービス計画表':form.name;
+    sheet.innerHTML='<div class="sheet-head"><span class="tno">'+esc(tnoOf(form.name)||form.name)+'</span><h3>'+esc(title)+'</h3></div>';
+    const body=document.createElement('div'); body.className='sheet-body'; sheet.appendChild(body);
+    form.fields.forEach(f=>{ if(f.svcOnly) body.appendChild(svcEl(f.svcOnly)); else body.appendChild(fieldEl(f)); });
+
+    form.needs.forEach((need,i)=>{
+      if (DEMO_MODE && i>=2){
+        if (i===2){
+          const lk=document.createElement('div'); lk.className='locked';
+          lk.innerHTML='<b>デモ版ではニーズ2件まで表示されます</b><br>残り'+(form.needs.length-2)+'件のニーズは製品版でご利用いただけます';
+          body.appendChild(lk);
+        }
+        return;
+      }
+      const nd=document.createElement('div'); nd.className='need';
+      const pc = need.priority==='高'?'p-high':need.priority==='中'?'p-mid':'p-low';
+      nd.innerHTML='<div class="need-head"><span class="nname">'+esc(need.name)+'</span>'+
+        (need.priority?'<span class="pri '+pc+'">優先度: '+esc(need.priority)+'</span>':'')+
+        (need.reason?'<span class="need-reason">'+esc(need.reason)+'</span>':'')+'</div>';
+      const nb=document.createElement('div'); nb.className='need-body'; nd.appendChild(nb);
+      need.fields.forEach(f=>nb.appendChild(fieldEl(f)));
+      if (need.svc) nb.appendChild(svcEl(need.svc));
+      body.appendChild(nd);
+    });
+    out.appendChild(sheet);
+  });
+
+  if (plan.checklist.length){
+    const ck=document.createElement('section'); ck.className='checks';
+    ck.innerHTML='<div class="checks-head">要確認リスト(担当者会議・調整で確定)</div>';
+    const cb=document.createElement('div'); cb.className='checks-body';
+    plan.checklist.forEach(item=>{
+      const lb=document.createElement('label');
+      lb.innerHTML='<input type="checkbox"><span>'+decorate(item)+'</span>';
+      lb.querySelector('input').addEventListener('change',e=>lb.classList.toggle('done',e.target.checked));
+      cb.appendChild(lb);
+    });
+    ck.appendChild(cb); out.appendChild(ck);
+  }
+  if (plan.closing){
+    const cl=document.createElement('div'); cl.className='closing'; cl.textContent=plan.closing; out.appendChild(cl);
+  }
+  updateProgress();
+  $('progressbar').style.display = totalUnits? 'flex':'none';
+}
+
+function fieldEl(f){
+  totalUnits++;
+  const div=document.createElement('div'); div.className='field';
+  const w=countWarn(f.text);
+  div.innerHTML='<div class="field-head"><span class="field-label">'+esc(f.label)+'</span>'+
+    (w?'<span class="chip-warn">要確認 '+w+'件</span>':'')+
+    '<button class="btn-copy">コピー</button></div>'+
+    '<div class="field-text">'+decorate(f.text)+'</div>';
+  const btn=div.querySelector('.btn-copy');
+  btn.addEventListener('click',()=>copyText(f.text,()=>{
+    if(!div.classList.contains('copied')){doneUnits++;}
+    div.classList.add('copied'); btn.classList.add('done'); btn.textContent='✓ コピー済';
+    updateProgress();
+  }));
+  return div;
+}
+
+function svcEl(svc){
+  const wrap=document.createElement('div'); wrap.className='svc';
+  wrap.innerHTML='<div class="svc-title">援助内容(マス目クリックでその部分をコピー)</div>';
+  const sc=document.createElement('div'); sc.className='svc-scroll';
+  const tbl=document.createElement('table'); tbl.className='svc-tbl';
+  const thead=document.createElement('tr');
+  svc.header.forEach(h=>{ const th=document.createElement('th'); th.textContent=h; thead.appendChild(th); });
+  const thb=document.createElement('th'); thb.textContent='行'; thead.appendChild(thb);
+  tbl.appendChild(thead);
+  svc.rows.forEach(row=>{
+    totalUnits++;
+    const tr=document.createElement('tr');
+    for(let c=0;c<svc.header.length;c++){
+      const td=document.createElement('td'); td.className='cell';
+      const val=row[c]!==undefined?row[c]:'';
+      td.innerHTML=decorate(val); td.title='クリックでコピー';
+      td.addEventListener('click',()=>copyText(val,()=>td.classList.add('copied')));
+      tr.appendChild(td);
+    }
+    const tdb=document.createElement('td'); tdb.className='rowbtn';
+    const b=document.createElement('button'); b.className='btn-copy'; b.textContent='行コピー';
+    b.addEventListener('click',()=>copyText(row.join('\t'),()=>{
+      if(!b.classList.contains('done')){doneUnits++;}
+      b.classList.add('done'); b.textContent='✓ 済';
+      tr.querySelectorAll('td.cell').forEach(td=>td.classList.add('copied'));
+      updateProgress();
+    }));
+    tdb.appendChild(b); tr.appendChild(tdb);
+    tbl.appendChild(tr);
+  });
+  sc.appendChild(tbl); wrap.appendChild(sc);
+  svc.notes.forEach(n=>{ const d=document.createElement('div'); d.className='svc-note'; d.innerHTML=decorate(n); wrap.appendChild(d); });
+  return wrap;
+}
+
+function updateProgress(){
+  $('pnum').textContent=doneUnits+' / '+totalUnits;
+  $('pfill').style.width=(totalUnits?Math.round(doneUnits/totalUnits*100):0)+'%';
+}
+
+/* ===== コピー ===== */
+function copyText(t,cb){
+  const done=()=>{cb(); toast();};
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(t).then(done,()=>legacyCopy(t,done));
+  } else legacyCopy(t,done);
+}
+function legacyCopy(t,cb){
+  const ta=document.createElement('textarea');
+  ta.value=t; ta.style.cssText='position:fixed;opacity:0;';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try{ document.execCommand('copy'); cb(); }
+  catch(e){ alert('自動コピーに失敗しました。テキストを選択して手動でコピーしてください。'); }
+  ta.remove();
+}
+let toastTimer=null;
+function toast(){
+  const el=$('toast'); el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),1400);
+}
+
+/* ===== イベント ===== */
+$('btnParse').addEventListener('click',()=>{
+  const text=$('src').value;
+  const warn=$('warn'); warn.style.display='none'; warn.textContent='';
+  if (!text.trim()){ warn.style.display='block'; warn.textContent='入力が空です。Skillの出力を貼り付けてから「様式に反映」を押してください。'; $('output').innerHTML=''; $('progressbar').style.display='none'; return; }
+  const plan=parsePlan(text);
+  if (plan.version!=='v1'){
+    warn.style.display='block';
+    warn.textContent='注意: バージョンタグ [careplan-v1] が見つかりません。Skillの出力を1行目から全文貼り付けてください。旧形式の出力は正しく表示されないことがあります。';
+  }
+  if (!plan.forms.length){
+    warn.style.display='block';
+    warn.textContent='様式(■第1表 など)が見つかりませんでした。ケアプラン作成Skillの出力をそのまま貼り付けているかご確認ください。';
+    $('output').innerHTML=''; $('progressbar').style.display='none'; return;
+  }
+  render(plan);
+});
+$('btnSample').addEventListener('click',()=>{ $('src').value=SAMPLE; $('btnParse').click(); });
+$('btnClear').addEventListener('click',()=>{ $('src').value=''; $('output').innerHTML=''; $('warn').style.display='none'; $('progressbar').style.display='none'; });
+if (DEMO_MODE) $('demoBadge').style.display='inline-block';
+</script>
+</body>
+</html>
