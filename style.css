@@ -106,7 +106,27 @@ ul { list-style: none; }
 .nav-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
 .nav-toggle.active span:nth-child(2) { opacity: 0; }
 .nav-toggle.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
- 
+
+/* ヘッダーCTAボタン（お問い合わせ） */
+.nav-links a.nav-cta-link {
+  padding: 8px 20px;
+  background: var(--accent);
+  color: var(--white);
+  border-radius: 100px;
+  letter-spacing: 0.06em;
+}
+.nav-links a.nav-cta-link::after { content: none; }
+.nav-links a.nav-cta-link:hover { background: var(--black); color: var(--white); }
+@media (max-width: 768px) {
+  .nav-links a.nav-cta-link {
+    display: inline-block;
+    margin: 16px 24px 0;
+    width: calc(100% - 48px);
+    text-align: center;
+    border-bottom: none;
+  }
+}
+
 /* ===========================
    Hero
 =========================== */
@@ -324,7 +344,37 @@ ul { list-style: none; }
 .contact-btn:hover { background: var(--dark-gray); }
 .contact-btn--outline { background: transparent; border: 1px solid var(--black); color: var(--black); }
 .contact-btn--outline:hover { background: var(--black); color: var(--white); }
- 
+
+/* ===========================
+   Inline CTA Card
+=========================== */
+.inline-cta {
+  max-width: 640px;
+  margin: 56px auto 0;
+  padding: 48px 32px;
+  background: var(--white);
+  border: 1px solid var(--mid);
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.inline-cta-title {
+  font-family: var(--font-en);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+.inline-cta-desc {
+  font-size: 0.88rem;
+  color: var(--dark-gray);
+  margin-bottom: 24px;
+}
+@media (max-width: 768px) {
+  .inline-cta { padding: 36px 20px; margin-top: 40px; }
+}
+
 /* ===========================
    Footer
 =========================== */
