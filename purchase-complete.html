@@ -177,6 +177,49 @@
       margin-top: .4rem;
       line-height: 1.5;
     }
+    .dl-card-desc {
+      font-size: .78rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: .4rem;
+      line-height: 1.7;
+    }
+
+    /* Skill商品カード用：縦積みレイアウト（ケアマネSkillパッケージ等） */
+    .dl-card--stack {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .dl-card--stack .dl-btn { width: 100%; justify-content: center; }
+
+    /* 購入前の注意書きブロック（DLボタン直上・skill系カードで共通利用） */
+    .dl-card-notice {
+      background: #fef2f2;
+      border: 1px solid #f3b8b8;
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0;
+      color: #b91c1c;
+    }
+    .dl-card-notice-title {
+      font-size: .78rem;
+      font-weight: 700;
+      margin-bottom: .5rem;
+    }
+    .dl-card-notice-list {
+      list-style: none;
+      font-size: .74rem;
+      font-weight: 500;
+      line-height: 1.7;
+    }
+    .dl-card-notice-list li {
+      padding-left: 1.1em;
+      text-indent: -1.1em;
+      margin-bottom: .35rem;
+    }
+    .dl-card-notice-list li::before { content: "・"; }
+    .dl-card-notice-list li:last-child { margin-bottom: 0; }
+
     .dl-btn {
       display: inline-flex;
       align-items: center;
@@ -506,6 +549,19 @@
     const KAIGO_SET_STRIPE_URL = 'https://buy.stripe.com/dRmfZhaqk0b80Uk32k7bW0a';
     const LINE_SUPPORT_STRIPE_URL = 'https://buy.stripe.com/3cI00jfKE3nk1YocCU7bW0b';
 
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ケアマネSkillパッケージ 商品マスター
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const SKILL_PRODUCTS = {
+      kadai: {
+        category: 'ケアマネSkillパッケージ',
+        label: '課題整理総括表24項目 Claude Skill',
+        emoji: '📊',
+        desc: 'ダウンロード内容：Skillファイル一式（.skill＋issue-summary-tool.html＋利用の手引きPDF）をまとめたZIP／価格：¥2,480',
+        driveUrl: 'https://drive.google.com/PLACEHOLDER_KADAI' // ★ Google Driveの共有リンクに差し替えてください
+      }
+    };
+
     // DownloadSVG アイコン
     const DL_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -524,6 +580,36 @@
           </div>
           <a class="dl-btn" href="${product.driveUrl}" target="_blank" rel="noopener">
             ${DL_ICON} PDFを開く
+          </a>
+        </div>`;
+    }
+
+    // ── 購入前の注意書きブロック（skill系DLカードで共通利用） ──
+    function makePurchaseNotice() {
+      return `
+        <div class="dl-card-notice">
+          <p class="dl-card-notice-title">⚠️ ご購入前にご確認ください</p>
+          <ul class="dl-card-notice-list">
+            <li>Claudeアカウント（Freeプランで使えます！）が必要です。設定から「コード実行とファイル作成」機能をONにしていただきます（同梱の手引きに設定手順を記載しています）</li>
+            <li>お渡しするファイルはZIP形式です。ダウンロード後、ご自身で解凍（展開）していただく操作が必要です</li>
+            <li>ご利用の際は、認定調査票や主治医意見書などの認定情報を、写真撮影またはスキャンしてClaudeに取り込んでいただく操作が発生します</li>
+            <li>上記の操作にご不安がある場合は、同梱の「はじめてのセットアップ手引き」に沿って進めていただけます</li>
+          </ul>
+        </div>`;
+    }
+
+    // ── skill系カード生成ヘルパー（注意書き＋ダウンロードボタン） ──
+    function makeSkillCard(product) {
+      return `
+        <div class="dl-card dl-card--stack">
+          <div class="dl-card-info">
+            <span class="dl-card-label">${product.category}</span>
+            <p class="dl-card-name">${product.emoji} ${product.label}</p>
+            <p class="dl-card-desc">${product.desc}</p>
+          </div>
+          ${makePurchaseNotice()}
+          <a class="dl-btn" href="${product.driveUrl}" target="_blank" rel="noopener">
+            ${DL_ICON} ダウンロードする
           </a>
         </div>`;
     }
@@ -652,6 +738,27 @@
 
       // セット購入者には案内不要
       upsellBoxEl.innerHTML = '';
+      otherAreaEl.innerHTML = '';
+
+    // ── ケアマネSkillパッケージ：単品購入 ──
+    } else if (item && SKILL_PRODUCTS[item]) {
+      const p = SKILL_PRODUCTS[item];
+
+      badgeEl.textContent = `✅ ${p.label} をご購入`;
+      badgeEl.style.display = 'inline-block';
+
+      dlCardsEl.innerHTML = makeSkillCard(p);
+
+      // 3点セットは近日公開のため控えめな案内のみ
+      upsellBoxEl.innerHTML = `
+        <div class="upsell-section">
+          <div class="upsell-badge">🔜 近日公開</div>
+          <h2 class="upsell-title">ケアマネSkill 3点セット</h2>
+          <p class="upsell-desc">
+            課題整理総括表・ケアプラン点検・書式チェックをまとめた3点セットを準備中です。<br>
+            公開まで今しばらくお待ちください。
+          </p>
+        </div>`;
       otherAreaEl.innerHTML = '';
 
     // ── パラメータなし（旧URL・直アクセス）→ 全冊表示（後方互換） ──
