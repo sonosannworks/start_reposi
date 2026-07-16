@@ -170,6 +170,12 @@
       color: var(--ink);
       letter-spacing: .05em;
     }
+    .dl-card-hint {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: .3rem;
+      line-height: 1.5;
+    }
     .dl-btn {
       display: inline-flex;
       align-items: center;
@@ -513,9 +519,10 @@
           <div class="dl-card-info">
             <span class="dl-card-label">おたすけガイドブック</span>
             <p class="dl-card-name">${product.emoji} ${product.label}</p>
+            <p class="dl-card-hint">開いた後、画面右上の⬇ボタンを押して端末に保存してください</p>
           </div>
           <a class="dl-btn" href="${product.driveUrl}" target="_blank" rel="noopener">
-            ${DL_ICON} ダウンロード
+            ${DL_ICON} PDFを開く
           </a>
         </div>`;
     }
