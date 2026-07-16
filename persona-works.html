@@ -86,6 +86,40 @@
     }
     .wf-arrow { font-size: .7rem; color: #c8b898; }
 
+    .hearing-cta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      margin: 1.6rem 0 2rem;
+    }
+    .hearing-cta-inquiry {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-left: 28px;
+      border-left: 1px solid #e0dcd4;
+    }
+    .hearing-cta-inquiry-text {
+      font-size: .8rem;
+      color: #5c4a30;
+      line-height: 1.6;
+      text-align: left;
+    }
+    @media (max-width: 640px) {
+      .hearing-cta-row { flex-direction: column; gap: 16px; }
+      .hearing-cta-inquiry {
+        flex-direction: column;
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid #e0dcd4;
+        padding-top: 16px;
+        text-align: center;
+      }
+      .hearing-cta-inquiry-text { text-align: center; }
+    }
+
     .main {
       max-width: 1060px; margin: 0 auto;
       padding: 56px 20px 80px;
@@ -280,10 +314,16 @@
     </div>
   </div>
 
-  <div style="text-align: center; margin: 1.6rem 0 2rem;">
+  <div class="hearing-cta-row">
     <a href="https://sonosannworks.github.io/start_reposi/sonosann_client_form.html" target="_blank" rel="noopener" class="contact-btn" style="display:inline-flex; align-items:center; gap:.5rem; font-size:.88rem;">
       📋 ヒアリング（要望）
     </a>
+    <div class="hearing-cta-inquiry">
+      <p class="hearing-cta-inquiry-text">実際のヒアリング内容が<br>気になったらお気軽にご相談ください</p>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform" target="_blank" rel="noopener" class="contact-btn contact-btn--outline" style="display:inline-flex; align-items:center; gap:.5rem; font-size:.88rem;">
+        お問い合わせ
+      </a>
+    </div>
   </div>
 
   <main class="main">
