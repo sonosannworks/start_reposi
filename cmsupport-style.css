@@ -127,6 +127,13 @@
   margin-bottom: 1.1rem;
   flex: 1;
 }
+.cm-tool-note {
+  font-size: .78rem;
+  color: var(--dark-gray);
+  opacity: .85;
+  line-height: 1.75;
+  margin: -.6rem 0 1.1rem;
+}
 .cm-tool-points {
   list-style: none;
   padding: 0;
