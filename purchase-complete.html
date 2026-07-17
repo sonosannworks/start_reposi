@@ -559,6 +559,13 @@
         emoji: '📊',
         desc: 'ダウンロード内容：Skillファイル一式（.skill＋issue-summary-tool.html＋利用の手引きPDF）をまとめたZIP／価格：¥2,480',
         driveUrl: 'https://drive.google.com/drive/folders/14k4tBC0Yt66LxYCQOV1unwabJUjWy0Wd?usp=sharing'
+      },
+      cmset: {
+        category: 'ケアマネSkillパッケージ',
+        label: '3点セット',
+        emoji: '📦',
+        desc: 'ダウンロード内容：課題整理総括表24項目Skill＋ケアプラン第1・2表Skill＋事業所加算マスタの3点フルセット（ZIP1つ）／価格：¥4,980',
+        driveUrl: 'https://drive.google.com/PLACEHOLDER_CMSET'
       }
     };
 
@@ -749,16 +756,20 @@
 
       dlCardsEl.innerHTML = makeSkillCard(p);
 
-      // 3点セットは近日公開のため控えめな案内のみ
-      upsellBoxEl.innerHTML = `
-        <div class="upsell-section">
-          <div class="upsell-badge">🔜 近日公開</div>
-          <h2 class="upsell-title">ケアマネSkill 3点セット</h2>
-          <p class="upsell-desc">
-            課題整理総括表・ケアプラン点検・書式チェックをまとめた3点セットを準備中です。<br>
-            公開まで今しばらくお待ちください。
-          </p>
-        </div>`;
+      if (item === 'kadai') {
+        // 3点セットは近日公開のため控えめな案内のみ
+        upsellBoxEl.innerHTML = `
+          <div class="upsell-section">
+            <div class="upsell-badge">🔜 近日公開</div>
+            <h2 class="upsell-title">ケアマネSkill 3点セット</h2>
+            <p class="upsell-desc">
+              課題整理総括表・ケアプラン点検・書式チェックをまとめた3点セットを準備中です。<br>
+              公開まで今しばらくお待ちください。
+            </p>
+          </div>`;
+      } else {
+        upsellBoxEl.innerHTML = '';
+      }
       otherAreaEl.innerHTML = '';
 
     // ── パラメータなし（旧URL・直アクセス）→ 全冊表示（後方互換） ──
