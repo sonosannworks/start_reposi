@@ -179,6 +179,22 @@
   transition: background var(--transition), transform var(--transition);
 }
 .cm-tool-buy-btn:hover { background: #b3903f; transform: translateY(-2px); }
+.cm-tool-select {
+  width: 100%;
+  padding: .75rem 1rem;
+  background: var(--white);
+  color: var(--dark-gray);
+  font-size: .85rem;
+  font-weight: 500;
+  border: 1px solid var(--light);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.cm-tool-support-note {
+  font-size: .72rem;
+  color: var(--dark-gray);
+  margin: -.3rem 0 0;
+}
 .cm-tool-cta-group .cm-tool-link { margin-top: 0; }
 .cm-tool-link {
   display: inline-flex;

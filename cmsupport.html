@@ -359,7 +359,14 @@
         </ul>
         <div class="cm-tool-tags"><span>ケアプラン作成</span><span>転記支援</span><span>Vol.958準拠</span></div>
         <div class="cm-tool-cta-group">
-          <a href="https://buy.stripe.com/bJedR95605vsbyY7iA7bW0i" target="_blank" rel="noopener" class="cm-tool-buy-btn">3点セット ¥4,980で購入する</a>
+          <select class="cm-tool-select" id="careplan-plan-select">
+            <option value="https://buy.stripe.com/eVq28rgOI8HE8mMgTa7bW0e">単品：ケアプラン転記アシスト（¥2,480）</option>
+            <option value="https://buy.stripe.com/bJedR95605vsbyY7iA7bW0i" selected>3点セット：課題整理＋ケアプラン＋加算マスタ（¥4,980）</option>
+            <option value="https://buy.stripe.com/6oUcN5560cXUfPe32k7bW0h" data-support="1">3点セット＋サポート6ヶ月（¥4,980＋月¥1,000）</option>
+            <option value="https://buy.stripe.com/5kQ5kD7e80b8fPegTa7bW0d" data-support="1">3点セット＋サポート12ヶ月（¥4,980＋月¥1,000）</option>
+          </select>
+          <button type="button" class="cm-tool-buy-btn" id="careplan-buy-btn">購入する</button>
+          <p class="cm-tool-support-note" id="careplan-support-note" hidden>※サポート内容の詳細はご購入後にご案内します</p>
           <a href="careplan-tool.html" class="cm-tool-link">ツールを見る →</a>
         </div>
       </div>
@@ -627,6 +634,26 @@
       btn.setAttribute('aria-expanded', String(!expanded));
       btn.nextElementSibling.classList.toggle('is-open', !expanded);
     }
+
+    // ケアプラン転記アシスト：プルダウン選択式の購入導線
+    (function () {
+      var select = document.getElementById('careplan-plan-select');
+      var buyBtn = document.getElementById('careplan-buy-btn');
+      var note = document.getElementById('careplan-support-note');
+      if (!select || !buyBtn) return;
+
+      function updateNote() {
+        var opt = select.options[select.selectedIndex];
+        note.hidden = !(opt && opt.dataset.support === '1');
+      }
+      select.addEventListener('change', updateNote);
+      updateNote();
+
+      buyBtn.addEventListener('click', function () {
+        var url = select.value;
+        if (url) window.open(url, '_blank', 'noopener');
+      });
+    })();
   </script>
 </body>
 </html>
