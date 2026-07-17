@@ -152,6 +152,34 @@
   color: var(--dark-gray);
   border-radius: 3px;
 }
+.cm-tool-tags span.tag-buy {
+  background: var(--accent);
+  color: var(--white);
+  font-weight: 500;
+}
+.cm-tool-cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  margin-top: auto;
+}
+.cm-tool-buy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .9rem 1.4rem;
+  background: var(--accent);
+  color: var(--white);
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background var(--transition), transform var(--transition);
+}
+.cm-tool-buy-btn:hover { background: #b3903f; transform: translateY(-2px); }
+.cm-tool-cta-group .cm-tool-link { margin-top: 0; }
 .cm-tool-link {
   display: inline-flex;
   align-items: center;
