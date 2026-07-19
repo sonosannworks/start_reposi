@@ -60,10 +60,11 @@ ul { list-style: none; }
 }
 .nav-logo {
   font-family: var(--font-en);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   color: var(--black);
+  white-space: nowrap;
 }
 .nav-links {
   display: flex;
@@ -432,6 +433,7 @@ ul { list-style: none; }
 @media (max-width: 480px) {
   .hero-title { font-size: 2rem; }
   .slide-item img { height: 220px; }
+  .nav-logo { font-size: .78rem; letter-spacing: .01em; }
 }
 
 body.menu-open { overflow: hidden; }
