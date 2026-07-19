@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script src="redirect-to-vercel.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お申し込みありがとうございます | sonosann Web&AIサポート</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:      #b4a078;
+      --gold-deep: #9a8860;
+      --ink:       #1a1a2e;
+      --text:      #3a3530;
+      --muted:     #7a7060;
+      --bg:        #fdfaf5;
+      --bg-warm:   #f5f0e8;
+      --border:    #e8e0d0;
+      --green:     #2d7a4f;
+      --green-bg:  #edf7f0;
+      --green-bd:  #80c898;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.8;
+    }
+
+    .nav {
+      background: rgba(253,250,245,.97);
+      border-bottom: 1px solid var(--border);
+      padding: .9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: .06em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-back {
+      font-size: .78rem;
+      letter-spacing: .1em;
+      color: var(--gold);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      transition: opacity .2s;
+      white-space: nowrap;
+    }
+    .nav-back:hover { opacity: .7; }
+
+    .thanks-header {
+      text-align: center;
+      padding: 4rem 1.5rem 2.5rem;
+    }
+    .check-circle {
+      width: 72px;
+      height: 72px;
+      background: var(--green-bg);
+      border: 2px solid var(--green-bd);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .check-circle svg {
+      width: 36px;
+      height: 36px;
+      color: var(--green);
+    }
+    .thanks-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 300;
+      color: var(--ink);
+      letter-spacing: .1em;
+      margin-bottom: .75rem;
+    }
+    .thanks-sub {
+      font-size: .88rem;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: .08em;
+      line-height: 1.9;
+    }
+    .thanks-divider {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin: 1.5rem auto;
+      opacity: .6;
+    }
+
+    .purchase-badge {
+      display: inline-block;
+      background: var(--green-bg);
+      border: 1px solid var(--green-bd);
+      border-radius: 20px;
+      padding: .35rem 1.2rem;
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--green);
+      letter-spacing: .1em;
+      margin-bottom: 1rem;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 1.5rem 5rem;
+    }
+
+    .section-title {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .25em;
+      color: var(--gold);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+
+    /* 次のステップ：ステップカード */
+    .steps {
+      counter-reset: step;
+      margin-bottom: 2.5rem;
+    }
+    .step-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #fff;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-body { flex: 1; }
+    .step-title {
+      font-size: .92rem;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: .04em;
+      margin-bottom: .4rem;
+    }
+    .step-desc {
+      font-size: .8rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.85;
+    }
+    .step-desc ul { margin: .5rem 0 0 1.1em; }
+    .step-desc li { margin-bottom: .3rem; }
+
+    .checklist-box {
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.2rem 1.5rem;
+      font-size: .8rem;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.9;
+      letter-spacing: .03em;
+      margin-bottom: 2.5rem;
+    }
+    .checklist-box strong {
+      font-weight: 500;
+      color: var(--ink);
+      display: block;
+      margin-bottom: .5rem;
+      font-size: .82rem;
+    }
+    .checklist-box ul { list-style: none; }
+    .checklist-box li {
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+      margin-bottom: .3rem;
+    }
+    .checklist-box li::before { content: "☐ "; color: var(--gold-deep); }
+
+    .cta-box {
+      text-align: center;
+      background: linear-gradient(135deg, #fdfaf5 0%, #f5f0e8 100%);
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: 1.8rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .cta-desc {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: var(--gold);
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      padding: .85rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .cta-btn:hover { background: var(--gold-deep); }
+
+    .notice-box {
+      background: #fef2f2;
+      border: 1px solid #f3b8b8;
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      font-size: .76rem;
+      font-weight: 400;
+      color: #b91c1c;
+      line-height: 1.85;
+      margin-bottom: 2.5rem;
+    }
+    .notice-box strong { display: block; margin-bottom: .4rem; font-size: .78rem; }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: .75rem;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+    .footer a { color: var(--gold); text-decoration: none; }
+
+    @media (max-width: 520px) {
+      .step-card { flex-direction: column; }
+      .cta-btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a class="nav-logo" href="./index.html">sonosann Web&AIサポート</a>
+    <a class="nav-back" href="./kaigo-hp-support.html">← サービス一覧に戻る</a>
+  </nav>
+
+  <div class="thanks-header">
+    <div class="check-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <div id="purchase-badge" class="purchase-badge" style="display:none;"></div>
+    <h1 class="thanks-title">お申し込みありがとうございます</h1>
+    <p class="thanks-sub" id="thanks-sub">
+      お支払いが確認できました。<br>
+      このあとの流れをご案内します。
+    </p>
+    <div class="thanks-divider"></div>
+  </div>
+
+  <main class="container">
+
+    <p class="section-title">次のステップ</p>
+    <div id="steps" class="steps"></div>
+
+    <div id="checklist" class="checklist-box"></div>
+
+    <div class="cta-box">
+      <p class="cta-desc" id="cta-desc">
+        ご不明点がございましたら、お気軽にお問い合わせください。
+      </p>
+      <a class="cta-btn" href="mailto:sonosannworks@gmail.com">✉️ メールで問い合わせる</a>
+    </div>
+
+    <div class="notice-box">
+      <strong>⚠️ ご注意</strong>
+      掲載内容の最終確認・公表責任は、必ず貴事業所様にてお願いいたします。掲載後に制度改正等があった場合は、別途更新のご相談を承ります。
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>sonosann Web&AIサポート</p>
+    <p style="margin-top:.5rem;">
+      <a href="mailto:sonosannworks@gmail.com">sonosannworks@gmail.com</a>
+    </p>
+  </footer>
+
+  <script>
+    const STEPS = {
+      wordpress: {
+        badge: '✅ 重要事項ページ追加支援(WordPress版) をお申し込み',
+        sub: 'お支払いが確認できました。WordPressサイトへの掲載作業を進めるため、以下2点のご準備をお願いします。',
+        cta: 'ご準備が整いましたら、下記メールアドレスまで一時アカウント情報と資料をお送りください。',
+        steps: [
+          {
+            title: 'WordPress管理画面への一時アクセスをご準備ください',
+            desc: '貴事業所のWordPress管理画面にて、編集者権限の一時アカウントを新規発行し、ユーザー名・初期パスワードをメールでお知らせください。作業完了後、アカウントは削除いただいて問題ございません。'
+          },
+          {
+            title: '掲載内容の資料をお送りください',
+            desc: '下記チェックリストの資料をメール添付でお送りください。'
+          },
+          {
+            title: '制作・確認・公開',
+            desc: '資料が揃い次第、制作を開始し、1週間程度を目安に公開のご連絡をいたします。'
+          }
+        ],
+        checklist: ['運営規程の原本(PDFまたはWord)', '重要事項説明書の原本(PDFまたはWord)', '現在の職員体制がわかる資料(職種・人数)', '利用料金・キャンセル料等がわかる資料']
+      },
+      html: {
+        badge: '✅ 重要事項ページ追加支援(HTML・CSS版) をお申し込み',
+        sub: 'お支払いが確認できました。現在のホームページの制作環境を確認させてください。',
+        cta: '下記チェックリストの内容と資料を、メールでお送りください。',
+        steps: [
+          {
+            title: '現在の制作環境を教えてください',
+            desc: '以下のいずれかに当てはまるか、メールでお知らせください。<ul><li>ホームページ制作を依頼された会社様がいる(社名・連絡先)</li><li>ご自身でHP作成ツール(Wix、Jimdo、ペライチ等)を使われている(ツール名)</li><li>サーバーに直接アップロードされている(レンタルサーバー会社名)</li></ul>'
+          },
+          {
+            title: '掲載内容の資料をお送りください',
+            desc: '下記チェックリストの資料をメール添付でお送りください。'
+          },
+          {
+            title: 'アクセス方法のご案内・制作・確認・公開',
+            desc: '制作環境に応じたアクセス方法(一時FTPアカウント発行のお願い等)をこちらからご案内し、制作を進めます。'
+          }
+        ],
+        checklist: ['運営規程の原本(PDFまたはWord)', '重要事項説明書の原本(PDFまたはWord)', '現在の職員体制がわかる資料(職種・人数)', '利用料金・キャンセル料等がわかる資料']
+      },
+      new: {
+        badge: '✅ 介護事業所向け新規HP作成 をお申し込み',
+        sub: 'お支払いが確認できました。ご要望をお伺いするヒアリングにご協力ください。',
+        cta: 'ヒアリング内容をもとに、構成案をご提案いたします。',
+        steps: [
+          {
+            title: 'ヒアリングフォームにご入力ください',
+            desc: '事業所概要・掲載したい内容・ご希望のデザインイメージなどをお伺いします。下記メールアドレスへご連絡いただければ、ヒアリングフォームをお送りします。'
+          },
+          {
+            title: '掲載内容の資料をお送りください',
+            desc: '下記チェックリストの資料をメール添付でお送りください。'
+          },
+          {
+            title: '構成案のご提案・制作・確認・公開',
+            desc: 'ヒアリング内容をもとに構成案をご提案し、ご確認いただいた上で制作を進めます。'
+          }
+        ],
+        checklist: ['運営規程の原本(PDFまたはWord)', '重要事項説明書の原本(PDFまたはWord)', '現在の職員体制がわかる資料(職種・人数)', '利用料金・キャンセル料等がわかる資料', 'スタッフ紹介・事業所の写真等(あれば)']
+      }
+    };
+
+    const params = new URLSearchParams(location.search);
+    const item = params.get('item');
+    const data = STEPS[item] || STEPS.wordpress;
+
+    document.getElementById('purchase-badge').textContent = data.badge;
+    document.getElementById('purchase-badge').style.display = 'inline-block';
+    document.getElementById('thanks-sub').innerHTML = data.sub.replace(/\n/g, '<br>');
+    document.getElementById('cta-desc').textContent = data.cta;
+
+    document.getElementById('steps').innerHTML = data.steps.map((s, i) => `
+      <div class="step-card">
+        <div class="step-num">${i + 1}</div>
+        <div class="step-body">
+          <p class="step-title">${s.title}</p>
+          <p class="step-desc">${s.desc}</p>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('checklist').innerHTML = `
+      <strong>お送りいただく資料</strong>
+      <ul>${data.checklist.map(c => `<li>${c}</li>`).join('')}</ul>
+    `;
+  </script>
+
+</body>
+</html>
