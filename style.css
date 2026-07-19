@@ -127,6 +127,37 @@ ul { list-style: none; }
   }
 }
 
+/* デスクトップ：CMsupport・介護事業所HP・お問い合わせのみ常時表示し、
+   それ以外の項目はハンバーガーメニュー（ドロップダウン）に格納 */
+.nav-right { display: flex; align-items: center; gap: 20px; }
+@media (min-width: 769px) {
+  .nav-toggle { display: flex; order: 2; }
+  .nav-links { position: relative; align-items: center; order: 1; }
+  .nav-more { position: relative; }
+  .nav-more-menu { display: none; }
+  .nav-links.open .nav-more-menu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 28px;
+    left: 0;
+    background: var(--white);
+    border: 1px solid var(--mid);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    padding: 8px 0;
+    min-width: 160px;
+    gap: 0;
+    z-index: 10;
+  }
+  .nav-more-menu a {
+    display: block;
+    padding: 10px 20px;
+    font-size: 0.78rem;
+  }
+  .nav-more-menu a::after { content: none; }
+}
+
 /* ===========================
    Hero
 =========================== */
