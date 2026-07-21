@@ -291,5 +291,15 @@
   </p>
 </footer>
 <script src="script.js?v=2"></script>
+<script>
+  // webAIサイトからの遷移時はヘッダーを非表示にする
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('from') === 'webai') {
+      const nav = document.getElementById('nav');
+      if (nav) nav.style.display = 'none';
+    }
+  })();
+</script>
 </body>
 </html>
