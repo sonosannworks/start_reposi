@@ -146,6 +146,12 @@
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 10);
     });
+
+    // webAIサイトからの遷移時はヘッダーを非表示にする
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('from') === 'webai') {
+      if (nav) nav.style.display = 'none';
+    }
   </script>
 </body>
 </html>
