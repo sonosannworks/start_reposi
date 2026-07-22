@@ -19,36 +19,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <!-- webAIサイトからの遷移時ヘッダー用フォント -->
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <nav class="nav" id="nav">
-    <div class="nav-inner">
-      <a class="nav-logo" href="./index.html">sonosann Web&AIサポート</a>
-      <div class="nav-right">
-        <button class="nav-toggle" id="navToggle" aria-label="メニュー">
-          <span></span><span></span><span></span>
-        </button>
-        <ul class="nav-links" id="navLinks">
-          <li class="nav-more">
-            <ul class="nav-more-menu">
-              <li><a href="index.html#about">About</a></li>
-              <li><a href="index.html#youtube">YouTube</a></li>
-              <li><a href="index.html#ai-works">AI Works</a></li>
-              <li><a href="index.html#html-works">Web Design</a></li>
-              <li><a href="mini-games.html">MiniGame</a></li>
-              <li><a href="index.html#skills">Skills</a></li>
-              <li><a href="blog.html">BLOG</a></li>
-              <li><a href="index.html#contact">Contact</a></li>
-            </ul>
-          </li>
-          <li><a href="cmsupport.html">CMsupport</a></li>
-          <li><a href="kaigo-hp-support.html" style="color:var(--accent);">介護事業所HP</a></li>
-          <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform" target="_blank" rel="noopener" class="nav-cta-link">お問い合わせ</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <div id="site-nav-placeholder"></div>
 
   <!-- ヒーロー -->
   <section class="cm-hero">
@@ -169,25 +145,10 @@
     </p>
   </footer>
 
+  <script src="script.js?v=2"></script>
   <script>
-    // ナビ（ハンバーガーメニュー・スクロール時の影）
-    const nav = document.getElementById('nav');
-    const navToggle = document.getElementById('navToggle');
-    const navLinks = document.getElementById('navLinks');
-
-    navToggle.addEventListener('click', () => {
-      navToggle.classList.toggle('active');
-      navLinks.classList.toggle('open');
-    });
-    navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        navToggle.classList.remove('active');
-        navLinks.classList.remove('open');
-      });
-    });
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 10);
-    });
+    // webAIサイトからの遷移時はweb&AIサポートサイトと同じヘッダーを表示する
+    initWebAiHeaderSwap();
   </script>
 </body>
 </html>
