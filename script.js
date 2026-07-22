@@ -2,12 +2,25 @@
    Portfolio Script
 =========================== */
 
-document.addEventListener('DOMContentLoaded', () => {
+/* ---- 共通ヘッダー（nav.html）の読み込みと初期化 ---- */
+function loadSiteNav() {
+  const placeholder = document.getElementById('site-nav-placeholder');
+  if (!placeholder) return Promise.resolve();
 
-  // ---- ナビゲーション ----
+  return fetch('nav.html')
+    .then(res => res.text())
+    .then(html => {
+      placeholder.innerHTML = html;
+      initSiteNav();
+    })
+    .catch(err => console.error('ナビゲーションの読み込みに失敗しました:', err));
+}
+
+function initSiteNav() {
   const nav = document.getElementById('nav');
   const navToggle = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
+  if (!nav || !navToggle || !navLinks) return;
 
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 40);
@@ -28,9 +41,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // 現在のページに対応するリンクをハイライト
+  const currentFile = location.pathname.split('/').pop() || 'index.html';
+  navLinks.querySelectorAll('a').forEach(link => {
+    const hrefFile = (link.getAttribute('href') || '').split('#')[0].split('/').pop();
+    if (hrefFile && hrefFile === currentFile) {
+      link.style.color = 'var(--accent)';
+    }
+  });
+
+  // webAIサイトからの遷移時はヘッダーを非表示にする
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('from') === 'webai') {
+    nav.style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  loadSiteNav();
+
   // ---- スライドショー生成関数 ----
   function createSlideshow(folder, count, wrapId, prevId, nextId, dotsId, counterId, altPrefix) {
     const wrap = document.getElementById(wrapId);
+    if (!wrap) return;
     const prev = document.getElementById(prevId);
     const next = document.getElementById(nextId);
     const dotsContainer = document.getElementById(dotsId);
