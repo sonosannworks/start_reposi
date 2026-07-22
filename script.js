@@ -49,12 +49,104 @@ function initSiteNav() {
       link.style.color = 'var(--accent)';
     }
   });
+}
 
-  // webAIサイトからの遷移時はヘッダーを非表示にする
+/* ---- webAIサイトからの遷移時: ポートフォリオヘッダーの代わりに
+   web&AIサポートサイトのヘッダーを表示する ----
+   ※ index.html では呼び出さない。対象ページ側で明示的に呼び出す。 */
+const WEBAI_SITE_BASE = 'https://sonosannworks.github.io/web-AI-/';
+
+// header.html の取得に失敗した場合に使うフォールバック（同サイトの header.html を複製）
+const WEBAI_HEADER_FALLBACK = `
+<header class="site-header">
+  <div class="inner header-inner">
+    <a href="#" class="logo">
+      <span class="logo-en">sonosann</span>
+      <span class="logo-jp">Web&AIサポート</span>
+    </a>
+
+    <nav class="global-nav" id="global-nav">
+      <ul>
+        <li><a href="#hero">ホーム</a></li>
+        <li><a href="#service">サービス</a></li>
+        <li><a href="#app">導入事例</a></li>
+        <li><a href="#about">会社概要</a></li>
+        <li class="nav-item-app nav-item-app-first">
+          <a class="nav-app-link" href="https://start-reposi.vercel.app/mini-games.html?from=webai" target="_blank" rel="noopener">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            認知症miniGAME
+          </a>
+        </li>
+        <li class="nav-item-app">
+          <a class="nav-app-link" href="https://start-reposi.vercel.app/cmsupport.html?from=webai" target="_blank" rel="noopener">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            ケアプラン作成支援アプリ
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform" class="btn btn-primary btn-header" target="_blank" rel="noopener">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4.4 3.3A.6.6 0 0 1 3.6 20V16H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg>
+      無料相談する
+    </a>
+
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+`;
+
+function initWebAiHeaderSwap() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('from') === 'webai') {
-    nav.style.display = 'none';
-  }
+  if (params.get('from') !== 'webai') return;
+
+  // ポートフォリオ側の通常ヘッダーを非表示にする（CSSはクラスで制御するため挿入順序に依存しない）
+  document.documentElement.classList.add('webai-mode');
+
+  const mount = document.createElement('div');
+  mount.id = 'webai-header-mount';
+  document.body.insertBefore(mount, document.body.firstChild);
+
+  fetch(WEBAI_SITE_BASE + 'header.html')
+    .then(res => {
+      if (!res.ok) throw new Error('status ' + res.status);
+      return res.text();
+    })
+    .then(html => renderWebAiHeader(mount, html))
+    .catch(err => {
+      console.error('web&AIサポートサイトのヘッダー取得に失敗したため、複製版を表示します:', err);
+      renderWebAiHeader(mount, WEBAI_HEADER_FALLBACK);
+    });
+}
+
+function renderWebAiHeader(mount, html) {
+  mount.innerHTML = html;
+
+  // ロゴ・セクションリンク（#で始まるもの）はweb&AIサポートサイトの絶対URLへ書き換える
+  mount.querySelectorAll('.logo, .global-nav a:not(.nav-app-link)').forEach(a => {
+    const href = a.getAttribute('href') || '';
+    if (href.charAt(0) === '#') {
+      a.setAttribute('href', WEBAI_SITE_BASE + href);
+    }
+  });
+
+  const toggle = mount.querySelector('#nav-toggle');
+  const nav = mount.querySelector('#global-nav');
+  if (!toggle || !nav) return;
+
+  toggle.addEventListener('click', () => {
+    const isOpen = nav.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  nav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -19,6 +19,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <!-- webAIサイトからの遷移時ヘッダー用フォント -->
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
     /* ===== MiniGame ページ専用スタイル ===== */
     .minigame-hero {
@@ -265,5 +267,9 @@
   </p>
 </footer>
 <script src="script.js?v=2"></script>
+<script>
+  // webAIサイトからの遷移時はweb&AIサポートサイトと同じヘッダーを表示する
+  initWebAiHeaderSwap();
+</script>
 </body>
 </html>
