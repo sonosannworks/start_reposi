@@ -54,7 +54,7 @@ function initSiteNav() {
 /* ---- webAIサイトからの遷移時: ポートフォリオヘッダーの代わりに
    web&AIサポートサイトのヘッダーを表示する ----
    ※ index.html では呼び出さない。対象ページ側で明示的に呼び出す。 */
-const WEBAI_SITE_BASE = 'https://sonosannworks.github.io/web-AI-/';
+const WEBAI_SITE_BASE = 'https://sonosann-webai.net/';
 
 // header.html の取得に失敗した場合に使うフォールバック（同サイトの header.html を複製）
 const WEBAI_HEADER_FALLBACK = `
