@@ -57,14 +57,68 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative; /* .nav-title の絶対配置の基準 */
 }
 .nav-logo {
+  display: inline-flex; /* 画像ロゴを入れてもaタグがクリック領域を持つように */
+  align-items: center;
+  padding: 6px 0; /* 画像が小さくてもタップ領域の高さを確保（左右位置はずらさない） */
   font-family: var(--font-en);
   font-size: 1.05rem;
   font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--black);
   white-space: nowrap;
+}
+/* ヘッダー左：画像ロゴ
+   image/logo-sonosann.png は 139x71（2倍解像度・実寸およそ70x35）。
+   高さ基準で表示し、幅はアスペクト比（約1.96:1）から自動算出。 */
+.nav-logo img,
+.nav-logo-img {
+  display: block;
+  height: 34px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+}
+/* ヘッダー中央：サイトタイトル
+   絶対配置で真に中央へ固定し、左ロゴ／右ナビの既存レイアウトには影響させない。
+   pointer-events:none でロゴ・ナビのクリック領域も塞がない。 */
+.nav-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-en);
+  font-size: 1.3rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  color: var(--black);
+  white-space: nowrap;
+  pointer-events: none;
+}
+/* 〜1100px では右ナビ（CMsupport/介護事業所HP/お問い合わせ）が横幅を使い切り、
+   中央タイトルを出すと重なるため非表示。
+   ただし768px以下はハンバーガーのみになり中央が空くので下で復帰させる。
+   （max-width指定を重ねることで768〜769の小数幅でも必ずどちらかが効く） */
+@media (max-width: 1100px) {
+  .nav-title { display: none; }
+}
+@media (max-width: 768px) {
+  .nav-title { display: block; font-size: 1.05rem; letter-spacing: 0.08em; }
+  .nav-logo img,
+  .nav-logo-img { height: 30px; max-width: 150px; }
+}
+@media (max-width: 480px) {
+  .nav-title { font-size: 0.9rem; letter-spacing: 0.06em; }
+  .nav-logo img,
+  .nav-logo-img { height: 28px; max-width: 100px; }
+}
+@media (max-width: 360px) {
+  .nav-title { font-size: 0.82rem; letter-spacing: 0.04em; }
+  .nav-logo img,
+  .nav-logo-img { height: 26px; max-width: 80px; }
 }
 .nav-links {
   display: flex;
