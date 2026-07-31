@@ -391,6 +391,125 @@
   letter-spacing: .02em;
 }
 
+/* ---- 料金表ページ ---- */
+.price-section {
+  padding: 20px 24px 100px;
+  background: var(--white);
+}
+.price-block {
+  max-width: 900px;
+  margin: 0 auto 4rem;
+}
+.price-block-title {
+  font-family: var(--font-en);
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--black);
+  letter-spacing: .04em;
+  text-align: center;
+  margin-bottom: .4rem;
+}
+.price-block-sub {
+  text-align: center;
+  font-size: .82rem;
+  color: var(--gray);
+  letter-spacing: .04em;
+  margin-bottom: 2rem;
+}
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--off-white);
+  border: 1px solid var(--mid);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.price-table th,
+.price-table td {
+  padding: 1.1rem 1.3rem;
+  text-align: left;
+  border-bottom: 1px solid var(--mid);
+  vertical-align: top;
+}
+.price-table thead th {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-jp);
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+}
+.price-table tbody tr:last-child th,
+.price-table tbody tr:last-child td { border-bottom: none; }
+.price-plan {
+  font-family: var(--font-en);
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--black);
+  letter-spacing: .02em;
+}
+.price-plan-note {
+  display: block;
+  font-family: var(--font-jp);
+  font-size: .72rem;
+  color: var(--gray);
+  letter-spacing: .02em;
+  margin-top: .2rem;
+}
+.price-amount {
+  font-family: var(--font-en);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.price-amount--quote {
+  font-family: var(--font-jp);
+  font-size: .82rem;
+  color: var(--dark-gray);
+  white-space: normal;
+}
+.price-desc {
+  font-size: .82rem;
+  color: var(--dark-gray);
+  line-height: 1.85;
+}
+.price-table tr.is-highlight td,
+.price-table tr.is-highlight th { background: var(--pink-light); }
+.price-table tr.is-highlight .price-amount { color: var(--pink); }
+
+.price-compare-box {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--light);
+  border: 1px solid var(--mid);
+  border-radius: 8px;
+  padding: 1.8rem 2rem;
+  text-align: center;
+}
+.price-compare-formula {
+  font-family: var(--font-en);
+  font-size: 1.02rem;
+  color: var(--black);
+  letter-spacing: .02em;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+.price-compare-formula strong {
+  color: var(--pink);
+  font-weight: 500;
+}
+.price-compare-note {
+  font-size: .84rem;
+  color: var(--dark-gray);
+  line-height: 1.9;
+  letter-spacing: .02em;
+}
+.price-bottom-cta {
+  text-align: center;
+  margin-top: 4rem;
+}
+
 /* ---- レスポンシブ ---- */
 @media (max-width: 600px) {
   .cm-hero { padding: 132px 20px 56px; }
@@ -399,4 +518,11 @@
   .cm-tool-badge { left: 1.4rem; }
   .cm-flow-arrow { display: none; }
   .cm-flow-step { width: 100%; text-align: center; }
+  .price-table { font-size: .82rem; }
+  .price-table th, .price-table td { padding: .9rem .8rem; }
+  .price-table thead { display: none; }
+  .price-table tbody tr { display: block; border-bottom: 1px solid var(--mid); padding: 1rem 0; }
+  .price-table tbody tr:last-child { border-bottom: none; }
+  .price-table tbody td, .price-table tbody th { display: block; border-bottom: none; padding: .3rem 1.3rem; }
+  .price-compare-box { padding: 1.5rem 1.2rem; }
 }
