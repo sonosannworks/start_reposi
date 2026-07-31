@@ -107,6 +107,11 @@ function initWebAiHeaderSwap() {
   // ポートフォリオ側の通常ヘッダーを非表示にする（CSSはクラスで制御するため挿入順序に依存しない）
   document.documentElement.classList.add('webai-mode');
 
+  // ページ内の内部リンクにも from=webai 等のクエリパラメータを引き継ぐ
+  document.querySelectorAll('a[href="kaigo-hp-price.html"]').forEach(a => {
+    a.setAttribute('href', 'kaigo-hp-price.html' + window.location.search);
+  });
+
   const mount = document.createElement('div');
   mount.id = 'webai-header-mount';
   document.body.insertBefore(mount, document.body.firstChild);
