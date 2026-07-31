@@ -477,6 +477,15 @@
 .price-table tr.is-highlight td,
 .price-table tr.is-highlight th { background: var(--pink-light); }
 .price-table tr.is-highlight .price-amount { color: var(--pink); }
+.price-buy {
+  white-space: nowrap;
+  font-size: .78rem;
+  color: var(--dark-gray);
+}
+.price-buy .cm-tool-buy-btn {
+  padding: .6rem 1.1rem;
+  font-size: .78rem;
+}
 
 .price-compare-box {
   max-width: 900px;
