@@ -100,7 +100,9 @@ const WEBAI_HEADER_FALLBACK = `
 
 function initWebAiHeaderSwap() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('from') !== 'webai') return;
+  const fromParam = params.get('from') || '';
+  // 'webai' 単体だけでなく、'webai_hero' のような流入元の内訳を示す値も対象にする
+  if (!fromParam.startsWith('webai')) return;
 
   // ポートフォリオ側の通常ヘッダーを非表示にする（CSSはクラスで制御するため挿入順序に依存しない）
   document.documentElement.classList.add('webai-mode');
