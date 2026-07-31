@@ -166,12 +166,9 @@
   max-width: 1480px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 28px;
   align-items: stretch;
-}
-@media (max-width: 1100px) {
-  .cm-tools-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 820px) {
   .cm-tools-grid { grid-template-columns: 1fr; }
@@ -206,6 +203,15 @@
 }
 .cm-tool-badge.demo { background: #ededeb; color: #4a4845; border: 1px solid var(--mid); }
 .cm-tool-badge.new  { background: var(--accent); color: #fff; }
+.cm-tool-badge.campaign { background: var(--pink); color: #fff; }
+
+.cm-tool-card-campaign {
+  background: var(--pink-light);
+  border-color: #f4c9dc;
+}
+.cm-tool-card-campaign:hover { border-color: var(--pink); }
+.cm-tool-card-campaign .cm-tool-icon { background: var(--pink); }
+.cm-tool-card-campaign .cm-tool-tagline { color: var(--pink); }
 
 .cm-tool-icon {
   width: 52px;
