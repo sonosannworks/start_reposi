@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script src="redirect-to-vercel.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事業のご相談・お問い合わせ | sonosann Web&AIサポート</title>
+    <!-- デザインを整えるためのツール（Tailwind CSS）を読み込んでいます -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- ヘッダー部分 -->
+        <div class="bg-blue-600 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold">事業のご相談・お問い合わせ</h1>
+            <p class="text-blue-100 mt-2">事業所加算マスタ・新規HP作成などのご相談はこちらから</p>
+        </div>
+
+        <!-- フォーム本体 -->
+        <form id="contactForm" class="p-8 space-y-6">
+            <div class="space-y-4">
+                <!-- 事業所名 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">事業所名</label>
+                    <input type="text" name="company" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="例：〇〇居宅介護支援事業所">
+                </div>
+
+                <!-- お名前 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">お名前</label>
+                    <input type="text" name="name" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="例：山田 太郎">
+                </div>
+
+                <!-- メールアドレス -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">メールアドレス</label>
+                    <input type="email" name="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="例：example@example.com">
+                </div>
+
+                <!-- 相談カテゴリー -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">相談カテゴリ</label>
+                    <select name="category" id="categorySelect" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">カテゴリーを選択してください</option>
+                        <option value="kasan-full">事業所加算マスタ フル版について</option>
+                        <option value="hp-new">介護事業所向け新規HP作成について</option>
+                        <option value="other">その他</option>
+                    </select>
+                </div>
+
+                <!-- 自由記述 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">ご相談内容（自由記述）</label>
+                    <textarea name="content" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none h-32" placeholder="どのようなことでお困りですか？"></textarea>
+                </div>
+            </div>
+
+            <!-- 送信ボタン -->
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95">
+                この内容で相談する
+            </button>
+
+            <p class="text-xs text-center text-gray-500 mt-4">
+                ※送信後、自動的にスプレッドシートに記録されます。
+            </p>
+
+            <!-- 予備の連絡手段 -->
+            <div class="text-center pt-4 border-t border-gray-200">
+                <p class="text-sm text-gray-500 mb-2">フォームが送信できない場合は、こちらからもお問い合わせいただけます。</p>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sonosannworks@gmail.com" target="_blank" rel="noopener" class="text-blue-600 font-semibold underline text-sm">
+                    Gmailで問い合わせる（sonosannworks@gmail.com）
+                </a>
+            </div>
+        </form>
+
+        <!-- 完了メッセージ（初期は非表示） -->
+        <div id="successMessage" class="hidden p-8 text-center space-y-4">
+            <div class="text-5xl text-green-500">✓</div>
+            <h2 class="text-2xl font-bold text-gray-800">送信が完了しました！</h2>
+            <p class="text-gray-600">お問い合わせを承りました。担当より折り返しご連絡いたします。</p>
+            <button onclick="location.reload()" class="text-blue-600 font-semibold underline">もう一度入力する</button>
+        </div>
+    </div>
+
+    <script>
+        // ★ここに作成したGASのウェブアプリURLを貼り付けてください
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyP38BRMhZ8YlpKHIjPXZxpNOAedE3w5RaQQ2qAKuZzFNYUdI76NKpudlh_yhMNwXA/exec';
+
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+        const categorySelect = document.getElementById('categorySelect');
+
+        // URLの?category=... からカテゴリを自動選択
+        const presetCategory = new URLSearchParams(location.search).get('category');
+        if (presetCategory && categorySelect.querySelector(`option[value="${presetCategory}"]`)) {
+            categorySelect.value = presetCategory;
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = '送信中...';
+            submitBtn.classList.add('bg-gray-400');
+
+            const formData = new FormData(form);
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                form.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert('送信に失敗しました。');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'この内容で相談する';
+                submitBtn.classList.remove('bg-gray-400');
+            });
+        });
+    </script>
+</body>
+</html>
