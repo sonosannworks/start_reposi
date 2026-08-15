@@ -352,6 +352,37 @@ button.cm-tool-link::before {
   color: var(--accent);
 }
 
+/* ---- 1BOX内の複数動画セクション（例: AIと個人情報保護 BOX） ---- */
+.cm-tool-subsection .cm-tool-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 1.05rem;
+  margin-bottom: .8rem;
+}
+.cm-tool-subtitle {
+  font-family: var(--font-en);
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--black);
+  letter-spacing: .04em;
+  margin-bottom: .5rem;
+}
+.cm-tool-subsection .cm-tool-desc {
+  flex: none;
+  margin-bottom: .9rem;
+}
+.cm-tool-subsection .cm-tool-tags {
+  margin-bottom: 1rem;
+}
+.cm-tool-subsection .cm-tool-link {
+  margin-top: 0;
+}
+.cm-tool-subsection + .cm-tool-subsection {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--mid);
+}
+
 /* ---- 使い方のつながり説明 ---- */
 .cm-flow {
   max-width: 980px;
