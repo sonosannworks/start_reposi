@@ -156,6 +156,82 @@ function renderWebAiHeader(mount, html) {
   });
 }
 
+/* ---- 解説動画モーダル（YouTube nocookie埋め込み）----
+   ※ 対象ページに #video-modal がある場合のみ動作する。
+   対象ページ側で明示的に initVideoModal() を呼び出すこと。 */
+function initVideoModal() {
+  const overlay = document.getElementById('video-modal');
+  if (!overlay) return;
+
+  const dialog = overlay.querySelector('.video-modal-dialog');
+  const iframe = document.getElementById('video-modal-iframe');
+  const closeBtn = document.getElementById('video-modal-close');
+  const triggers = document.querySelectorAll('[data-youtube-id]');
+  let lastFocused = null;
+  let scrollY = 0;
+  let closeTimer = null;
+
+  function openModal(youtubeId, label) {
+    if (!youtubeId) return;
+    lastFocused = document.activeElement;
+    scrollY = window.scrollY;
+    clearTimeout(closeTimer);
+
+    iframe.title = label || '解説動画';
+    dialog.setAttribute('aria-label', label || '解説動画');
+    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    iframe.src = 'https://www.youtube-nocookie.com/embed/' + youtubeId + '?rel=0&autoplay=1';
+
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + scrollY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+
+    overlay.classList.add('is-open');
+    void overlay.offsetWidth; // フェード用に強制リフロー
+    overlay.classList.add('is-visible');
+
+    document.addEventListener('keydown', onKeydown);
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    overlay.classList.remove('is-visible');
+    document.removeEventListener('keydown', onKeydown);
+
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    window.scrollTo(0, scrollY);
+
+    closeTimer = setTimeout(() => {
+      overlay.classList.remove('is-open');
+      iframe.src = ''; // 裏で再生され続けないようにする
+    }, 250);
+
+    if (lastFocused && typeof lastFocused.focus === 'function') {
+      lastFocused.focus();
+    }
+  }
+
+  function onKeydown(e) {
+    if (e.key === 'Escape' || e.key === 'Esc') closeModal();
+  }
+
+  triggers.forEach(btn => {
+    btn.addEventListener('click', () => {
+      openModal(btn.getAttribute('data-youtube-id'), btn.getAttribute('data-video-label'));
+    });
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
   loadSiteNav();

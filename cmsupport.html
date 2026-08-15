@@ -326,6 +326,7 @@
         <div class="cm-tool-cta-group">
           <a href="https://buy.stripe.com/dRm8wPbuo1fcauU0Uc7bW0c" target="_blank" rel="noopener" class="cm-tool-buy-btn">¥2,480で購入する</a>
           <a href="care-manager-support/issue-summary-tool.html" class="cm-tool-link">ツールを見る →</a>
+          <button type="button" class="cm-tool-link" data-youtube-id="eeRuAqE_Hqk" data-video-label="課題整理総括表 解説動画">動画を見る</button>
         </div>
       </div>
 
@@ -357,7 +358,21 @@
           <button type="button" class="cm-tool-buy-btn" id="careplan-buy-btn">購入する</button>
           <p class="cm-tool-support-note" id="careplan-support-note" hidden>※サポート内容の詳細はご購入後にご案内します</p>
           <a href="careplan-tool.html" class="cm-tool-link">ツールを見る →</a>
+          <button type="button" class="cm-tool-link" data-youtube-id="qMTN1CTUX1o" data-video-label="ケアプラン転記アシスト 解説動画">動画を見る</button>
         </div>
+      </div>
+
+      <!-- AIと個人情報保護 BOX -->
+      <div class="cm-tool-card">
+        <span class="cm-tool-badge new">NEW</span>
+        <div class="cm-tool-icon">🔒</div>
+        <h2 class="cm-tool-title">AIで個人情報を取り扱う際の注意点</h2>
+        <p class="cm-tool-tagline">AI活用時の個人情報保護 解説動画</p>
+        <p class="cm-tool-desc">
+          ケアプラン作成等でAIを活用する際に気をつけたい、個人情報のマスキングやオプトアウト設定など、日々の業務で押さえておきたい取り扱いのポイントを解説しています。
+        </p>
+        <div class="cm-tool-tags"><span>個人情報保護</span><span>AI活用</span><span>マスキング</span></div>
+        <button type="button" class="cm-tool-link" data-youtube-id="wqWVq7U9PpY" data-video-label="AIで個人情報を取り扱う際の注意点">動画を見る</button>
       </div>
 
     </div>
@@ -598,10 +613,21 @@
     </p>
   </footer>
 
+  <!-- 解説動画モーダル -->
+  <div class="video-modal-overlay" id="video-modal">
+    <div class="video-modal-dialog" role="dialog" aria-modal="true" aria-label="解説動画">
+      <button type="button" class="video-modal-close" id="video-modal-close" aria-label="閉じる">&times;</button>
+      <div class="video-modal-frame">
+        <iframe id="video-modal-iframe" src="" title="解説動画" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js?v=2"></script>
   <script>
     // webAIサイトからの遷移時はweb&AIサポートサイトと同じヘッダーを表示する
     initWebAiHeaderSwap();
+    initVideoModal();
 
     function toggleIntro(btn) {
       var expanded = btn.getAttribute('aria-expanded') === 'true';

@@ -341,6 +341,16 @@
   margin-top: auto;
 }
 .cm-tool-link:hover { background: var(--dark-gray); }
+button.cm-tool-link {
+  border: none;
+  font-family: var(--font-jp);
+  cursor: pointer;
+}
+button.cm-tool-link::before {
+  content: "▶";
+  font-size: .65rem;
+  color: var(--accent);
+}
 
 /* ---- 使い方のつながり説明 ---- */
 .cm-flow {
