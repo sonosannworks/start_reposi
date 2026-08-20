@@ -405,6 +405,8 @@ ul { list-style: none; }
 .web-card-thumb--2 { background: linear-gradient(135deg, #dce8e4 0%, #c8d4d0 100%); }
 .web-card-thumb--3 { background: linear-gradient(135deg, #e4dce8 0%, #d0c8d4 100%); }
 .web-card-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; background: var(--white); color: var(--dark-gray); padding: 4px 10px; border: 1px solid var(--mid); position: absolute; top: 12px; left: 12px; }
+.web-card-thumb-link { display: block; width: 100%; height: 100%; }
+.web-card-thumb-img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .web-card-body { padding: 20px; }
 .web-card-body h3 { font-size: 0.95rem; font-weight: 500; margin-bottom: 8px; }
 .web-card-body p { font-size: 0.82rem; color: var(--gray); line-height: 1.7; margin-bottom: 12px; }
