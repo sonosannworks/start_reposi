@@ -84,18 +84,33 @@
   .card-list{display:grid; gap:16px; margin-bottom:36px;}
   .card-link{
     display:flex;
-    align-items:center;
-    gap:16px;
+    flex-direction:column;
     background:var(--paper);
     color:var(--text-on-paper);
     border-radius:var(--radius);
     padding:22px 22px;
-    text-decoration:none;
     box-shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 30px -18px rgba(0,0,0,.5);
     transition:transform .15s ease;
   }
   .card-link:hover{transform:translateY(-2px);}
   .card-link:active{transform:translateY(0);}
+  .card-main{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    text-decoration:none;
+    color:inherit;
+  }
+  .card-sub-link{
+    align-self:flex-end;
+    margin-top:10px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.03em;
+    color:var(--text-muted);
+    text-decoration:underline;
+  }
+  .card-sub-link:hover{color:var(--text-on-paper);}
   .card-icon{
     width:52px; height:52px; border-radius:14px; flex:none;
     display:flex; align-items:center; justify-content:center;
@@ -143,15 +158,18 @@
   </div>
 
   <div class="card-list">
-    <a class="card-link big5" href="big5/index.html">
-      <div class="card-icon">🌱</div>
-      <div class="card-body">
-        <h3>ビッグファイブ性格傾向チェック</h3>
-        <p>30問で5つの特性（開放性・誠実性・外向性・協調性・情緒安定性）の強さの度合いを測ります。心理学研究で広く使われているモデルです。</p>
-        <span class="card-meta">全30問 ・ 約5分</span>
-      </div>
-      <div class="card-arrow">›</div>
-    </a>
+    <div class="card-link big5">
+      <a class="card-main" href="big5/index.html">
+        <div class="card-icon">🌱</div>
+        <div class="card-body">
+          <h3>ビッグファイブ性格傾向チェック</h3>
+          <p>30問で5つの特性（開放性・誠実性・外向性・協調性・情緒安定性）の強さの度合いを測ります。心理学研究で広く使われているモデルです。</p>
+          <span class="card-meta">全30問 ・ 約5分</span>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+      <a class="card-sub-link" href="big5/docs/big5-guide.pdf" target="_blank" rel="noopener">くわしい解説PDFを見る ↗</a>
+    </div>
     <a class="card-link full" href="type-compass/full.html">
       <div class="card-icon">🧭</div>
       <div class="card-body">
