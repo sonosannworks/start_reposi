@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <script src="../../redirect-to-vercel.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="自己理解と対話のための、端末内で完結するビッグファイブ性格傾向チェック">
+  <title>ビッグファイブ性格傾向チェック | 対話のための参考資料</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">本文へ移動</a>
+  <header class="site-header no-print">
+    <div class="inner header-inner">
+      <a href="../../index.html" class="logo">
+        <span class="logo-en">sonosann</span>
+        <span class="logo-jp">Web&AIサポート</span>
+      </a>
+
+      <nav class="global-nav" id="global-nav">
+        <ul>
+          <li><a href="../../index.html#hero">ホーム</a></li>
+          <li><a href="../../index.html#service">サービス</a></li>
+          <li><a href="../../index.html#app">導入事例</a></li>
+          <li><a href="../../index.html#about">会社概要</a></li>
+          <li class="nav-item-app-first">
+            <a class="nav-app-link" href="../../certification survey app.html" target="_blank" rel="noopener noreferrer">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              要介護認定シミュレーション
+            </a>
+          </li>
+          <li class="nav-item-app">
+            <a class="nav-app-link" href="https://start-reposi.vercel.app/cmsupport.html?from=webai" target="_blank" rel="noopener">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              ケアプラン作成支援アプリ
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcuPxjBmkqhXWLq02e_RkbfR6JX9WB--kRG6Df52_uLF89pw/viewform" class="btn btn-primary btn-header" target="_blank" rel="noopener">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4.4 3.3A.6.6 0 0 1 3.6 20V16H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg>
+        無料相談する
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content" class="container" tabindex="-1">
+    <section id="start-screen" class="screen" aria-labelledby="start-title">
+      <div class="hero"><p class="eyebrow">自己理解・1on1・キャリア対話のために</p><h2 id="start-title">自分らしい働き方を話す、ひとつのきっかけに。</h2><p>5つの性格傾向について振り返る簡易チェックです。結果は答え合わせではなく、日々の実感や業務経験を言葉にするための参考資料として扱います。</p></div>
+      <aside class="notice" aria-label="利用上の大切な注意">
+        <h3>ご利用前にご確認ください</h3>
+        <p>このチェックは、自己理解や1on1などの対話を支援する簡易的な参考資料です。採用選考、合否判定、昇進・降格、契約更新などの人事判断には使用しないでください。</p>
+        <p>結果だけで本人を評価・分類・決めつけないでください。本人の実感や業務経験と照らし合わせながら、対話の材料としてご活用ください。</p>
+        <p>入力内容と結果は外部送信されず、このブラウザ内で処理されます。</p>
+      </aside>
+      <form id="start-form" novalidate>
+        <div class="form-field"><label for="display-name">表示名 <span>（任意）</span></label><input id="display-name" name="displayName" type="text" autocomplete="name" maxlength="40" placeholder="例：山田 太郎"><p class="field-hint">入力しなくても使えます。結果を保存する場合も、表示名を含むデータはこの端末のブラウザ内にだけ保存されます。</p></div>
+        <label class="check-label"><input id="acknowledgement" type="checkbox" required><span>上記の目的と注意事項を理解しました。</span></label>
+        <p id="start-error" class="error" role="alert" hidden>注意事項を確認のうえ、チェックを入れてください。</p>
+        <div class="actions"><button id="start-button" class="button primary" type="submit" disabled>チェックを始める</button><button id="load-saved-button" class="button secondary" type="button" hidden>保存した結果を表示</button></div>
+      </form>
+    </section>
+
+    <section id="question-screen" class="screen" hidden aria-labelledby="question-title">
+      <div class="progress-row"><p id="progress-text" aria-live="polite">1 / 30</p><div class="progress-track" role="progressbar" aria-label="回答の進捗" aria-valuemin="0" aria-valuemax="30" aria-valuenow="1"><span id="progress-bar"></span></div></div>
+      <p id="trait-label" class="trait-label"></p>
+      <form id="question-form" novalidate>
+        <fieldset><legend id="question-title"></legend><p class="question-help">今のご自身に、どの程度当てはまるかを選んでください。</p><div id="answer-options" class="answer-options"></div></fieldset>
+      </form>
+      <p id="question-error" class="error" role="alert" hidden>回答を選択してから次へ進んでください。</p>
+      <div class="actions question-actions"><button id="previous-button" class="button secondary" type="button">前へ</button><button id="next-button" class="button primary" type="button">次へ</button></div>
+    </section>
+
+    <section id="result-screen" class="screen" hidden aria-labelledby="result-title">
+      <div class="result-heading"><div><p class="eyebrow">RESULT</p><h2 id="result-title">今回の回答から見える傾向</h2><p id="result-meta" class="result-meta"></p></div><p class="no-print print-hint">「印刷／PDFとして保存」から、ブラウザの印刷画面でPDFにも保存できます。</p></div>
+      <aside class="notice compact"><p>数値は正式な心理測定尺度による診断ではありません。本人の実感や置かれた環境と照らし合わせ、対話の入口としてご利用ください。</p></aside>
+      <section class="summary" aria-labelledby="summary-title"><h3 id="summary-title">スコア一覧</h3><div id="chart" class="chart" role="img" aria-label="5つの性格傾向のスコアを示す棒グラフ"></div></section>
+      <section aria-labelledby="overview-title"><h3 id="overview-title">組み合わせから対話を始めるなら</h3><p id="overview-text"></p></section>
+      <section aria-labelledby="detail-title"><h3 id="detail-title">特性ごとの振り返り</h3><div id="trait-details" class="trait-details"></div></section>
+      <aside class="notice final-notice"><h3>取り扱いに関する再確認</h3><p>この結果を採用、合否判定、昇進・降格、契約更新その他の人事選考に用いないでください。数値だけで評価・分類・決めつけず、本人との対話を大切にしてください。</p></aside>
+      <div class="actions result-actions no-print"><button id="save-button" class="button primary" type="button">この端末に結果を保存</button><button id="delete-button" class="button secondary" type="button">保存した結果を削除</button><button id="print-button" class="button secondary" type="button">印刷／PDFとして保存</button><a href="docs/big5-guide.pdf" class="button secondary" target="_blank" rel="noopener">くわしい解説を見る</a><button id="restart-button" class="button text-button" type="button">もう一度チェックする</button></div>
+      <p class="no-print" style="margin-top:1rem;"><a href="../personality-hub.html" class="text-button" style="text-decoration:underline;">性格診断コーナーのトップへ戻る</a></p>
+      <p id="save-status" class="status no-print" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <footer class="site-footer no-print"><div class="container">外部送信なし・ログインなし・端末内で完結するチェックです。</div></footer>
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      var toggle = document.getElementById("nav-toggle");
+      var nav = document.getElementById("global-nav");
+      if (!toggle || !nav) return;
+      toggle.addEventListener("click", function () {
+        var isOpen = nav.classList.toggle("is-open");
+        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      });
+      nav.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          nav.classList.remove("is-open");
+          toggle.setAttribute("aria-expanded", "false");
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

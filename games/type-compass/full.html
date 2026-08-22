@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script src="../../redirect-to-vercel.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16タイプ診断（フル版）| sonosann Web&AIサポート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B1A2E;
+    --ink-soft:#2A2846;
+    --paper:#FAF9F6;
+    --paper-dim:#F0EEE8;
+    --text-on-ink:#F5F3EE;
+    --text-on-paper:#211F35;
+    --text-muted:#6B6880;
+
+    --c-ei:#E8623D;
+    --c-sn:#3FA796;
+    --c-tf:#9B6BC7;
+    --c-jp:#C9932E;
+
+    --font-display:'Fraunces', serif;
+    --font-body:'IBM Plex Sans JP', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+
+    --radius:14px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text-on-ink);
+    font-family:var(--font-body);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .screen{min-height:100vh; display:none; padding:32px 20px 64px;}
+  .screen.active{display:flex; flex-direction:column;}
+  .wrap{max-width:720px; margin:0 auto; width:100%;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  :focus-visible{outline:3px solid var(--c-sn); outline-offset:3px;}
+
+  .eyebrow{font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-muted); margin:0 0 12px;}
+  .eyebrow.on-paper{color:#8A8798;}
+
+  #screen-intro{justify-content:center;}
+  .intro-head{text-align:center; margin-bottom:44px;}
+  .intro-head h1{font-family:var(--font-display); font-weight:600; font-size:clamp(28px,6vw,44px); line-height:1.25; margin:0 0 18px; letter-spacing:-.01em;}
+  .intro-head p{color:#C9C6D6; font-size:15px; max-width:520px; margin:0 auto;}
+
+  .gauge-panel{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:0 auto 40px; max-width:520px;}
+  .gauge{background:var(--ink-soft); border-radius:10px; padding:14px 10px 16px; display:flex; flex-direction:column; align-items:center; gap:10px;}
+  .gauge-track{width:10px; height:120px; border-radius:6px; background:rgba(255,255,255,.08); position:relative; overflow:hidden;}
+  .gauge-fill{position:absolute; bottom:0; left:0; right:0; height:0%; border-radius:6px; transition:height .5s ease;}
+  .gauge[data-axis="ei"] .gauge-fill{background:var(--c-ei);}
+  .gauge[data-axis="sn"] .gauge-fill{background:var(--c-sn);}
+  .gauge[data-axis="tf"] .gauge-fill{background:var(--c-tf);}
+  .gauge[data-axis="jp"] .gauge-fill{background:var(--c-jp);}
+  .gauge-letters{font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; color:#B4B1C4; text-align:center; line-height:1.5;}
+  .gauge-letters b{color:var(--text-on-ink); font-weight:600;}
+
+  .notice-box{background:var(--ink-soft); border-left:3px solid var(--c-jp); border-radius:8px; padding:18px 20px; font-size:13.5px; color:#D6D3E2; margin-bottom:28px;}
+  .notice-box strong{color:var(--text-on-ink); font-weight:600;}
+
+  .version-note{font-size:12.5px; color:#9793A8; text-align:center; margin-bottom:10px;}
+  .version-note a{text-decoration:underline;}
+  .version-note:last-of-type{margin-bottom:36px;}
+
+  .btn{font-family:var(--font-body); font-weight:700; font-size:15px; border:none; border-radius:999px; padding:16px 30px; cursor:pointer; transition:transform .15s ease, opacity .15s ease;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn-primary{background:var(--paper); color:var(--ink);}
+  .btn-block{width:100%; display:block; text-align:center;}
+  .btn-ghost{background:transparent; border:1.5px solid rgba(255,255,255,.25); color:var(--text-on-ink);}
+  #screen-result .btn-ghost{color:var(--ink); border-color:rgba(27,26,46,.25);}
+  #screen-result .btn-ghost:hover{background:rgba(27,26,46,.04);}
+  .cta-row{display:flex; justify-content:center;}
+  .prev-result-row{display:flex; justify-content:center; margin-bottom:14px;}
+  .prev-result-row .btn-ghost{font-size:13.5px; padding:12px 22px;}
+  .delete-link{display:block; text-align:center; font-size:12px; color:var(--text-muted); text-decoration:underline; background:none; border:none; cursor:pointer; margin-top:4px; padding:6px 0;}
+
+  @media print{
+    body{background:#fff !important;}
+    .screen{padding:0;}
+    .btn, .link-btn, .delete-link, .version-note, footer.disclaimer{display:none !important;}
+    .card, .result-gauges, .axis-row{box-shadow:none !important; border:1px solid #ddd;}
+  }
+
+  #screen-quiz{background:var(--paper); color:var(--text-on-paper);}
+  .quiz-top{margin-bottom:28px;}
+  .progress-dots{display:flex; gap:5px; margin-bottom:10px; flex-wrap:wrap;}
+  .dot{width:7px; height:7px; border-radius:50%; background:#E2DFD6; transition:background .2s ease, transform .2s ease;}
+  .dot.done{background:var(--dot-color, var(--ink));}
+  .dot.current{transform:scale(1.5);}
+  .progress-text{font-family:var(--font-mono); font-size:12px; color:var(--text-muted);}
+
+  .question-card{background:#fff; border-radius:var(--radius); padding:36px 28px; box-shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 30px -18px rgba(27,26,46,.25); margin-bottom:26px;}
+  .question-axis-tag{display:inline-block; font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; padding:4px 10px; border-radius:999px; margin-bottom:16px; color:#fff;}
+  .question-text{font-family:var(--font-display); font-size:clamp(19px,4vw,24px); font-weight:500; line-height:1.55; margin:0;}
+
+  .scale{display:flex; flex-direction:column; gap:10px;}
+  .scale-btn{background:var(--paper-dim); border:1.5px solid transparent; border-radius:10px; padding:16px 18px; text-align:left; font-size:14.5px; color:var(--text-on-paper); cursor:pointer; display:flex; align-items:center; justify-content:space-between; transition:border-color .15s ease, background .15s ease;}
+  .scale-btn:hover{background:#E9E6DC;}
+  .scale-btn .n{font-family:var(--font-mono); font-size:12px; color:var(--text-muted);}
+
+  .quiz-nav{display:flex; justify-content:space-between; align-items:center;}
+  .link-btn{background:none; border:none; cursor:pointer; font-size:13.5px; color:var(--text-muted); text-decoration:underline; padding:8px 0;}
+
+  #screen-result{background:var(--paper); color:var(--text-on-paper);}
+  .result-hero{text-align:center; margin-bottom:8px;}
+  .result-type{font-family:var(--font-display); font-weight:700; font-size:clamp(48px,14vw,88px); letter-spacing:.03em; margin:6px 0 4px; line-height:1;}
+  .result-title{font-size:16px; color:var(--text-muted); margin-bottom:32px; text-align:center;}
+
+  .result-gauges{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; background:#fff; border-radius:var(--radius); padding:22px 16px; margin-bottom:24px; box-shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 30px -18px rgba(27,26,46,.2);}
+  .rg{display:flex; flex-direction:column; align-items:center; gap:8px;}
+  .rg-track{width:8px; height:90px; border-radius:5px; background:var(--paper-dim); position:relative; overflow:hidden;}
+  .rg-fill{position:absolute; bottom:0; left:0; right:0; border-radius:5px;}
+  .rg[data-axis="ei"] .rg-fill{background:var(--c-ei);}
+  .rg[data-axis="sn"] .rg-fill{background:var(--c-sn);}
+  .rg[data-axis="tf"] .rg-fill{background:var(--c-tf);}
+  .rg[data-axis="jp"] .rg-fill{background:var(--c-jp);}
+  .rg-label{font-family:var(--font-mono); font-size:11px; text-align:center; color:var(--text-muted); line-height:1.5;}
+  .rg-label b{color:var(--text-on-paper);}
+
+  .card{background:#fff; border-radius:var(--radius); padding:26px 24px; margin-bottom:16px; box-shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 30px -18px rgba(27,26,46,.2);}
+  .card h3{font-family:var(--font-display); font-size:19px; margin:0 0 12px; display:flex; align-items:center; gap:8px;}
+  .card h3 .dot-ico{width:8px; height:8px; border-radius:50%; background:var(--ink); display:inline-block;}
+  .card p{margin:0; font-size:14.5px; color:#4B4860;}
+  .card ul{margin:0; padding-left:20px; font-size:14px; color:#4B4860;}
+  .card ul li{margin-bottom:7px;}
+  .card ul li:last-child{margin-bottom:0;}
+
+  .card.advice{border-left:3px solid var(--c-jp);}
+  .card.compat{border-left:3px solid var(--c-tf);}
+  .compat-row{margin-bottom:12px;}
+  .compat-row:last-of-type{margin-bottom:10px;}
+  .compat-label{display:inline-block; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.03em; padding:3px 9px; border-radius:999px; margin-bottom:6px; color:#fff;}
+  .compat-label-good{background:var(--c-sn);}
+  .compat-label-challenge{background:var(--c-ei);}
+  .compat-row p{margin-top:2px;}
+  .compat-disclaimer{font-size:11.5px; color:var(--text-muted); border-top:1px solid var(--paper-dim); padding-top:10px; margin-top:4px;}
+  .card.strength{border-left:3px solid var(--c-sn);}
+  .card.watch{border-left:3px solid var(--c-ei);}
+
+  .axis-breakdown{display:grid; gap:10px; margin-bottom:30px;}
+  .axis-row{background:#fff; border-radius:10px; padding:14px 16px; display:flex; align-items:flex-start; gap:14px; box-shadow:0 1px 0 rgba(0,0,0,.04);}
+  .axis-row .swatch{width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:5px;}
+  .axis-row .label{font-size:13px; color:#4B4860; flex:1;}
+  .axis-row .label b{color:var(--text-on-paper);}
+  .axis-row .label .desc{display:block; margin-top:3px; color:#8A8798; font-size:12.5px;}
+
+  .result-actions{display:flex; flex-direction:column; gap:12px;}
+  footer.disclaimer{text-align:center; font-size:11.5px; color:var(--text-muted); margin-top:20px;}
+
+  @media (max-width:520px){
+    .gauge-panel{gap:8px;}
+    .gauge-track{height:90px;}
+    .result-gauges{padding:18px 8px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none !important; scroll-behavior:auto !important;}}
+</style>
+</head>
+<body>
+
+<section id="screen-intro" class="screen active">
+  <div class="wrap">
+    <p class="eyebrow">TYPE COMPASS &mdash; 本格版</p>
+    <div class="intro-head">
+      <h1>60の質問で、<br>より深く自分の傾向を見る。</h1>
+      <p>4つの軸（E/I・S/N・T/F・J/P）それぞれを15問ずつ、計60問で丁寧に測ります。結果には、強みが活きる場面や意識するとよい点、対話のヒントまで含めた詳しいコメントが付きます。所要時間は約8分です。</p>
+    </div>
+
+    <div class="gauge-panel" aria-hidden="true">
+      <div class="gauge" data-axis="ei"><div class="gauge-track"><div class="gauge-fill"></div></div><div class="gauge-letters"><b>E</b><br>外向<br>―<br>内向<br><b>I</b></div></div>
+      <div class="gauge" data-axis="sn"><div class="gauge-track"><div class="gauge-fill"></div></div><div class="gauge-letters"><b>S</b><br>感覚<br>―<br>直観<br><b>N</b></div></div>
+      <div class="gauge" data-axis="tf"><div class="gauge-track"><div class="gauge-fill"></div></div><div class="gauge-letters"><b>T</b><br>思考<br>―<br>感情<br><b>F</b></div></div>
+      <div class="gauge" data-axis="jp"><div class="gauge-track"><div class="gauge-fill"></div></div><div class="gauge-letters"><b>J</b><br>判断<br>―<br>知覚<br><b>P</b></div></div>
+    </div>
+
+    <div class="notice-box">
+      <strong>ご利用前に：</strong>このチェックは自己理解や1on1・対話のきっかけとなる簡易的な参考資料です。採用選考・人事評価・昇格などの判断には使用しないでください。結果は「正解」ではなく、日々の実感と照らし合わせるための材料としてご活用ください。入力内容と結果は外部に送信されず、このブラウザ内だけで処理されます。
+    </div>
+
+    <p class="version-note">3分で終わる簡易版は <a href="index.html">こちら</a></p>
+    <p class="version-note"><a href="../personality-hub.html">性格診断コーナーのトップへ戻る</a></p>
+
+    <div class="prev-result-row" id="prevResultRow" style="display:none;">
+      <button class="btn btn-ghost" onclick="loadPreviousResult()">→ 前回の結果を見る（<span id="prevResultDate"></span>保存）</button>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn btn-primary" onclick="startQuiz()">→ 診断をはじめる（約8分）</button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-quiz" class="screen">
+  <div class="wrap">
+    <div class="quiz-top">
+      <div class="progress-dots" id="progressDots"></div>
+      <div class="progress-text" id="progressText">Q1 / 60</div>
+    </div>
+    <div class="question-card">
+      <span class="question-axis-tag" id="axisTag"></span>
+      <p class="question-text" id="questionText"></p>
+    </div>
+    <div class="scale" id="scaleButtons"></div>
+    <div class="quiz-nav" style="margin-top:22px;">
+      <button class="link-btn" id="backBtn" onclick="goBack()">← 前の質問に戻る</button>
+      <button class="link-btn" onclick="resetQuiz()">はじめからやり直す</button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-result" class="screen">
+  <div class="wrap">
+    <p class="eyebrow on-paper" style="text-align:center;">YOUR TYPE</p>
+    <div class="result-hero"><div class="result-type" id="resultTypeLetters"></div></div>
+    <p class="result-title" id="resultTypeName"></p>
+
+    <div class="result-gauges" id="resultGauges"></div>
+
+    <div class="card">
+      <h3><span class="dot-ico"></span>特徴</h3>
+      <p id="resultDescText"></p>
+    </div>
+
+    <div class="card strength">
+      <h3><span class="dot-ico" style="background:var(--c-sn)"></span>強みが活きる場面</h3>
+      <ul id="resultStrengths"></ul>
+    </div>
+
+    <div class="card watch">
+      <h3><span class="dot-ico" style="background:var(--c-ei)"></span>意識するとよいこと</h3>
+      <ul id="resultWatch"></ul>
+    </div>
+
+    <div class="card advice">
+      <h3><span class="dot-ico" style="background:var(--c-jp)"></span>対話のヒント</h3>
+      <p id="resultAdvice"></p>
+    </div>
+
+    <div class="card compat">
+      <h3><span class="dot-ico" style="background:var(--c-tf)"></span>タイプ同士の対話の傾向</h3>
+      <div class="compat-row">
+        <span class="compat-label compat-label-good">話が合いやすい傾向</span>
+        <p id="resultGoodMatch"></p>
+      </div>
+      <div class="compat-row">
+        <span class="compat-label compat-label-challenge">対話にひと工夫必要な傾向</span>
+        <p id="resultChallenge"></p>
+      </div>
+      <p class="compat-disclaimer">※これは軸の共通点・相違点に基づく一般的な傾向を示したものであり、心理学的に実証された相性診断ではありません。「合わないタイプ」を避けるためではなく、違いを理解して対話を工夫するための参考としてご活用ください。</p>
+    </div>
+
+    <div class="axis-breakdown" id="axisBreakdown"></div>
+
+    <div class="result-actions">
+      <a class="btn btn-ghost btn-block" href="docs/使い方ガイド.pdf" target="_blank" rel="noopener">→ 結果の使い方ガイドを見る</a>
+      <button class="btn btn-ghost btn-block" onclick="window.print()">→ PDFで印刷する</button>
+      <button class="btn btn-primary btn-block" onclick="resetQuiz()">→ もう一度診断する</button>
+    </div>
+    <button class="delete-link" onclick="deleteSavedResult()">この端末に保存した結果を削除する</button>
+    <a class="delete-link" href="../personality-hub.html">性格診断コーナーのトップへ戻る</a>
+
+    <footer class="disclaimer">本診断は正式な心理検査・職業適性の判定ではありません。人材育成・自己理解のための対話ツールとしてご利用ください。結果はこの端末のブラウザ内にのみ保存され、外部には送信されません。</footer>
+  </div>
+</section>
+
+<script>
+const QUESTIONS = [
+  {axis:'ei', text:'初対面の人ともわりとすぐに打ち解けられる方だと思う'},
+  {axis:'ei', text:'一人でじっくり考えるより、誰かと話しながら考える方がはかどる'},
+  {axis:'ei', text:'会議やグループワークでは、自分から発言することが多い'},
+  {axis:'ei', text:'新しい環境に入ったとき、まず周りの人に話しかけてみる方だ'},
+  {axis:'ei', text:'アイデアは、人と話しているうちに生まれることが多い'},
+  {axis:'ei', text:'疲れたときは、一人で過ごすよりも誰かと話す方が回復する'},
+  {axis:'ei', text:'会話の中で考えがまとまっていくタイプだ'},
+  {axis:'ei', text:'初めての場でも、自分から自己紹介や声かけをすることが多い'},
+  {axis:'ei', text:'静かな環境より、多少賑やかな環境の方が集中できる'},
+  {axis:'ei', text:'週末は、家で静かに過ごすより人と会って過ごすことが多い'},
+  {axis:'ei', text:'仕事の相談は、一人で抱え込むよりまず誰かに話してみる方だ'},
+  {axis:'ei', text:'大人数の場でも物怖じせず振る舞える方だと思う'},
+  {axis:'ei', text:'新しいプロジェクトが始まると、まず関係者に話を聞きに行く'},
+  {axis:'ei', text:'考えを整理する前に、話しながら考えを固めていくことが多い'},
+  {axis:'ei', text:'刺激や変化のある環境の方がやる気が出る'},
+
+  {axis:'sn', text:'物事を考えるとき、まず具体的な事実やデータを確認したい'},
+  {axis:'sn', text:'抽象的な議論より、実際の事例を聞く方が理解しやすい'},
+  {axis:'sn', text:'作業は、決まった手順通りに進める方が安心する'},
+  {axis:'sn', text:'将来の可能性より、今目の前にある課題に意識が向きやすい'},
+  {axis:'sn', text:'新しいやり方より、実績のある方法を選ぶことが多い'},
+  {axis:'sn', text:'説明を受けるときは、抽象的な話より具体例がある方が理解しやすい'},
+  {axis:'sn', text:'資料は、要点だけより詳細なデータがある方が安心する'},
+  {axis:'sn', text:'新しい提案より、これまでのやり方を改善する方が得意だ'},
+  {axis:'sn', text:'計画を立てるときは、現実的に実行できるかをまず考える'},
+  {axis:'sn', text:'話を聞くときは、全体像より細かい事実の積み重ねに注目する'},
+  {axis:'sn', text:'未来の予測より、過去の実績や経験から判断することが多い'},
+  {axis:'sn', text:'マニュアルや前例があると、安心して取り組める'},
+  {axis:'sn', text:'アイデアより、実行のための具体的な手順を考える方が得意だ'},
+  {axis:'sn', text:'五感で確認できる情報（実物・数字）を重視する方だ'},
+  {axis:'sn', text:'突飛な発想より、地に足のついた現実的な案を好む'},
+
+  {axis:'tf', text:'判断するときは、感情より論理を優先することが多い'},
+  {axis:'tf', text:'意見を伝えるときは、相手への配慮より正確さを重視しがちだ'},
+  {axis:'tf', text:'問題を解決するときは、原因と結果を整理してから動く'},
+  {axis:'tf', text:'人間関係の良し悪しより、物事の筋道が通っているかを気にする'},
+  {axis:'tf', text:'指摘や助言は、相手の気持ちより内容の正しさを優先しがちだ'},
+  {axis:'tf', text:'チームの意見が割れたときは、感情より論理的な妥当性で判断したい'},
+  {axis:'tf', text:'褒めるときも指摘するときも、根拠をはっきり示す方だ'},
+  {axis:'tf', text:'効率が悪いと分かれば、人間関係より改善を優先することが多い'},
+  {axis:'tf', text:'議論では、感情的な反応より事実に基づいた反論を重視する'},
+  {axis:'tf', text:'ルールや基準は、状況に応じて曲げるより一貫して守るべきだと思う'},
+  {axis:'tf', text:'フィードバックは、オブラートに包むより率直に伝える方だ'},
+  {axis:'tf', text:'意思決定では、みんなの気持ちより最も合理的な選択を優先しやすい'},
+  {axis:'tf', text:'感情的になっている人より、冷静に話せる人の方が話しやすい'},
+  {axis:'tf', text:'自分の失敗も、感情的に落ち込むより原因分析を優先する方だ'},
+  {axis:'tf', text:'公平さを保つには、個別事情より一律のルールが大事だと思う'},
+
+  {axis:'jp', text:'予定は前もって立てて、その通りに進めたい方だ'},
+  {axis:'jp', text:'締め切りより早めに終わらせないと落ち着かない'},
+  {axis:'jp', text:'物事はきっちり計画通りに進む方が心地よい'},
+  {axis:'jp', text:'散らかった状態より、整理された状態を保ちたい'},
+  {axis:'jp', text:'急な予定変更があると、ストレスを感じやすい方だ'},
+  {axis:'jp', text:'旅行や外出の予定は、当日決めるより事前にしっかり計画したい'},
+  {axis:'jp', text:'タスクは、締め切り直前より早めに片付けたい方だ'},
+  {axis:'jp', text:'予定が変わるとペースが乱れやすいと感じる'},
+  {axis:'jp', text:'TODOリストや予定表を使って管理するのが好きだ'},
+  {axis:'jp', text:'作業を始める前に、まず全体の計画を立てたい方だ'},
+  {axis:'jp', text:'選択肢を残しておくより、早めに決めてしまいたい方だ'},
+  {axis:'jp', text:'部屋やデスクは、散らかっているとそわそわする'},
+  {axis:'jp', text:'締め切りのない仕事より、期限が明確な仕事の方が進めやすい'},
+  {axis:'jp', text:'予定外の出来事が起きると、まず予定への影響が気になる'},
+  {axis:'jp', text:'一度決めたことは、途中で変えるより最後までやり通したい方だ'},
+];
+
+const SCALE_LABELS = [
+  {v:5, label:'とてもそう思う'},
+  {v:4, label:'ややそう思う'},
+  {v:3, label:'どちらとも言えない'},
+  {v:2, label:'あまりそう思わない'},
+  {v:1, label:'そう思わない'},
+];
+
+const AXIS_META = {
+  ei:{color:'var(--c-ei)', left:'E', right:'I', leftName:'外向', rightName:'内向',
+      leftDesc:'人との関わりの中でエネルギーを得やすいタイプです。', rightDesc:'一人の時間の中でエネルギーを充電しやすいタイプです。'},
+  sn:{color:'var(--c-sn)', left:'S', right:'N', leftName:'感覚', rightName:'直観',
+      leftDesc:'具体的な事実や経験をもとに物事を捉えやすいタイプです。', rightDesc:'物事の可能性やパターンに着目しやすいタイプです。'},
+  tf:{color:'var(--c-tf)', left:'T', right:'F', leftName:'思考', rightName:'感情',
+      leftDesc:'論理的な整合性を軸に判断しやすいタイプです。', rightDesc:'人の気持ちや価値観を軸に判断しやすいタイプです。'},
+  jp:{color:'var(--c-jp)', left:'J', right:'P', leftName:'判断', rightName:'知覚',
+      leftDesc:'計画を立てて着実に進めることを好みやすいタイプです。', rightDesc:'状況に応じて柔軟に進めることを好みやすいタイプです。'},
+};
+
+const TYPE_DESCRIPTIONS = {
+  ISTJ:{name:'堅実に物事を積み上げるタイプ',
+    desc:'決めた手順や責任を大切にし、コツコツと成果を積み上げていくタイプです。約束や期限を守ることに強いこだわりがあり、周囲から「頼れる人」として信頼されやすい傾向があります。一方で、想定外の変化には慎重になりやすく、リスクを避けたい気持ちが強く出ることもあります。',
+    strengths:['決めたことを最後までやり遂げる責任感','具体的な事実に基づいた着実な判断','地道な積み重ねが必要な業務への強さ'],
+    watch:['急な変更への抵抗感が出やすい','新しいやり方への切り替えに時間がかかることがある','自分の基準を人にも求めすぎる場合がある'],
+    advice:'「今のやり方を変えるとしたら、何があれば安心して踏み出せそうですか？」といった問いかけが、変化への抵抗感をやわらげる対話のきっかけになります。',
+    goodMatch:['ESTJ','ISTP'], challenge:['ENFP']},
+  ISFJ:{name:'周囲をそっと支えるタイプ',
+    desc:'周囲の状況をよく観察し、必要なサポートをさりげなく差し出せるタイプです。人の役に立つことに喜びを感じ、地道な支援や気配りでチームを支えます。自分の意見や希望を後回しにしがちで、無理を重ねてしまう場合もあります。',
+    strengths:['細やかな気配りと観察力','任された役割を着実にこなす責任感','周囲の変化にいち早く気づく力'],
+    watch:['自分の希望を言い出しにくい','頼まれごとを断れず抱え込みやすい','評価されないと感じると意欲が下がりやすい'],
+    advice:'「最近、無理をしていると感じる場面はありますか？」と具体的に尋ねることで、本人が言い出しにくい負担に気づくきっかけになります。',
+    goodMatch:['ESFJ','ISFP'], challenge:['ENTP']},
+  INFJ:{name:'静かに深く考えるタイプ',
+    desc:'物事の背景にある意味や、人との関わりの奥にある感情を丁寧に読み取ろうとするタイプです。長期的な視点を持ち、理想に向けて静かに努力を続けます。一方で、理想と現実のギャップにエネルギーを消耗しやすく、周囲に本音を見せにくい面もあります。',
+    strengths:['物事の本質や意図を深く読み取る力','長期的な視点での構想力','相手の感情に寄り添う洞察力'],
+    watch:['理想が高く、現実とのギャップに疲れやすい','本音を周囲に見せるまでに時間がかかる','一人で抱え込みすぎる傾向'],
+    advice:'「その理想に近づくために、今できる小さな一歩は何ですか？」と問うことで、大きな理想を現実的な行動に落とし込む助けになります。',
+    goodMatch:['ENFJ','INFP'], challenge:['ESTP']},
+  INTJ:{name:'戦略的に組み立てるタイプ',
+    desc:'目的から逆算して物事を組み立てるのが得意で、独自の視点で戦略を描くタイプです。効率や本質を重視し、遠回りを嫌う傾向があります。一方でプロセスや周囲の感情より結果を優先しがちで、独断的に見られることもあります。',
+    strengths:['目的から逆算した戦略的思考','独自性のある発想力','本質を見極めて優先順位をつける力'],
+    watch:['周囲への説明や共有が後回しになりがち','プロセスより結果を急ぎすぎる','独断的だと誤解されやすい'],
+    advice:'「その考えに至った背景を、もう少し聞かせてもらえますか？」と尋ねることで、本人の思考プロセスを共有してもらいやすくなります。',
+    goodMatch:['ENTJ','INTP'], challenge:['ESFP']},
+  ISTP:{name:'手を動かしながら考えるタイプ',
+    desc:'状況を冷静に観察し、実際に手を動かしながら最適な方法を見つけていくタイプです。トラブル対応や実践的な問題解決を得意とします。感情や意図を言葉で説明するのは得意でなく、周囲から何を考えているか分かりにくいと言われることもあります。',
+    strengths:['実践を通じた素早い問題解決','冷静な状況判断力','独立して作業を進める力'],
+    watch:['考えを言葉で説明するのが苦手','感情表現が控えめで誤解されやすい','長期的な計画立案は後回しになりがち'],
+    advice:'「今、頭の中で考えていることを言葉にするとどんな感じですか？」とゆっくり尋ねることで、言語化を後押しできます。',
+    goodMatch:['ESTP','ISTJ'], challenge:['ENFJ']},
+  ISFP:{name:'自分の感覚を大切にするタイプ',
+    desc:'穏やかで柔軟性があり、自分なりの美意識や価値観を大切にしながら行動するタイプです。争いを好まず、周囲と調和しながら自分のペースで物事を進めます。自己主張が控えめで、意見を求められると戸惑うこともあります。',
+    strengths:['柔軟に状況へ適応する力','自分の価値観に沿った丁寧な仕事ぶり','周囲との調和を大切にする姿勢'],
+    watch:['自分の意見を主張するのが苦手','対立を避けて我慢しがち','評価や成果を言語化するのが苦手'],
+    advice:'「あなたなりのこだわりを教えてください」と聞くことで、言葉にしにくい価値観を引き出しやすくなります。',
+    goodMatch:['ESFP','ISFJ'], challenge:['ENTJ']},
+  INFP:{name:'理想を静かに温めるタイプ',
+    desc:'自分の価値観に忠実で、人の気持ちに寄り添うことを大切にするタイプです。理想を胸に、自分らしい形で物事に取り組もうとします。理想と現実の折り合いをつけるのに時間がかかり、完璧を求めすぎて動けなくなることもあります。',
+    strengths:['価値観に基づいた誠実な姿勢','人の気持ちへの深い共感力','独自の視点からの発想力'],
+    watch:['理想が高く、現実との折り合いに悩みやすい','批判に敏感で落ち込みやすい','行動に移すまでに時間がかかる'],
+    advice:'「完璧じゃなくても、まず小さく試してみるとしたら？」という問いかけが、行動への一歩を後押しします。',
+    goodMatch:['ENFP','INFJ'], challenge:['ESTJ']},
+  INTP:{name:'仕組みを解き明かすタイプ',
+    desc:'物事の仕組みや理屈を掘り下げて理解することに喜びを感じるタイプです。論理的な整合性を重視し、独自の視点で分析します。考えがまとまる前に発言を求められると戸惑いやすく、実行段階では詰めが甘くなることもあります。',
+    strengths:['物事の本質を分析する力','独創的で柔軟な発想','客観的で公平な視点'],
+    watch:['考えがまとまるまで時間がかかる','実行や細部の詰めが後回しになりがち','感情面への配慮が薄れやすい'],
+    advice:'「今考えていることを、途中経過でいいので聞かせてもらえますか？」と伝えると、思考の途中でも共有しやすくなります。',
+    goodMatch:['ENTP','INTJ'], challenge:['ESFJ']},
+  ESTP:{name:'その場で動いて結果を出すタイプ',
+    desc:'状況を素早く読み取り、実践しながら結果を出していくタイプです。行動力があり、変化やトラブルにも臨機応変に対応できます。目先の対応に集中しやすく、長期的な計画が後回しになることもあります。',
+    strengths:['状況判断の速さと行動力','臨機応変な対応力','現場感覚に基づいた実践力'],
+    watch:['長期的な計画が後回しになりやすい','勢いで判断して後悔することがある','地道な準備を軽視しがち'],
+    advice:'「この先1年でどうなっていたいですか？」と長期の視点を尋ねることで、目先の対応とのバランスを取りやすくなります。',
+    goodMatch:['ISTP','ESTJ'], challenge:['INFJ']},
+  ESFP:{name:'その場を明るくするタイプ',
+    desc:'周囲を巻き込みながら場を盛り上げるエネルギーを持つタイプです。今この瞬間を楽しみ、人との関わりの中で力を発揮します。楽しさを優先しすぎて、計画や地道な作業が後回しになりやすい面もあります。',
+    strengths:['場を明るくするエネルギー','人を巻き込む力','柔軟でフットワークの軽い行動力'],
+    watch:['計画や準備が後回しになりやすい','地道な作業への集中力が続きにくい','感情の起伏が行動に出やすい'],
+    advice:'「楽しく進めながらも、ここだけは外せないというポイントは何ですか？」と確認すると、計画性を補いやすくなります。',
+    goodMatch:['ISFP','ESFJ'], challenge:['INTJ']},
+  ENFP:{name:'可能性を広げるタイプ',
+    desc:'発想力があり、人やアイデアを掛け合わせながら新しいことに挑戦するのが得意なタイプです。人への関心が強く、周囲を巻き込みながらプロジェクトを広げていきます。興味の対象が広がりやすく、優先順位づけや完了までのやり切りが課題になることもあります。',
+    strengths:['発想力と人を巻き込む力','新しい可能性を見つける柔軟性','人の強みを引き出す関わり方'],
+    watch:['興味が広がりすぎて集中しづらい','計画通りに進めるのが苦手','始めたことを最後までやり切るのが課題になりやすい'],
+    advice:'「今、一番エネルギーを注ぎたいことはどれですか？」と優先順位を一緒に整理する問いかけが役立ちます。',
+    goodMatch:['INFP','ENFJ'], challenge:['ISTJ']},
+  ENTP:{name:'議論しながら発想するタイプ',
+    desc:'物事を多角的に捉え、議論を通じて新しい発想を生み出すタイプです。既存の枠にとらわれない発想力があり、議論そのものを楽しみます。細部の詰めより発想の広がりを楽しむ傾向があり、実行段階でのフォローが必要になることもあります。',
+    strengths:['多角的な視点からの発想力','議論を通じてアイデアを発展させる力','変化や新しい挑戦への適応力'],
+    watch:['細部の詰めが後回しになりやすい','議論が目的化してしまうことがある','飽きが早く、実行の継続が課題になりやすい'],
+    advice:'「そのアイデアを形にするために、次にやることは何ですか？」と実行に焦点を当てる問いかけが有効です。',
+    goodMatch:['INTP','ENTJ'], challenge:['ISFJ']},
+  ESTJ:{name:'現場を仕切るタイプ',
+    desc:'物事を段取りよく進め、チームを目標に向けてまとめていくタイプです。責任感が強く、決めたことを着実に実行に移す力があります。効率を重視するあまり、個々の事情への配慮が後回しになりやすい面もあります。',
+    strengths:['段取り力とチームをまとめる力','責任感の強さと実行力','目標達成に向けた一貫性'],
+    watch:['効率を優先しすぎて配慮が不足しがち','自分のやり方を人にも求めすぎる','柔軟な軌道修正が苦手な場合がある'],
+    advice:'「今のペースについて、周りはどう感じていると思いますか？」と尋ねることで、チームへの配慮を意識するきっかけになります。',
+    goodMatch:['ISTJ','ESTP'], challenge:['INFP']},
+  ESFJ:{name:'チームの空気を整えるタイプ',
+    desc:'周囲への気配りとまとめ役としての責任感があり、チームの雰囲気を大切にするタイプです。人のために動くことにやりがいを感じ、協調性を大事にします。人からの評価を気にしすぎたり、対立を避けようとしすぎる面もあります。',
+    strengths:['周囲への気配りとまとめる力','協調性と責任感の強さ','チームの雰囲気を大切にする姿勢'],
+    watch:['人からの評価を気にしすぎる','対立を避けて本音を言わないことがある','自分のペースを後回しにしがち'],
+    advice:'「本当はどう思っていますか？遠慮なく聞かせてください」と伝えることで、本音を話しやすい空気を作れます。',
+    goodMatch:['ISFJ','ESFP'], challenge:['INTP']},
+  ENFJ:{name:'人を後押しするタイプ',
+    desc:'人の成長や可能性に関心が高く、周囲を励ましながら巻き込んでいくタイプです。相手の強みを見つけて引き出すことに長けています。相手を優先しすぎて自分のケアが後回しになり、燃え尽きてしまうこともあります。',
+    strengths:['人の可能性を引き出す力','周囲を巻き込むリーダーシップ','相手に合わせた関わり方の柔軟性'],
+    watch:['自分のケアが後回しになりやすい','相手の期待に応えようとしすぎる','断ることへの苦手意識'],
+    advice:'「あなた自身は、今どんなサポートが必要ですか？」と本人に矢印を向ける問いかけが大切です。',
+    goodMatch:['INFJ','ENFP'], challenge:['ISTP']},
+  ENTJ:{name:'目標に向けて牽引するタイプ',
+    desc:'目標達成に向けて計画を立て、周囲を引っ張っていくリーダーシップを持つタイプです。決断力があり、大きな目標を掲げて組織やチームを動かします。スピードや成果を重視するあまり、周囲がついてこられているかの確認が後回しになることもあります。',
+    strengths:['目標達成に向けた計画力と決断力','周囲を巻き込むリーダーシップ','課題を見極めて優先順位をつける力'],
+    watch:['スピード重視で周囲が置いていかれやすい','反対意見を押し切ってしまうことがある','結果を急ぐあまり過程への配慮が薄れる'],
+    advice:'「このペースについて、チームのメンバーはどう感じていそうですか？」という問いかけが、周囲との足並みを確認する材料になります。',
+    goodMatch:['INTJ','ENTP'], challenge:['ISFP']},
+};
+
+const STORAGE_KEY = 'type_compass_full_result_v1';
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+
+function saveResultToStorage(typeCode, pct){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({typeCode, pct, savedAt: Date.now()}));
+  }catch(e){
+    console.warn('この端末では結果を保存できませんでした', e);
+  }
+}
+
+function checkPreviousResult(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    const d = new Date(data.savedAt);
+    document.getElementById('prevResultDate').textContent = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+    document.getElementById('prevResultRow').style.display = 'flex';
+  }catch(e){ /* 前回結果なし、または読み込み不可 */ }
+}
+
+function loadPreviousResult(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    renderResult(data.typeCode, data.pct);
+  }catch(e){
+    console.warn('前回の結果を読み込めませんでした', e);
+  }
+}
+
+function deleteSavedResult(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  const row = document.getElementById('prevResultRow');
+  if(row) row.style.display = 'none';
+  alert('この端末に保存していた結果を削除しました。');
+  resetQuiz();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'auto'});
+}
+
+function startQuiz(){
+  current = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function resetQuiz(){
+  checkPreviousResult();
+  showScreen('screen-intro');
+}
+
+function renderDots(){
+  const wrap = document.getElementById('progressDots');
+  wrap.innerHTML = '';
+  QUESTIONS.forEach((q,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (answers[i]!==null?' done':'') + (i===current?' current':'');
+    d.style.setProperty('--dot-color', getComputedStyle(document.documentElement).getPropertyValue(`--c-${q.axis}`));
+    wrap.appendChild(d);
+  });
+  document.getElementById('progressText').textContent = `Q${current+1} / ${QUESTIONS.length}`;
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[current];
+  const meta = AXIS_META[q.axis];
+  const tag = document.getElementById('axisTag');
+  tag.textContent = `${meta.leftName}(${meta.left}) ／ ${meta.rightName}(${meta.right})`;
+  tag.style.background = meta.color;
+  document.getElementById('questionText').textContent = q.text;
+
+  const scaleWrap = document.getElementById('scaleButtons');
+  scaleWrap.innerHTML = '';
+  SCALE_LABELS.forEach(opt=>{
+    const btn = document.createElement('button');
+    btn.className = 'scale-btn';
+    btn.innerHTML = `<span>${opt.label}</span><span class="n">${opt.v}</span>`;
+    if(answers[current]===opt.v){ btn.style.borderColor = meta.color; }
+    btn.onclick = ()=>selectAnswer(opt.v);
+    scaleWrap.appendChild(btn);
+  });
+
+  document.getElementById('backBtn').style.visibility = current===0 ? 'hidden' : 'visible';
+  renderDots();
+}
+
+function selectAnswer(value){
+  answers[current] = value;
+  if(current < QUESTIONS.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    computeResult();
+  }
+}
+
+function goBack(){
+  if(current>0){ current--; renderQuestion(); }
+}
+
+function tierLabel(leftPct){
+  const dist = Math.abs(leftPct-50);
+  if(dist>=20) return '強め';
+  if(dist>=5) return 'やや強め';
+  return 'バランス型';
+}
+
+function computeResult(){
+  const totals = {ei:0, sn:0, tf:0, jp:0};
+  const counts = {ei:0, sn:0, tf:0, jp:0};
+  QUESTIONS.forEach((q,i)=>{
+    totals[q.axis] += answers[i];
+    counts[q.axis] += 5;
+  });
+  const pct = {};
+  const letters = {};
+  ['ei','sn','tf','jp'].forEach(axis=>{
+    const leftPct = Math.round((totals[axis]/counts[axis])*100);
+    pct[axis] = leftPct;
+    letters[axis] = leftPct >= 50 ? AXIS_META[axis].left : AXIS_META[axis].right;
+  });
+  const typeCode = letters.ei + letters.sn + letters.tf + letters.jp;
+  saveResultToStorage(typeCode, pct);
+  renderResult(typeCode, pct);
+}
+
+function renderResult(typeCode, pct){
+  document.getElementById('resultTypeLetters').textContent = typeCode;
+  const info = TYPE_DESCRIPTIONS[typeCode];
+  document.getElementById('resultTypeName').textContent = info.name;
+  document.getElementById('resultDescText').textContent = info.desc;
+
+  const sWrap = document.getElementById('resultStrengths');
+  sWrap.innerHTML = info.strengths.map(s=>`<li>${s}</li>`).join('');
+  const wWrap = document.getElementById('resultWatch');
+  wWrap.innerHTML = info.watch.map(s=>`<li>${s}</li>`).join('');
+  document.getElementById('resultAdvice').textContent = info.advice;
+
+  const fmtTypes = (codes)=> codes.map(c=>`${c}（${TYPE_DESCRIPTIONS[c].name}）`).join('、');
+  document.getElementById('resultGoodMatch').textContent = fmtTypes(info.goodMatch);
+  document.getElementById('resultChallenge').textContent = fmtTypes(info.challenge);
+
+  const gWrap = document.getElementById('resultGauges');
+  gWrap.innerHTML = '';
+  ['ei','sn','tf','jp'].forEach(axis=>{
+    const meta = AXIS_META[axis];
+    const leftPct = pct[axis];
+    const g = document.createElement('div');
+    g.className = 'rg';
+    g.setAttribute('data-axis', axis);
+    g.innerHTML = `<div class="rg-track"><div class="rg-fill" style="height:${leftPct}%"></div></div>
+      <div class="rg-label"><b>${meta.left}</b> ${leftPct}%<br>${100-leftPct}% <b>${meta.right}</b></div>`;
+    gWrap.appendChild(g);
+  });
+
+  const bWrap = document.getElementById('axisBreakdown');
+  bWrap.innerHTML = '';
+  ['ei','sn','tf','jp'].forEach(axis=>{
+    const meta = AXIS_META[axis];
+    const leftPct = pct[axis];
+    const isLeft = leftPct>=50;
+    const dominant = isLeft ? `${meta.leftName}(${meta.left})` : `${meta.rightName}(${meta.right})`;
+    const desc = isLeft ? meta.leftDesc : meta.rightDesc;
+    const tier = tierLabel(leftPct);
+    const row = document.createElement('div');
+    row.className = 'axis-row';
+    row.innerHTML = `<span class="swatch" style="background:${meta.color}"></span>
+      <span class="label">${meta.leftName}(${meta.left}) ― ${meta.rightName}(${meta.right})：<b>${dominant}</b> の傾向が${tier}（${Math.max(leftPct,100-leftPct)}%）
+      <span class="desc">${desc}</span></span>`;
+    bWrap.appendChild(row);
+  });
+
+  showScreen('screen-result');
+}
+
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    const targets = {ei:'42%', sn:'58%', tf:'50%', jp:'65%'};
+    document.querySelectorAll('#screen-intro .gauge').forEach(g=>{
+      const axis = g.getAttribute('data-axis');
+      g.querySelector('.gauge-fill').style.height = targets[axis];
+    });
+  }, 200);
+  checkPreviousResult();
+});
+</script>
+</body>
+</html>

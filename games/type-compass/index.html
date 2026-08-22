@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script src="../../redirect-to-vercel.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16タイプ診断（かんたん版）| sonosann Web&AIサポート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B1A2E;
+    --ink-soft:#2A2846;
+    --paper:#FAF9F6;
+    --paper-dim:#F0EEE8;
+    --text-on-ink:#F5F3EE;
+    --text-on-paper:#211F35;
+    --text-muted:#6B6880;
+
+    --c-ei:#E8623D; /* E / I */
+    --c-sn:#3FA796; /* S / N */
+    --c-tf:#9B6BC7; /* T / F */
+    --c-jp:#C9932E; /* J / P */
+
+    --font-display:'Fraunces', serif;
+    --font-body:'IBM Plex Sans JP', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+
+    --radius:14px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text-on-ink);
+    font-family:var(--font-body);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .screen{
+    min-height:100vh;
+    display:none;
+    padding:32px 20px 64px;
+  }
+  .screen.active{display:flex; flex-direction:column;}
+  .wrap{max-width:720px; margin:0 auto; width:100%;}
+
+  a{color:inherit;}
+  button{font-family:inherit;}
+  :focus-visible{outline:3px solid var(--c-sn); outline-offset:3px;}
+
+  /* ---------- Eyebrow / labels ---------- */
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin:0 0 12px;
+  }
+  .eyebrow.on-paper{color:#8A8798;}
+
+  /* ================= INTRO SCREEN ================= */
+  #screen-intro{justify-content:center;}
+  .intro-head{text-align:center; margin-bottom:44px;}
+  .intro-head h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(28px,6vw,44px);
+    line-height:1.25;
+    margin:0 0 18px;
+    letter-spacing:-.01em;
+  }
+  .intro-head p{
+    color:#C9C6D6;
+    font-size:15px;
+    max-width:520px;
+    margin:0 auto;
+  }
+
+  /* signature element: 4-axis gauge */
+  .gauge-panel{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin:0 auto 40px;
+    max-width:520px;
+  }
+  .gauge{
+    background:var(--ink-soft);
+    border-radius:10px;
+    padding:14px 10px 16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  }
+  .gauge-track{
+    width:10px;
+    height:120px;
+    border-radius:6px;
+    background:rgba(255,255,255,.08);
+    position:relative;
+    overflow:hidden;
+  }
+  .gauge-fill{
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:0%;
+    border-radius:6px;
+    transition:height .5s ease;
+  }
+  .gauge[data-axis="ei"] .gauge-fill{background:var(--c-ei);}
+  .gauge[data-axis="sn"] .gauge-fill{background:var(--c-sn);}
+  .gauge[data-axis="tf"] .gauge-fill{background:var(--c-tf);}
+  .gauge[data-axis="jp"] .gauge-fill{background:var(--c-jp);}
+  .gauge-letters{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.06em;
+    color:#B4B1C4;
+    text-align:center;
+    line-height:1.5;
+  }
+  .gauge-letters b{color:var(--text-on-ink); font-weight:600;}
+
+  .notice-box{
+    background:var(--ink-soft);
+    border-left:3px solid var(--c-jp);
+    border-radius:8px;
+    padding:18px 20px;
+    font-size:13.5px;
+    color:#D6D3E2;
+    margin-bottom:36px;
+  }
+  .notice-box strong{color:var(--text-on-ink); font-weight:600;}
+
+  .version-note{font-size:12.5px; color:#9793A8; text-align:center; margin-bottom:10px;}
+  .version-note a{text-decoration:underline;}
+  .version-note:last-of-type{margin-bottom:36px;}
+
+  .btn{
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:15px;
+    border:none;
+    border-radius:999px;
+    padding:16px 30px;
+    cursor:pointer;
+    transition:transform .15s ease, opacity .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn-primary{
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .btn-block{width:100%; display:block; text-align:center;}
+  .btn-ghost{
+    background:transparent;
+    border:1.5px solid rgba(255,255,255,.25);
+    color:var(--text-on-ink);
+  }
+  #screen-result .btn-ghost{
+    color:var(--ink);
+    border-color:rgba(27,26,46,.25);
+  }
+  #screen-result .btn-ghost:hover{
+    background:rgba(27,26,46,.04);
+  }
+
+  .cta-row{display:flex; justify-content:center;}
+
+  /* ================= QUIZ SCREEN ================= */
+  #screen-quiz{background:var(--paper); color:var(--text-on-paper);}
+  .quiz-top{margin-bottom:28px;}
+  .progress-dots{
+    display:flex;
+    gap:6px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:#E2DFD6;
+    transition:background .2s ease, transform .2s ease;
+  }
+  .dot.done{background:var(--dot-color, var(--ink));}
+  .dot.current{transform:scale(1.4);}
+  .progress-text{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--text-muted);
+  }
+
+  .question-card{
+    background:#fff;
+    border-radius:var(--radius);
+    padding:36px 28px;
+    box-shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 30px -18px rgba(27,26,46,.25);
+    margin-bottom:26px;
+  }
+  .question-axis-tag{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    padding:4px 10px;
+    border-radius:999px;
+    margin-bottom:16px;
+    color:#fff;
+  }
+  .question-text{
+    font-family:var(--font-display);
+    font-size:clamp(19px,4vw,24px);
+    font-weight:500;
+    line-height:1.55;
+    margin:0;
+  }
+
+  .scale{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .scale-btn{
+    background:var(--paper-dim);
+    border:1.5px solid transparent;
+    border-radius:10px;
+    padding:16px 18px;
+    text-align:left;
+    font-size:14.5px;
+    color:var(--text-on-paper);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .scale-btn:hover{background:#E9E6DC;}
+  .scale-btn .n{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--text-muted);
+  }
+
+  .quiz-nav{display:flex; justify-content:space-between; align-items:center;}
+  .link-btn{
+    background:none; border:none; cursor:pointer;
+    font-size:13.5px; color:var(--text-muted);
+    text-decoration:underline;
+    padding:8px 0;
+  }
+
+  /* ================= RESULT SCREEN ================= */
+  #screen-result{background:var(--paper); color:var(--text-on-paper);}
+  .result-hero{text-align:center; margin-bottom:8px;}
+  .result-type{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(48px,14vw,88px);
+    letter-spacing:.03em;
+    margin:6px 0 4px;
+    line-height:1;
+  }
+  .result-type span{display:inline-block;}
+  .result-title{
+    font-size:16px;
+    color:var(--text-muted);
+    margin-bottom:32px;
+    text-align:center;
+  }
+
+  .result-gauges{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    background:#fff;
+    border-radius:var(--radius);
+    padding:22px 16px;
+    margin-bottom:24px;
+    box-shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 30px -18px rgba(27,26,46,.2);
+  }
+  .rg{display:flex; flex-direction:column; align-items:center; gap:8px;}
+  .rg-track{
+    width:8px; height:90px; border-radius:5px;
+    background:var(--paper-dim);
+    position:relative; overflow:hidden;
+  }
+  .rg-fill{position:absolute; bottom:0; left:0; right:0; border-radius:5px;}
+  .rg[data-axis="ei"] .rg-fill{background:var(--c-ei);}
+  .rg[data-axis="sn"] .rg-fill{background:var(--c-sn);}
+  .rg[data-axis="tf"] .rg-fill{background:var(--c-tf);}
+  .rg[data-axis="jp"] .rg-fill{background:var(--c-jp);}
+  .rg-label{font-family:var(--font-mono); font-size:11px; text-align:center; color:var(--text-muted); line-height:1.5;}
+  .rg-label b{color:var(--text-on-paper);}
+
+  .result-desc{
+    background:#fff;
+    border-radius:var(--radius);
+    padding:26px 24px;
+    margin-bottom:16px;
+    box-shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 30px -18px rgba(27,26,46,.2);
+  }
+  .result-desc h3{
+    font-family:var(--font-display);
+    font-size:19px;
+    margin:0 0 10px;
+  }
+  .result-desc p{margin:0; font-size:14.5px; color:#4B4860;}
+
+  .axis-breakdown{
+    display:grid;
+    gap:10px;
+    margin-bottom:30px;
+  }
+  .axis-row{
+    background:#fff;
+    border-radius:10px;
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    box-shadow:0 1px 0 rgba(0,0,0,.04);
+  }
+  .axis-row .swatch{width:10px; height:10px; border-radius:50%; flex-shrink:0;}
+  .axis-row .label{font-size:13px; color:#4B4860; flex:1;}
+  .axis-row .label b{color:var(--text-on-paper);}
+
+  .result-actions{display:flex; flex-direction:column; gap:12px;}
+
+  footer.disclaimer{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--text-muted);
+    margin-top:20px;
+  }
+
+  @media (max-width:520px){
+    .gauge-panel{gap:8px;}
+    .gauge-track{height:90px;}
+    .result-gauges{padding:18px 8px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== INTRO ===================== -->
+<section id="screen-intro" class="screen active">
+  <div class="wrap">
+    <p class="eyebrow">TYPE COMPASS &mdash; 簡易版</p>
+    <div class="intro-head">
+      <h1>4つの軸で、<br>いまの自分の傾向を見る。</h1>
+      <p>20の質問に答えると、E/I・S/N・T/F・J/Pという4つの軸のバランスから、あなたの性格タイプ（4文字）が浮かび上がります。所要時間は約3分です。</p>
+    </div>
+
+    <div class="gauge-panel" aria-hidden="true">
+      <div class="gauge" data-axis="ei">
+        <div class="gauge-track"><div class="gauge-fill"></div></div>
+        <div class="gauge-letters"><b>E</b><br>外向<br>―<br>内向<br><b>I</b></div>
+      </div>
+      <div class="gauge" data-axis="sn">
+        <div class="gauge-track"><div class="gauge-fill"></div></div>
+        <div class="gauge-letters"><b>S</b><br>感覚<br>―<br>直観<br><b>N</b></div>
+      </div>
+      <div class="gauge" data-axis="tf">
+        <div class="gauge-track"><div class="gauge-fill"></div></div>
+        <div class="gauge-letters"><b>T</b><br>思考<br>―<br>感情<br><b>F</b></div>
+      </div>
+      <div class="gauge" data-axis="jp">
+        <div class="gauge-track"><div class="gauge-fill"></div></div>
+        <div class="gauge-letters"><b>J</b><br>判断<br>―<br>知覚<br><b>P</b></div>
+      </div>
+    </div>
+
+    <div class="notice-box">
+      <strong>ご利用前に：</strong>このチェックは自己理解や1on1・対話のきっかけとなる簡易的な参考資料です。採用選考・人事評価・昇格などの判断には使用しないでください。結果は「正解」ではなく、日々の実感と照らし合わせるための材料としてご活用ください。入力内容と結果は外部に送信されず、このブラウザ内だけで処理されます。
+    </div>
+
+    <p class="version-note">じっくり8分かける本格版は <a href="full.html">こちら</a></p>
+    <p class="version-note"><a href="../personality-hub.html">性格診断コーナーのトップへ戻る</a></p>
+
+    <div class="cta-row">
+      <button class="btn btn-primary" onclick="startQuiz()">→ 診断をはじめる（約3分）</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUIZ ===================== -->
+<section id="screen-quiz" class="screen">
+  <div class="wrap">
+    <div class="quiz-top">
+      <div class="progress-dots" id="progressDots"></div>
+      <div class="progress-text" id="progressText">Q1 / 20</div>
+    </div>
+
+    <div class="question-card">
+      <span class="question-axis-tag" id="axisTag"></span>
+      <p class="question-text" id="questionText"></p>
+    </div>
+
+    <div class="scale" id="scaleButtons"></div>
+
+    <div class="quiz-nav" style="margin-top:22px;">
+      <button class="link-btn" id="backBtn" onclick="goBack()">← 前の質問に戻る</button>
+      <button class="link-btn" onclick="resetQuiz()">はじめからやり直す</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESULT ===================== -->
+<section id="screen-result" class="screen">
+  <div class="wrap">
+    <p class="eyebrow on-paper" style="text-align:center;">YOUR TYPE</p>
+    <div class="result-hero">
+      <div class="result-type" id="resultTypeLetters"></div>
+    </div>
+    <p class="result-title" id="resultTypeName"></p>
+
+    <div class="result-gauges" id="resultGauges"></div>
+
+    <div class="result-desc">
+      <h3>この結果について</h3>
+      <p id="resultDescText"></p>
+    </div>
+
+    <div class="axis-breakdown" id="axisBreakdown"></div>
+
+    <div class="result-actions">
+      <a class="btn btn-ghost btn-block" href="docs/使い方ガイド.pdf" id="guideLink" target="_blank" rel="noopener">→ 結果の使い方ガイドを見る</a>
+      <button class="btn btn-primary btn-block" onclick="resetQuiz()">→ もう一度診断する</button>
+    </div>
+    <p class="version-note" style="margin-top:14px;"><a href="../personality-hub.html">性格診断コーナーのトップへ戻る</a></p>
+
+    <footer class="disclaimer">
+      本診断は正式な心理検査・職業適性の判定ではありません。人材育成・自己理解のための対話ツールとしてご利用ください。
+    </footer>
+  </div>
+</section>
+
+<script>
+/* ---------------------------------------------------------
+   Questions: 5 per axis. Agreeing (higher score) leans
+   toward the FIRST letter of each axis pair (E, S, T, J).
+--------------------------------------------------------- */
+const QUESTIONS = [
+  {axis:'ei', text:'初対面の人ともわりとすぐに打ち解けられる方だと思う'},
+  {axis:'ei', text:'一人でじっくり考えるより、誰かと話しながら考える方がはかどる'},
+  {axis:'ei', text:'会議やグループワークでは、自分から発言することが多い'},
+  {axis:'ei', text:'新しい環境に入ったとき、まず周りの人に話しかけてみる方だ'},
+  {axis:'ei', text:'アイデアは、人と話しているうちに生まれることが多い'},
+
+  {axis:'sn', text:'物事を考えるとき、まず具体的な事実やデータを確認したい'},
+  {axis:'sn', text:'抽象的な議論より、実際の事例を聞く方が理解しやすい'},
+  {axis:'sn', text:'作業は、決まった手順通りに進める方が安心する'},
+  {axis:'sn', text:'将来の可能性より、今目の前にある課題に意識が向きやすい'},
+  {axis:'sn', text:'新しいやり方より、実績のある方法を選ぶことが多い'},
+
+  {axis:'tf', text:'判断するときは、感情より論理を優先することが多い'},
+  {axis:'tf', text:'意見を伝えるときは、相手への配慮より正確さを重視しがちだ'},
+  {axis:'tf', text:'問題を解決するときは、原因と結果を整理してから動く'},
+  {axis:'tf', text:'人間関係の良し悪しより、物事の筋道が通っているかを気にする'},
+  {axis:'tf', text:'指摘や助言は、相手の気持ちより内容の正しさを優先しがちだ'},
+
+  {axis:'jp', text:'予定は前もって立てて、その通りに進めたい方だ'},
+  {axis:'jp', text:'締め切りより早めに終わらせないと落ち着かない'},
+  {axis:'jp', text:'物事はきっちり計画通りに進む方が心地よい'},
+  {axis:'jp', text:'散らかった状態より、整理された状態を保ちたい'},
+  {axis:'jp', text:'急な予定変更があると、ストレスを感じやすい方だ'},
+];
+
+const SCALE_LABELS = [
+  {v:5, label:'とてもそう思う'},
+  {v:4, label:'ややそう思う'},
+  {v:3, label:'どちらとも言えない'},
+  {v:2, label:'あまりそう思わない'},
+  {v:1, label:'そう思わない'},
+];
+
+const AXIS_META = {
+  ei:{color:'var(--c-ei)', left:'E', right:'I', leftName:'外向', rightName:'内向'},
+  sn:{color:'var(--c-sn)', left:'S', right:'N', leftName:'感覚', rightName:'直観'},
+  tf:{color:'var(--c-tf)', left:'T', right:'F', leftName:'思考', rightName:'感情'},
+  jp:{color:'var(--c-jp)', left:'J', right:'P', leftName:'判断', rightName:'知覚'},
+};
+
+const TYPE_DESCRIPTIONS = {
+  ISTJ:{name:'堅実に物事を積み上げるタイプ', desc:'計画や手順を大切にし、決めたことを最後までやり遂げる誠実さが強みです。一方で、急な変更が続く場面では負担を感じやすいかもしれません。'},
+  ISFJ:{name:'周囲をそっと支えるタイプ', desc:'細やかな気配りと着実な仕事ぶりで周囲を支えます。自分の意見より周りの調和を優先しやすい傾向もあるため、たまには自分の希望を言葉にする機会も大切です。'},
+  INFJ:{name:'静かに深く考えるタイプ', desc:'物事の背景や意味を丁寧に考え、長期的な視点を持って人と関わります。理想と現実のギャップに疲れやすい面もあるので、こまめな振り返りが力になります。'},
+  INTJ:{name:'戦略的に組み立てるタイプ', desc:'目的から逆算して計画を立てるのが得意で、独自の視点を持っています。プロセスより結果を重視しがちなので、周囲との共有を意識すると連携がスムーズになります。'},
+  ISTP:{name:'手を動かしながら考えるタイプ', desc:'状況を冷静に観察し、実際に試しながら最適な方法を見つけるのが得意です。感情や意図を言葉で説明するのは苦手意識を持ちやすいかもしれません。'},
+  ISFP:{name:'自分の感覚を大切にするタイプ', desc:'穏やかで柔軟、自分なりの美意識や価値観を大切にします。主張が控えめな分、意見を求められたときに言葉にする練習が役立つことがあります。'},
+  INFP:{name:'理想を静かに温めるタイプ', desc:'自分の価値観に忠実で、人の気持ちに寄り添うことを大切にします。理想と現実の折り合いをつける場面では、小さな一歩から形にしていく工夫が助けになります。'},
+  INTP:{name:'仕組みを解き明かすタイプ', desc:'物事の仕組みや理屈を掘り下げて理解することに喜びを感じます。考えがまとまる前に発言を求められると戸惑いやすいので、考える時間を確保すると力を発揮しやすくなります。'},
+  ESTP:{name:'その場で動いて結果を出すタイプ', desc:'状況を素早く読み取り、実践しながら結果を出すのが得意です。目先の対応に集中しやすい分、長期的な計画づくりは意識して時間を取ると安定します。'},
+  ESFP:{name:'その場を明るくするタイプ', desc:'周囲を巻き込みながら場を盛り上げるエネルギーがあります。楽しさを優先しすぎて計画が後回しになりやすい面もあるため、要所でのチェックが助けになります。'},
+  ENFP:{name:'可能性を広げるタイプ', desc:'発想力があり、人とアイデアを掛け合わせながら新しいことに挑戦するのが得意です。興味が広がりやすい分、優先順位を決める工夫があるとさらに力を発揮できます。'},
+  ENTP:{name:'議論しながら発想するタイプ', desc:'物事を多角的に捉え、議論を通じて新しい発想を生み出します。細部の詰めより発想の広がりを楽しむ傾向があるため、実行段階での伴走役がいると心強いです。'},
+  ESTJ:{name:'現場を仕切るタイプ', desc:'物事を段取りよく進め、チームを目標に向けてまとめる力があります。効率を重視するあまり、個々の事情への配慮が後回しになりやすい点は意識するとよいでしょう。'},
+  ESFJ:{name:'チームの空気を整えるタイプ', desc:'周囲への気配りとまとめ役としての責任感があり、チームの雰囲気を大切にします。人からの評価を気にしすぎる場面もあるため、自分の軸を確認する時間も大切です。'},
+  ENFJ:{name:'人を後押しするタイプ', desc:'人の成長や可能性に関心が高く、周囲を励ましながら巻き込んでいく力があります。相手を優先しすぎて自分のケアが後回しになりやすいので、意識してひと息つく時間を。'},
+  ENTJ:{name:'目標に向けて牽引するタイプ', desc:'目標達成に向けて計画を立て、周囲を引っ張っていくリーダーシップがあります。スピード重視で進めがちなので、周囲の状況を確認するひと呼吸があるとチームがついてきやすくなります。'},
+};
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'auto'});
+}
+
+function startQuiz(){
+  current = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function resetQuiz(){
+  animateIntroGauges(true);
+  showScreen('screen-intro');
+}
+
+function renderDots(){
+  const wrap = document.getElementById('progressDots');
+  wrap.innerHTML = '';
+  QUESTIONS.forEach((q,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (answers[i]!==null?' done':'') + (i===current?' current':'');
+    d.style.setProperty('--dot-color', getComputedStyle(document.documentElement).getPropertyValue(`--c-${q.axis}`));
+    wrap.appendChild(d);
+  });
+  document.getElementById('progressText').textContent = `Q${current+1} / ${QUESTIONS.length}`;
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[current];
+  const meta = AXIS_META[q.axis];
+  const tag = document.getElementById('axisTag');
+  tag.textContent = `${meta.leftName}(${meta.left}) ／ ${meta.rightName}(${meta.right})`;
+  tag.style.background = meta.color;
+
+  document.getElementById('questionText').textContent = q.text;
+
+  const scaleWrap = document.getElementById('scaleButtons');
+  scaleWrap.innerHTML = '';
+  SCALE_LABELS.forEach(opt=>{
+    const btn = document.createElement('button');
+    btn.className = 'scale-btn';
+    btn.innerHTML = `<span>${opt.label}</span><span class="n">${opt.v}</span>`;
+    if(answers[current]===opt.v){
+      btn.style.borderColor = meta.color;
+    }
+    btn.onclick = ()=>selectAnswer(opt.v);
+    scaleWrap.appendChild(btn);
+  });
+
+  document.getElementById('backBtn').style.visibility = current===0 ? 'hidden' : 'visible';
+  renderDots();
+}
+
+function selectAnswer(value){
+  answers[current] = value;
+  if(current < QUESTIONS.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    computeResult();
+  }
+}
+
+function goBack(){
+  if(current>0){
+    current--;
+    renderQuestion();
+  }
+}
+
+function computeResult(){
+  const totals = {ei:0, sn:0, tf:0, jp:0};
+  const counts = {ei:0, sn:0, tf:0, jp:0};
+  QUESTIONS.forEach((q,i)=>{
+    totals[q.axis] += answers[i];
+    counts[q.axis] += 5; // max score per question
+  });
+
+  const pct = {};
+  const letters = {};
+  ['ei','sn','tf','jp'].forEach(axis=>{
+    const leftPct = Math.round((totals[axis]/counts[axis])*100);
+    pct[axis] = leftPct;
+    letters[axis] = leftPct >= 50 ? AXIS_META[axis].left : AXIS_META[axis].right;
+  });
+
+  const typeCode = letters.ei + letters.sn + letters.tf + letters.jp;
+  renderResult(typeCode, pct);
+}
+
+function renderResult(typeCode, pct){
+  document.getElementById('resultTypeLetters').textContent = typeCode;
+  const info = TYPE_DESCRIPTIONS[typeCode];
+  document.getElementById('resultTypeName').textContent = info.name;
+  document.getElementById('resultDescText').textContent = info.desc;
+
+  // gauges
+  const gWrap = document.getElementById('resultGauges');
+  gWrap.innerHTML = '';
+  ['ei','sn','tf','jp'].forEach(axis=>{
+    const meta = AXIS_META[axis];
+    const leftPct = pct[axis];
+    const g = document.createElement('div');
+    g.className = 'rg';
+    g.setAttribute('data-axis', axis);
+    g.innerHTML = `
+      <div class="rg-track"><div class="rg-fill" style="height:${leftPct}%"></div></div>
+      <div class="rg-label"><b>${meta.left}</b> ${leftPct}%<br>${100-leftPct}% <b>${meta.right}</b></div>
+    `;
+    gWrap.appendChild(g);
+  });
+
+  // breakdown rows
+  const bWrap = document.getElementById('axisBreakdown');
+  bWrap.innerHTML = '';
+  ['ei','sn','tf','jp'].forEach(axis=>{
+    const meta = AXIS_META[axis];
+    const leftPct = pct[axis];
+    const dominant = leftPct>=50 ? `${meta.leftName}(${meta.left})` : `${meta.rightName}(${meta.right})`;
+    const row = document.createElement('div');
+    row.className = 'axis-row';
+    row.innerHTML = `
+      <span class="swatch" style="background:${meta.color}"></span>
+      <span class="label">${meta.leftName}(${meta.left}) ― ${meta.rightName}(${meta.right})：<b>${dominant}</b> の傾向がやや強め（${Math.max(leftPct,100-leftPct)}%）</span>
+    `;
+    bWrap.appendChild(row);
+  });
+
+  showScreen('screen-result');
+}
+
+function animateIntroGauges(reset){
+  document.querySelectorAll('#screen-intro .gauge-fill').forEach(el=>{
+    el.style.height = reset ? '0%' : el.style.height;
+  });
+}
+
+// gentle entrance animation for intro gauges (decorative, at rest ~30-45%)
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    const targets = {ei:'38%', sn:'55%', tf:'46%', jp:'62%'};
+    document.querySelectorAll('#screen-intro .gauge').forEach(g=>{
+      const axis = g.getAttribute('data-axis');
+      g.querySelector('.gauge-fill').style.height = targets[axis];
+    });
+  }, 200);
+});
+</script>
+</body>
+</html>
