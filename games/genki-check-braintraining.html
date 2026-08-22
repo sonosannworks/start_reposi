@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script src="../redirect-to-vercel.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>元気チェック＆脳トレひろば - 脳トレゲーム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#EEF3E7;
+    --bg-2:#E4EDDA;
+    --paper:#FFFDF7;
+    --ink:#2B3A34;
+    --ink-soft:#5B6960;
+    --pine:#3A6B57;
+    --pine-dark:#2A4E3F;
+    --gold:#DDA34C;
+    --gold-soft:#F3DDB0;
+    --berry:#B6555F;
+    --sky:#4B7A93;
+    --line:#D8E1CE;
+    --radius:22px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans JP',sans-serif;
+    background:linear-gradient(180deg,var(--bg-1),var(--bg-2) 60%);
+    color:var(--ink);
+    min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+  }
+  h1,h2,h3,.brand{font-family:'Zen Maru Gothic',sans-serif;}
+
+  /* ---------- shell ---------- */
+  .app{max-width:520px;margin:0 auto;padding:0 0 48px;min-height:100vh;}
+  header.topbar{
+    display:flex;align-items:center;gap:10px;
+    padding:18px 20px 14px;
+    position:sticky;top:0;z-index:5;
+    background:linear-gradient(180deg,var(--bg-1) 80%, transparent);
+  }
+  .backbtn{
+    display:none;
+    width:44px;height:44px;border-radius:50%;
+    border:none;background:var(--paper);
+    box-shadow:0 2px 6px rgba(42,78,63,.15);
+    font-size:20px;color:var(--pine-dark);
+    align-items:center;justify-content:center;cursor:pointer;
+  }
+  .backbtn.show{display:flex;}
+  .topbar .title{font-size:19px;font-weight:700;color:var(--pine-dark);}
+
+  /* ---------- home ---------- */
+  .hero{padding:6px 24px 18px;}
+  .hero .kicker{
+    display:inline-block;font-size:13px;font-weight:700;letter-spacing:.08em;
+    color:var(--pine);background:var(--gold-soft);
+    padding:4px 12px;border-radius:100px;margin-bottom:10px;
+  }
+  .hero h1{font-size:26px;line-height:1.4;margin:0 0 6px;color:var(--pine-dark);}
+  .hero p{margin:0;color:var(--ink-soft);font-size:14.5px;line-height:1.7;}
+
+  .grid{padding:6px 20px 10px;display:grid;grid-template-columns:1fr;gap:14px;}
+  .card{
+    background:var(--paper);
+    border-radius:var(--radius);
+    padding:20px 20px;
+    box-shadow:0 4px 14px rgba(42,78,63,.10);
+    border:1px solid var(--line);
+    display:flex;align-items:center;gap:16px;
+    cursor:pointer;transition:transform .15s ease;
+    text-align:left;width:100%;
+  }
+  .card:active{transform:scale(.98);}
+  .card .icon{
+    width:56px;height:56px;border-radius:16px;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:28px;
+    background:var(--gold-soft);
+  }
+  .card.pine .icon{background:#DCEBE1;}
+  .card.sky .icon{background:#DCEAF0;}
+  .card.berry .icon{background:#F3DEE0;}
+  .card .body h3{margin:0 0 4px;font-size:17.5px;color:var(--ink);}
+  .card .body p{margin:0;font-size:13px;color:var(--ink-soft);line-height:1.6;}
+  .card .arrow{margin-left:auto;color:var(--ink-soft);font-size:20px;flex:none;}
+
+  .footnote{padding:18px 26px 4px;font-size:12px;color:var(--ink-soft);line-height:1.8;}
+
+  /* ---------- screens ---------- */
+  .screen{display:none;padding:4px 20px 20px;}
+  .screen.active{display:block;}
+  .panel{
+    background:var(--paper);border-radius:var(--radius);
+    padding:22px 20px;box-shadow:0 4px 14px rgba(42,78,63,.10);
+    border:1px solid var(--line); margin-bottom:16px;
+  }
+  .panel h2{margin:0 0 8px;font-size:20px;color:var(--pine-dark);}
+  .panel .lead{color:var(--ink-soft);font-size:14px;line-height:1.7;margin-bottom:14px;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border:none;border-radius:100px;padding:14px 22px;
+    font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:16px;
+    background:var(--pine);color:#fff;cursor:pointer;width:100%;
+    box-shadow:0 4px 0 var(--pine-dark);
+  }
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--pine-dark);}
+  .btn.gold{background:var(--gold);box-shadow:0 4px 0 #B9832F;}
+  .btn.gold:active{box-shadow:0 2px 0 #B9832F;}
+  .btn.ghost{background:var(--paper);color:var(--pine-dark);border:2px solid var(--line);box-shadow:none;}
+  .btn.small{width:auto;padding:10px 18px;font-size:14px;}
+  .btn:disabled{opacity:.45;box-shadow:none;}
+
+  /* checklist */
+  .cl-section-title{
+    font-family:'Zen Maru Gothic',sans-serif;font-weight:700;color:var(--pine);
+    font-size:14px;margin:18px 0 8px;padding-left:2px;
+  }
+  .cl-item{border-top:1px solid var(--line);padding:14px 2px;}
+  .cl-item:first-child{border-top:none;}
+  .cl-q{font-size:15px;line-height:1.6;margin-bottom:10px;}
+  .cl-opts{display:flex;gap:10px;}
+  .cl-opt{
+    flex:1;text-align:center;padding:11px 6px;border-radius:14px;
+    border:2px solid var(--line);font-size:14.5px;font-weight:700;
+    color:var(--ink-soft);cursor:pointer;background:#fff;
+  }
+  .cl-opt.selected{border-color:var(--pine);background:#E4F0E8;color:var(--pine-dark);}
+
+  .progress-wrap{background:#E9EFE3;border-radius:100px;height:10px;overflow:hidden;margin:2px 0 4px;}
+  .progress-bar{height:100%;background:var(--gold);width:0%;transition:width .25s;}
+
+  .result-badge{
+    text-align:center;padding:22px 12px;border-radius:18px;margin-bottom:14px;
+  }
+  .result-badge.ok{background:#E4F0E8;}
+  .result-badge.watch{background:#F7E9CE;}
+  .result-badge .big{font-family:'Zen Maru Gothic',sans-serif;font-size:22px;font-weight:900;color:var(--pine-dark);margin-bottom:4px;}
+  .result-badge.watch .big{color:#9A6A1E;}
+  .result-list{font-size:13.5px;color:var(--ink-soft);line-height:2;}
+  .result-list b{color:var(--ink);}
+
+  /* memory game */
+  .word-stage{
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+    padding:26px 10px;
+  }
+  .word-chip{
+    background:var(--pine);color:#fff;font-family:'Zen Maru Gothic',sans-serif;
+    font-weight:700;font-size:20px;padding:14px 20px;border-radius:14px;
+  }
+  .timer-badge{
+    display:inline-block;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;
+    font-size:15px;color:var(--berry);background:#F6E3E4;border-radius:100px;
+    padding:6px 16px;margin-bottom:10px;
+  }
+  .answer-inputs{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+  .answer-inputs input{
+    border:2px solid var(--line);border-radius:12px;padding:12px 14px;
+    font-size:16px;font-family:'Noto Sans JP',sans-serif;
+  }
+  .answer-inputs input:focus{outline:none;border-color:var(--pine);}
+
+  /* naming game */
+  .naming-input-row{display:flex;gap:8px;margin-bottom:12px;}
+  .naming-input-row input{
+    flex:1;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-size:16px;
+  }
+  .naming-input-row input:focus{outline:none;border-color:var(--pine);}
+  .naming-list{display:flex;flex-wrap:wrap;gap:8px;min-height:38px;margin-bottom:10px;}
+  .naming-chip{
+    background:#E4F0E8;color:var(--pine-dark);border-radius:100px;
+    padding:8px 14px;font-size:14px;font-weight:700;
+  }
+  .big-timer{
+    text-align:center;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;
+    font-size:44px;color:var(--pine-dark);margin:4px 0 6px;
+  }
+
+  /* quiz */
+  .quiz-event{
+    text-align:center;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;
+    font-size:26px;color:var(--ink);padding:22px 10px;background:#F5F1E4;
+    border-radius:16px;margin-bottom:16px;
+  }
+  .season-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .season-opt{
+    padding:16px 8px;border-radius:14px;border:2px solid var(--line);
+    background:#fff;text-align:center;font-weight:700;font-size:16px;cursor:pointer;
+  }
+  .season-opt.correct{background:#E4F0E8;border-color:var(--pine);color:var(--pine-dark);}
+  .season-opt.wrong{background:#F6E3E4;border-color:var(--berry);color:var(--berry);}
+
+  /* calc */
+  .calc-current{
+    text-align:center;padding:20px;
+  }
+  .calc-current .now{font-family:'Zen Maru Gothic',sans-serif;font-size:15px;color:var(--ink-soft);}
+  .calc-current .num{font-family:'Zen Maru Gothic',sans-serif;font-size:52px;font-weight:900;color:var(--pine-dark);}
+  .calc-current .op{font-size:16px;color:var(--ink-soft);margin-top:2px;}
+  .calc-input{width:100%;text-align:center;font-size:28px;padding:14px;border-radius:14px;border:2px solid var(--line);font-family:'Zen Maru Gothic',sans-serif;font-weight:700;margin:14px 0;}
+  .calc-input:focus{outline:none;border-color:var(--pine);}
+  .calc-stats{display:flex;justify-content:space-around;text-align:center;margin-top:16px;}
+  .calc-stats div span{display:block;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:22px;color:var(--pine-dark);}
+  .calc-stats div small{color:var(--ink-soft);font-size:12px;}
+  .feedback{text-align:center;font-weight:700;font-size:15px;min-height:22px;margin-top:6px;}
+  .feedback.ok{color:var(--pine);}
+  .feedback.bad{color:var(--berry);}
+
+  .disclaimer{
+    background:#F5F1E4;border-radius:16px;padding:14px 16px;font-size:12.5px;
+    color:var(--ink-soft);line-height:1.8;margin-top:10px;
+  }
+  .source-note{font-size:11.5px;color:var(--ink-soft);text-align:center;margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <button class="backbtn" id="backBtn" onclick="goHome()">←</button>
+    <div class="title" id="topTitle">元気チェック＆脳トレひろば</div>
+  </header>
+
+  <!-- ===== HOME ===== -->
+  <section class="screen active" id="screen-home">
+    <div class="hero">
+      <span class="kicker">まいにちの元気チェック</span>
+      <h1>今日の調子を<br>のぞいてみましょう</h1>
+      <p>生活のふりかえりと、楽しい脳トレを5つご用意しました。気になるものから始めてください。</p>
+    </div>
+    <div class="grid">
+      <button class="card pine" onclick="showScreen('checklist')">
+        <div class="icon">📝</div>
+        <div class="body"><h3>生活機能セルフチェック</h3><p>25の質問で今の生活をふりかえります（時間制限なし）</p></div>
+        <div class="arrow">›</div>
+      </button>
+      <button class="card gold" onclick="showScreen('memory')">
+        <div class="icon">🧠</div>
+        <div class="body"><h3>おぼえて答えるゲーム</h3><p>5つの言葉を覚えて、あとで答えます</p></div>
+        <div class="arrow">›</div>
+      </button>
+      <button class="card sky" onclick="showScreen('naming')">
+        <div class="icon">🥕</div>
+        <div class="body"><h3>やさい・くだもの言うだけゲーム</h3><p>60秒でいくつ言えるかチャレンジ</p></div>
+        <div class="arrow">›</div>
+      </button>
+      <button class="card berry" onclick="showScreen('season')">
+        <div class="icon">🎋</div>
+        <div class="body"><h3>季節の行事クイズ</h3><p>行事が春夏秋冬どれか当てましょう</p></div>
+        <div class="arrow">›</div>
+      </button>
+      <button class="card pine" onclick="showScreen('calc')">
+        <div class="icon">🔢</div>
+        <div class="body"><h3>100から3ずつ引き算</h3><p>60秒、まちがえたら終了の暗算チャレンジ</p></div>
+        <div class="arrow">›</div>
+      </button>
+    </div>
+    <div class="footnote">※このアプリは楽しみながら生活習慣をふりかえるためのものです。医学的な診断を行うものではありません。結果が気になる場合はかかりつけ医や地域包括支援センターにご相談ください。</div>
+  </section>
+
+  <!-- ===== CHECKLIST ===== -->
+  <section class="screen" id="screen-checklist">
+    <div class="panel" id="cl-intro">
+      <h2>生活機能セルフチェック</h2>
+      <p class="lead">全25問、はい・いいえでお答えください。時間の制限はありません。ゆっくりお答えください。</p>
+      <button class="btn" onclick="startChecklist()">はじめる</button>
+      <div class="source-note">出典：厚生労働省「基本チェックリスト」（介護予防・日常生活支援総合事業）</div>
+    </div>
+    <div class="panel" id="cl-quiz" style="display:none;">
+      <div class="progress-wrap"><div class="progress-bar" id="cl-progress"></div></div>
+      <div id="cl-body"></div>
+    </div>
+    <div class="panel" id="cl-result" style="display:none;"></div>
+  </section>
+
+  <!-- ===== MEMORY ===== -->
+  <section class="screen" id="screen-memory">
+    <div class="panel" id="mem-intro">
+      <h2>おぼえて答えるゲーム</h2>
+      <p class="lead">5つの言葉が10秒間だけ表示されます。よく覚えて、あとで思い出した言葉を入力してください。</p>
+      <button class="btn gold" onclick="startMemory()">言葉を見る</button>
+    </div>
+    <div class="panel" id="mem-show" style="display:none;">
+      <p class="lead" style="text-align:center;">この5つを覚えてください</p>
+      <div class="word-stage" id="mem-words"></div>
+      <div class="big-timer" id="mem-timer">10</div>
+    </div>
+    <div class="panel" id="mem-answer" style="display:none;">
+      <h2>思い出した言葉を入力</h2>
+      <p class="lead">順番はバラバラで大丈夫です。わかる分だけ入力してください。</p>
+      <div class="answer-inputs">
+        <input type="text" id="a0" placeholder="1つ目">
+        <input type="text" id="a1" placeholder="2つ目">
+        <input type="text" id="a2" placeholder="3つ目">
+        <input type="text" id="a3" placeholder="4つ目">
+        <input type="text" id="a4" placeholder="5つ目">
+      </div>
+      <button class="btn" onclick="checkMemory()">答え合わせ</button>
+    </div>
+    <div class="panel" id="mem-result" style="display:none;"></div>
+  </section>
+
+  <!-- ===== NAMING ===== -->
+  <section class="screen" id="screen-naming">
+    <div class="panel" id="nm-intro">
+      <h2>やさい・くだもの言うだけゲーム</h2>
+      <p class="lead">60秒間で、思いつく名前をできるだけたくさん入力してください。どちらから始めますか？</p>
+      <button class="btn" onclick="startNaming('vegetable')">やさいで挑戦</button>
+      <button class="btn gold" style="margin-top:10px;" onclick="startNaming('fruit')">くだもので挑戦</button>
+    </div>
+    <div class="panel" id="nm-play" style="display:none;">
+      <div class="timer-badge" id="nm-timer">のこり 60秒</div>
+      <p class="lead" id="nm-play-lead" style="margin-top:-4px;"></p>
+      <div class="naming-input-row">
+        <input type="text" id="nm-input" placeholder="思いついた名前を入力してEnter" autocomplete="off">
+      </div>
+      <div class="naming-list" id="nm-list"></div>
+    </div>
+    <div class="panel" id="nm-result" style="display:none;"></div>
+  </section>
+
+  <!-- ===== SEASON QUIZ ===== -->
+  <section class="screen" id="screen-season">
+    <div class="panel" id="sq-intro">
+      <h2>季節の行事クイズ</h2>
+      <p class="lead">表示された行事が、春・夏・秋・冬のどれか選んでください。全10問です。</p>
+      <button class="btn gold" onclick="startSeason()">はじめる</button>
+    </div>
+    <div class="panel" id="sq-play" style="display:none;">
+      <div class="progress-wrap"><div class="progress-bar" id="sq-progress"></div></div>
+      <div class="quiz-event" id="sq-event"></div>
+      <div class="season-opts" id="sq-opts"></div>
+    </div>
+    <div class="panel" id="sq-result" style="display:none;"></div>
+  </section>
+
+  <!-- ===== CALC ===== -->
+  <section class="screen" id="screen-calc">
+    <div class="panel" id="cc-intro">
+      <h2>100から3ずつ引き算</h2>
+      <p class="lead">100から3を順番に引いていきます。制限時間は60秒。まちがえるか、時間切れになるまで続きます。</p>
+      <button class="btn" onclick="startCalc()">はじめる</button>
+    </div>
+    <div class="panel" id="cc-play" style="display:none;">
+      <div class="timer-badge" id="cc-timer">のこり 60秒</div>
+      <div class="calc-current">
+        <div class="now" id="cc-now">いまの数</div>
+        <div class="num" id="cc-num">100</div>
+        <div class="op">この数から3を引くと？</div>
+      </div>
+      <input type="number" class="calc-input" id="cc-input" placeholder="答え" inputmode="numeric">
+      <div class="feedback" id="cc-feedback"></div>
+      <button class="btn" onclick="submitCalc()">こたえる</button>
+      <button class="btn ghost" style="margin-top:10px;" onclick="finishCalc('self')">ここでやめる</button>
+    </div>
+    <div class="panel" id="cc-result" style="display:none;"></div>
+  </section>
+
+</div>
+
+<script>
+/* ---------------- navigation ---------------- */
+const titles = {
+  home:'元気チェック＆脳トレひろば',
+  checklist:'生活機能セルフチェック',
+  memory:'おぼえて答えるゲーム',
+  naming:'やさい・くだものゲーム',
+  season:'季節の行事クイズ',
+  calc:'100から3ずつ引き算'
+};
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('topTitle').textContent = titles[name];
+  document.getElementById('backBtn').classList.toggle('show', name!=='home');
+  window.scrollTo(0,0);
+}
+function goHome(){
+  clearTimers();
+  showScreen('home');
+}
+function clearTimers(){
+  if(memTimerId) clearInterval(memTimerId);
+  if(nmTimerId) clearInterval(nmTimerId);
+  if(ccTimerId) clearInterval(ccTimerId);
+}
+
+/* ================= CHECKLIST ================= */
+const CL_ITEMS = [
+ {cat:'日常生活', q:'バスや電車で1人で外出していますか', yes:0},
+ {cat:'日常生活', q:'日用品の買物をしていますか', yes:0},
+ {cat:'日常生活', q:'預貯金の出し入れをしていますか', yes:0},
+ {cat:'日常生活', q:'友人の家を訪ねていますか', yes:0},
+ {cat:'日常生活', q:'家族や友人の相談にのっていますか', yes:0},
+ {cat:'運動機能', q:'階段を手すりや壁をつたわらずに昇っていますか', yes:0},
+ {cat:'運動機能', q:'椅子に座った状態から何もつかまらずに立ち上がっていますか', yes:0},
+ {cat:'運動機能', q:'15分位続けて歩いていますか', yes:0},
+ {cat:'運動機能', q:'この1年間に転んだことがありますか', yes:1},
+ {cat:'運動機能', q:'転倒に対する不安は大きいですか', yes:1},
+ {cat:'栄養改善', q:'6ヶ月間で2〜3kg以上の体重減少がありましたか', yes:1},
+ {cat:'栄養改善', q:'BMI（体重kg÷身長m÷身長m）が18.5未満ですか', yes:1},
+ {cat:'口腔機能', q:'半年前に比べて固いものが食べにくくなりましたか', yes:1},
+ {cat:'口腔機能', q:'お茶や汁物等でむせることがありますか', yes:1},
+ {cat:'口腔機能', q:'口の渇きが気になりますか', yes:1},
+ {cat:'閉じこもり', q:'週に1回以上は外出していますか', yes:0},
+ {cat:'閉じこもり', q:'昨年と比べて外出の回数が減っていますか', yes:1},
+ {cat:'認知機能', q:'周りの人から「いつも同じことを聞く」などの物忘れがあると言われますか', yes:1},
+ {cat:'認知機能', q:'自分で電話番号を調べて、電話をかけることをしていますか', yes:0},
+ {cat:'認知機能', q:'今日が何月何日かわからない時がありますか', yes:1},
+ {cat:'うつ', q:'（ここ2週間）毎日の生活に充実感がない', yes:1},
+ {cat:'うつ', q:'（ここ2週間）これまで楽しんでやれていたことが楽しめなくなった', yes:1},
+ {cat:'うつ', q:'（ここ2週間）以前は楽にできていたことが今ではおっくうに感じられる', yes:1},
+ {cat:'うつ', q:'（ここ2週間）自分が役に立つ人間だと思えない', yes:1},
+ {cat:'うつ', q:'（ここ2週間）わけもなく疲れたような感じがする', yes:1},
+];
+let clAnswers = new Array(25).fill(null);
+let clIndex = 0;
+
+function startChecklist(){
+  clAnswers = new Array(25).fill(null);
+  clIndex = 0;
+  document.getElementById('cl-intro').style.display='none';
+  document.getElementById('cl-result').style.display='none';
+  document.getElementById('cl-quiz').style.display='block';
+  renderClItem();
+}
+function renderClItem(){
+  const item = CL_ITEMS[clIndex];
+  document.getElementById('cl-progress').style.width = (clIndex/25*100)+'%';
+  document.getElementById('cl-body').innerHTML = `
+    <div class="cl-section-title">${item.cat}（${clIndex+1}/25）</div>
+    <div class="cl-item">
+      <div class="cl-q">${item.q}</div>
+      <div class="cl-opts">
+        <div class="cl-opt" onclick="answerCl(true)">はい</div>
+        <div class="cl-opt" onclick="answerCl(false)">いいえ</div>
+      </div>
+    </div>`;
+}
+function answerCl(isYes){
+  const item = CL_ITEMS[clIndex];
+  clAnswers[clIndex] = (isYes ? 1 : 0) === item.yes ? 1 : 0; // 1 = 該当
+  clIndex++;
+  if(clIndex<25){ renderClItem(); }
+  else { finishChecklist(); }
+}
+function finishChecklist(){
+  document.getElementById('cl-quiz').style.display='none';
+  document.getElementById('cl-progress').style.width='100%';
+  const s1_20 = clAnswers.slice(0,20).reduce((a,b)=>a+b,0);
+  const s6_10 = clAnswers.slice(5,10).reduce((a,b)=>a+b,0);
+  const s11_12 = clAnswers.slice(10,12).reduce((a,b)=>a+b,0);
+  const s13_15 = clAnswers.slice(12,15).reduce((a,b)=>a+b,0);
+  const item16 = clAnswers[15];
+  const s18_20 = clAnswers.slice(17,20).reduce((a,b)=>a+b,0);
+  const s21_25 = clAnswers.slice(20,25).reduce((a,b)=>a+b,0);
+
+  const flags = [];
+  if(s1_20>=10) flags.push('日常生活全般（1〜20のうち10項目以上）');
+  if(s6_10>=3) flags.push('運動機能（6〜10のうち3項目以上）');
+  if(s11_12>=2) flags.push('栄養状態（11〜12の両方）');
+  if(s13_15>=2) flags.push('口腔機能（13〜15のうち2項目以上）');
+  if(item16>=1) flags.push('閉じこもり傾向（週1回以上の外出なし）');
+  if(s18_20>=1) flags.push('認知機能（18〜20のいずれか）');
+  if(s21_25>=2) flags.push('こころの健康（21〜25のうち2項目以上）');
+
+  const hit = flags.length>0;
+  const box = document.getElementById('cl-result');
+  box.style.display='block';
+  box.innerHTML = `
+    <div class="result-badge ${hit?'watch':'ok'}">
+      <div class="big">${hit?'気にかけたい項目があります':'該当する項目はありませんでした'}</div>
+      <div style="font-size:13px;color:var(--ink-soft);">全25問のふりかえり結果</div>
+    </div>
+    ${hit ? `<div class="result-list">${flags.map(f=>'・'+f).join('<br>')}</div>` : `<div class="result-list">今の生活を無理なく続けていきましょう。</div>`}
+    <div class="disclaimer">これは介護予防・日常生活支援総合事業で使われる「基本チェックリスト」と同じ質問による自己チェックです。正式な事業対象者の判定は市区町村・地域包括支援センターでの手続きが必要です。医学的な診断ではありません。</div>
+    <button class="btn ghost" style="margin-top:14px;" onclick="goHome()">トップへ戻る</button>
+  `;
+}
+
+/* ================= MEMORY GAME ================= */
+const WORD_SETS = [
+  ['時計','鍵','新聞','傘','財布'],
+  ['りんご','電車','花瓶','眼鏡','封筒'],
+  ['自転車','石けん','手紙','茶碗','靴下'],
+];
+let memTimerId=null, memWords=[];
+function startMemory(){
+  memWords = WORD_SETS[Math.floor(Math.random()*WORD_SETS.length)];
+  document.getElementById('mem-intro').style.display='none';
+  document.getElementById('mem-answer').style.display='none';
+  document.getElementById('mem-result').style.display='none';
+  document.getElementById('mem-show').style.display='block';
+  document.getElementById('mem-words').innerHTML = memWords.map(w=>`<div class="word-chip">${w}</div>`).join('');
+  let t=10;
+  document.getElementById('mem-timer').textContent=t;
+  memTimerId = setInterval(()=>{
+    t--;
+    document.getElementById('mem-timer').textContent = t;
+    if(t<=0){
+      clearInterval(memTimerId);
+      document.getElementById('mem-show').style.display='none';
+      document.getElementById('mem-answer').style.display='block';
+      for(let i=0;i<5;i++) document.getElementById('a'+i).value='';
+    }
+  },1000);
+}
+function checkMemory(){
+  const given = [0,1,2,3,4].map(i=>document.getElementById('a'+i).value.trim()).filter(v=>v);
+  let correct = 0;
+  const remaining = [...memWords];
+  given.forEach(g=>{
+    const idx = remaining.indexOf(g);
+    if(idx>-1){ correct++; remaining.splice(idx,1); }
+  });
+  document.getElementById('mem-answer').style.display='none';
+  const box = document.getElementById('mem-result');
+  box.style.display='block';
+  box.innerHTML = `
+    <div class="result-badge ${correct>=4?'ok':'watch'}">
+      <div class="big">5問中 ${correct}問 正解</div>
+    </div>
+    <div class="result-list"><b>正解の言葉：</b>${memWords.join('　')}</div>
+    <button class="btn gold" style="margin-top:14px;" onclick="startMemory()">もう一度</button>
+    <button class="btn ghost" style="margin-top:10px;" onclick="goHome()">トップへ戻る</button>
+  `;
+}
+
+/* ================= NAMING GAME ================= */
+let nmTimerId=null, nmSeconds=60, nmList=[], nmMode='vegetable';
+function startNaming(mode){
+  if(mode) nmMode = mode;
+  document.getElementById('nm-intro').style.display='none';
+  document.getElementById('nm-result').style.display='none';
+  document.getElementById('nm-play').style.display='block';
+  nmList=[];
+  nmSeconds=60;
+  document.getElementById('nm-list').innerHTML='';
+  document.getElementById('nm-timer').textContent = 'のこり 60秒';
+  document.getElementById('nm-play-lead').textContent = nmMode==='vegetable' ? '「やさいの名前」をできるだけ多く入力してください' : '「くだものの名前」をできるだけ多く入力してください';
+  const input = document.getElementById('nm-input');
+  input.value=''; input.focus();
+  input.onkeydown = (e)=>{ if(e.key==='Enter'){ addNamingWord(); } };
+  nmTimerId = setInterval(()=>{
+    nmSeconds--;
+    document.getElementById('nm-timer').textContent = 'のこり '+nmSeconds+'秒';
+    if(nmSeconds<=0){ finishNaming(); }
+  },1000);
+}
+function addNamingWord(){
+  const input = document.getElementById('nm-input');
+  const val = input.value.trim();
+  if(val && !nmList.includes(val)){
+    nmList.push(val);
+    document.getElementById('nm-list').innerHTML += `<div class="naming-chip">${val}</div>`;
+  }
+  input.value='';
+}
+function finishNaming(){
+  clearInterval(nmTimerId);
+  document.getElementById('nm-play').style.display='none';
+  const box = document.getElementById('nm-result');
+  box.style.display='block';
+  box.innerHTML = `
+    <div class="result-badge ok">
+      <div class="big">${nmList.length}個 言えました</div>
+    </div>
+    <div class="result-list">${nmList.join('　')||'（入力なし）'}</div>
+    <button class="btn gold" style="margin-top:14px;" onclick="startNaming(nmMode)">もう一度（${nmMode==='vegetable'?'やさい':'くだもの'}）</button>
+    <button class="btn ghost" style="margin-top:10px;" onclick="showScreen('naming');document.getElementById('nm-intro').style.display='block';document.getElementById('nm-result').style.display='none';">別のお題で挑戦</button>
+    <button class="btn ghost" style="margin-top:10px;" onclick="goHome()">トップへ戻る</button>
+  `;
+}
+
+/* ================= SEASON QUIZ ================= */
+const SEASON_EVENTS = [
+  ['お花見','春'],['七夕','夏'],['紅葉狩り','秋'],['雪まつり','冬'],
+  ['節分','冬'],['ひな祭り','春'],['盆踊り','夏'],['お月見','秋'],
+  ['こどもの日','春'],['お盆','夏'],['七五三','秋'],['大晦日','冬'],
+  ['入学式','春'],['海開き','夏'],['ハロウィン','秋'],['初詣','冬'],
+];
+const SEASONS = ['春','夏','秋','冬'];
+let sqOrder=[], sqIndex=0, sqCorrect=0;
+function startSeason(){
+  sqOrder = [...SEASON_EVENTS].sort(()=>Math.random()-0.5).slice(0,10);
+  sqIndex=0; sqCorrect=0;
+  document.getElementById('sq-intro').style.display='none';
+  document.getElementById('sq-result').style.display='none';
+  document.getElementById('sq-play').style.display='block';
+  renderSeasonQ();
+}
+function renderSeasonQ(){
+  document.getElementById('sq-progress').style.width = (sqIndex/10*100)+'%';
+  const [event] = sqOrder[sqIndex];
+  document.getElementById('sq-event').textContent = event;
+  document.getElementById('sq-opts').innerHTML = SEASONS.map(s=>`<div class="season-opt" data-s="${s}" onclick="answerSeason('${s}')">${s}</div>`).join('');
+}
+function answerSeason(picked){
+  const [event, answer] = sqOrder[sqIndex];
+  document.querySelectorAll('.season-opt').forEach(el=>{
+    if(el.dataset.s===answer) el.classList.add('correct');
+    else if(el.dataset.s===picked) el.classList.add('wrong');
+    el.onclick=null;
+  });
+  if(picked===answer) sqCorrect++;
+  setTimeout(()=>{
+    sqIndex++;
+    if(sqIndex<10) renderSeasonQ();
+    else finishSeason();
+  }, 700);
+}
+function finishSeason(){
+  document.getElementById('sq-play').style.display='none';
+  document.getElementById('sq-progress').style.width='100%';
+  const box = document.getElementById('sq-result');
+  box.style.display='block';
+  box.innerHTML = `
+    <div class="result-badge ${sqCorrect>=7?'ok':'watch'}">
+      <div class="big">10問中 ${sqCorrect}問 正解</div>
+    </div>
+    <button class="btn gold" style="margin-top:14px;" onclick="startSeason()">もう一度</button>
+    <button class="btn ghost" style="margin-top:10px;" onclick="goHome()">トップへ戻る</button>
+  `;
+}
+
+/* ================= CALC GAME ================= */
+const CC_LIMIT = 60;
+let ccCurrent=100, ccCorrectCount=0, ccStartTime=0, ccTimerId=null, ccSeconds=CC_LIMIT, ccDone=false;
+function startCalc(){
+  ccCurrent=100; ccCorrectCount=0; ccStartTime=Date.now(); ccSeconds=CC_LIMIT; ccDone=false;
+  document.getElementById('cc-intro').style.display='none';
+  document.getElementById('cc-result').style.display='none';
+  document.getElementById('cc-play').style.display='block';
+  document.getElementById('cc-feedback').textContent='';
+  document.getElementById('cc-timer').textContent = 'のこり '+ccSeconds+'秒';
+  if(ccTimerId) clearInterval(ccTimerId);
+  ccTimerId = setInterval(()=>{
+    ccSeconds--;
+    document.getElementById('cc-timer').textContent = 'のこり '+ccSeconds+'秒';
+    if(ccSeconds<=0){ finishCalc('time'); }
+  },1000);
+  renderCalc();
+}
+function renderCalc(){
+  document.getElementById('cc-now').textContent = '今の数（'+ (ccCorrectCount) +'問正解）';
+  document.getElementById('cc-num').textContent = ccCurrent;
+  const input = document.getElementById('cc-input');
+  input.value=''; input.disabled=false; input.focus();
+  input.onkeydown = (e)=>{ if(e.key==='Enter'){ submitCalc(); } };
+}
+function submitCalc(){
+  if(ccDone) return;
+  const input = document.getElementById('cc-input');
+  const val = parseInt(input.value,10);
+  const correctAns = ccCurrent - 3;
+  const fb = document.getElementById('cc-feedback');
+  if(val === correctAns){
+    fb.textContent = '正解！';
+    fb.className='feedback ok';
+    ccCorrectCount++;
+    ccCurrent = correctAns;
+    setTimeout(()=>{ if(!ccDone){ fb.textContent=''; renderCalc(); } }, 500);
+  } else {
+    fb.textContent = 'おしい、正解は '+correctAns+' でした';
+    fb.className='feedback bad';
+    setTimeout(()=>finishCalc('mistake'), 900);
+  }
+}
+function finishCalc(reason){
+  if(ccDone) return;
+  ccDone = true;
+  if(ccTimerId) clearInterval(ccTimerId);
+  const input = document.getElementById('cc-input');
+  if(input) input.disabled = true;
+  const sec = Math.round((Date.now()-ccStartTime)/1000);
+  const reasonText = reason==='time' ? '時間切れ（60秒）'
+                    : reason==='mistake' ? 'まちがえて終了'
+                    : '自分でやめた';
+  document.getElementById('cc-play').style.display='none';
+  const box = document.getElementById('cc-result');
+  box.style.display='block';
+  box.innerHTML = `
+    <div class="result-badge ok">
+      <div class="big">連続 ${ccCorrectCount}問 正解</div>
+      <div style="font-size:13px;color:var(--ink-soft);">${reasonText}／かかった時間 約${sec}秒</div>
+    </div>
+    <button class="btn gold" style="margin-top:14px;" onclick="startCalc()">もう一度</button>
+    <button class="btn ghost" style="margin-top:10px;" onclick="goHome()">トップへ戻る</button>
+  `;
+}
+
+/* naming: wire vegetable/fruit variants from home */
+document.addEventListener('DOMContentLoaded', ()=>{});
+</script>
+</body>
+</html>
