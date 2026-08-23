@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<script src="../../redirect-to-vercel.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生活自立度セルフチェック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE4;
+    --paper-deep:#ECE5D3;
+    --ink:#2B3328;
+    --ink-soft:#5C6459;
+    --moss:#5C7A5C;
+    --moss-deep:#3F5A41;
+    --gold:#B8935B;
+    --line:#D8CFB8;
+    --white:#FFFFFF;
+    --alert:#A65D4E;
+    --alert-soft:#F1E2DC;
+    --stamp:#8C4A3E;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 10% 0%, rgba(184,147,91,0.08), transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(92,122,92,0.08), transparent 45%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    line-height:1.75;
+    min-height:100vh;
+    padding:0 0 80px;
+  }
+  .sheet{
+    max-width:760px;
+    margin:0 auto;
+    padding:36px 20px 0;
+  }
+
+  /* ---------- Header : folder-tab motif ---------- */
+  .folder-tab{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--moss-deep);
+    color:var(--paper);
+    font-family:"Shippori Mincho", serif;
+    font-size:13px;
+    letter-spacing:.12em;
+    padding:7px 18px 8px;
+    border-radius:8px 8px 0 0;
+    font-weight:600;
+  }
+  header.app-header{
+    border-bottom:2px solid var(--moss-deep);
+    padding-bottom:22px;
+    margin-bottom:28px;
+  }
+  h1.title{
+    font-family:"Shippori Mincho", serif;
+    font-weight:800;
+    font-size:clamp(26px,5vw,36px);
+    margin:14px 0 6px;
+    letter-spacing:.03em;
+  }
+  .subtitle{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    margin:0;
+  }
+
+  /* ---------- Mode switch (persona tabs) ---------- */
+  .mode-row{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    flex-wrap:wrap;
+  }
+  .mode-btn{
+    flex:1;
+    min-width:160px;
+    border:1.5px solid var(--line);
+    background:var(--white);
+    color:var(--ink-soft);
+    font-family:"Zen Kaku Gothic New", sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:12px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    text-align:left;
+    transition:all .15s ease;
+  }
+  .mode-btn small{
+    display:block;
+    font-weight:400;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:3px;
+  }
+  .mode-btn.active{
+    border-color:var(--moss-deep);
+    background:var(--moss-deep);
+    color:var(--paper);
+  }
+  .mode-btn.active small{ color:rgba(243,239,228,0.75); }
+
+  /* ---------- Disclaimer ---------- */
+  .disclaimer{
+    background:var(--alert-soft);
+    border:1px solid #E1C2B7;
+    color:#6B392E;
+    border-radius:10px;
+    padding:14px 16px;
+    font-size:13px;
+    margin:20px 0 8px;
+  }
+  .disclaimer strong{display:block; font-size:13.5px; margin-bottom:3px;}
+
+  /* ---------- Category nav ---------- */
+  .cat-nav{
+    display:flex;
+    gap:6px;
+    margin:30px 0 0;
+    border-bottom:2px solid var(--line);
+  }
+  .cat-btn{
+    font-family:"Shippori Mincho", serif;
+    font-weight:600;
+    font-size:14.5px;
+    color:var(--ink-soft);
+    background:transparent;
+    border:none;
+    padding:10px 16px 12px;
+    cursor:pointer;
+    position:relative;
+    top:2px;
+  }
+  .cat-btn.active{
+    color:var(--moss-deep);
+    border-bottom:3px solid var(--gold);
+  }
+
+  /* ---------- Card / section ---------- */
+  section.panel{ display:none; padding-top:26px; }
+  section.panel.active{ display:block; animation:fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+
+  .panel-lead{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin-bottom:18px;
+  }
+
+  .option-card{
+    display:block;
+    background:var(--white);
+    border:1.5px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:12px;
+    cursor:pointer;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .option-card:hover{ border-color:var(--gold); }
+  .option-card.selected{
+    border-color:var(--moss-deep);
+    box-shadow:0 0 0 2px rgba(63,90,65,0.12);
+    background:#FBFAF5;
+  }
+  .option-head{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .rank-badge{
+    font-family:"Shippori Mincho", serif;
+    font-weight:800;
+    font-size:15px;
+    color:var(--moss-deep);
+    background:var(--paper-deep);
+    border-radius:6px;
+    padding:2px 9px;
+    min-width:38px;
+    text-align:center;
+  }
+  .option-title{ font-weight:700; font-size:15px; }
+  .option-desc{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+  .pro-tag{
+    display:inline-block;
+    margin-top:8px;
+    font-size:11px;
+    color:var(--gold);
+    border:1px solid var(--gold);
+    border-radius:5px;
+    padding:1px 7px;
+    font-weight:700;
+  }
+  .pro-only{ display:none; }
+  body.pro .pro-only{ display:inline-block; }
+
+  /* ---------- Result stamp ---------- */
+  .result-wrap{
+    margin-top:24px;
+    display:none;
+  }
+  .result-wrap.show{ display:block; animation:fade .3s ease; }
+  .result-card{
+    border:1.5px dashed var(--stamp);
+    border-radius:var(--radius);
+    padding:22px 22px 20px;
+    background:#FDFBF6;
+    position:relative;
+    overflow:hidden;
+  }
+  .stamp{
+    position:absolute;
+    top:16px;
+    right:18px;
+    width:76px;
+    height:76px;
+    border:3px solid var(--stamp);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:rotate(-8deg);
+    opacity:0.9;
+  }
+  .stamp span{
+    font-family:"Shippori Mincho", serif;
+    font-weight:800;
+    color:var(--stamp);
+    font-size:12px;
+    text-align:center;
+    line-height:1.3;
+  }
+  .result-label{
+    font-size:12px;
+    letter-spacing:.1em;
+    color:var(--ink-soft);
+    font-weight:700;
+  }
+  .result-rank{
+    font-family:"Shippori Mincho", serif;
+    font-weight:800;
+    font-size:30px;
+    color:var(--moss-deep);
+    margin:4px 0 10px;
+    padding-right:90px;
+  }
+  .result-text{
+    font-size:14.5px;
+    max-width:520px;
+  }
+  .result-note{
+    margin-top:14px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+    padding-top:10px;
+  }
+  .clear-btn{
+    margin-top:16px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    font-family:"Zen Kaku Gothic New", sans-serif;
+    font-size:12.5px;
+    font-weight:700;
+    padding:7px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .clear-btn:hover{
+    border-color:var(--alert);
+    color:var(--alert);
+  }
+
+  footer.app-footer{
+    max-width:760px;
+    margin:44px auto 0;
+    padding:18px 20px 0;
+    border-top:1px solid var(--line);
+    font-size:12px;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+
+  @media (max-width:520px){
+    .cat-btn{ font-size:13px; padding:9px 10px 11px; }
+    .result-rank{ padding-right:0; }
+    .stamp{ position:static; margin-bottom:12px; transform:rotate(-4deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <header class="app-header">
+    <div class="folder-tab">生活記録シート</div>
+    <h1 class="title">生活自立度セルフチェック</h1>
+    <p class="subtitle">日常生活自立度(障害高齢者・認知症高齢者) と modified Rankin Scale(mRS) の自己評価ツールです。</p>
+
+    <div class="mode-row">
+      <button class="mode-btn active" data-mode="family" onclick="setMode('family')">
+        ご本人・ご家族向け
+        <small>やさしい言葉での説明を中心に表示します</small>
+      </button>
+      <button class="mode-btn" data-mode="pro" onclick="setMode('pro')">
+        専門職向け
+        <small>正式なランク表記・補足情報も表示します</small>
+      </button>
+    </div>
+
+    <div class="disclaimer">
+      <strong>ご利用にあたって</strong>
+      これは医学的な診断を行うものではなく、あくまで自己評価・状況整理のためのツールです。要介護認定や障害申請、指定難病の重症度基準に該当するかどうかは、必ず医師・ケアマネジャー・お住まいの自治体窓口にご確認ください。
+    </div>
+  </header>
+
+  <nav class="cat-nav">
+    <button class="cat-btn active" data-panel="physical" onclick="setPanel('physical')">身体の自立度</button>
+    <button class="cat-btn" data-panel="dementia" onclick="setPanel('dementia')">認知面の自立度</button>
+    <button class="cat-btn" data-panel="mrs" onclick="setPanel('mrs')">mRS(機能障害度)</button>
+    <button class="cat-btn" data-panel="specified" onclick="setPanel('specified')">特定疾病(2号被保険者)</button>
+  </nav>
+
+  <!-- ============ 障害高齢者の日常生活自立度 ============ -->
+  <section class="panel active" id="panel-physical">
+    <p class="panel-lead">障害高齢者の日常生活自立度は、寝たきり度の目安として要介護認定などで使われる区分です。日中の過ごし方や外出のしやすさに最も近いものを選んでください。</p>
+    <div id="opts-physical"></div>
+    <div class="result-wrap" id="result-physical"></div>
+  </section>
+
+  <!-- ============ 認知症高齢者の日常生活自立度 ============ -->
+  <section class="panel" id="panel-dementia">
+    <p class="panel-lead">認知症高齢者の日常生活自立度は、認知面の症状が生活にどの程度影響しているかを見る区分です。最も近い状態を選んでください。</p>
+    <div id="opts-dementia"></div>
+    <div class="result-wrap" id="result-dementia"></div>
+  </section>
+
+  <!-- ============ mRS ============ -->
+  <section class="panel" id="panel-mrs">
+    <p class="panel-lead">modified Rankin Scale(mRS)は、脳卒中などの神経疾患でよく使われる機能障害度の評価です。0〜6の中から最も近いものを選んでください。<span class="pro-only" style="display:block;margin-top:6px;">※指定難病の重症度基準では、一般的に「mRS 3以上」が一つの目安とされます(疾患ごとの基準は必ず個別に確認してください)。</span></p>
+    <div id="opts-mrs"></div>
+    <div class="result-wrap" id="result-mrs"></div>
+  </section>
+
+  <!-- ============ 特定疾病(第2号被保険者) ============ -->
+  <section class="panel" id="panel-specified">
+    <p class="panel-lead">介護保険を使えるのは、原則として65歳以上の第1号被保険者です。40〜64歳の第2号被保険者は、「特定疾病」と呼ばれる16種類の病気が原因で要介護状態になった場合に限り、介護保険サービスを利用できます。65歳以上であれば、原因となる病気を問わず要介護認定の対象になるため、特定疾病に該当するかどうかを判断する必要はありません。<span class="pro-only" style="display:block;margin-top:6px;">※医療費助成の対象となる「指定難病」(約340疾患)とは別の制度です。特定疾病の該当可否は主治医意見書に基づき、市区町村の介護認定審査会が確認します。</span></p>
+
+    <div class="panel-lead" style="margin-top:-6px;font-weight:700;">まず、年齢区分を選んでください</div>
+    <div id="opts-age"></div>
+
+    <div id="disease-block" style="display:none;">
+      <div class="panel-lead" style="margin-top:18px;font-weight:700;">該当する、または近い病気を選んでください</div>
+      <div id="opts-disease16"></div>
+    </div>
+
+    <div class="result-wrap" id="result-specified"></div>
+  </section>
+
+  <footer class="app-footer">
+    自己評価の記録として、結果画面のスクリーンショット等をご活用ください。判定基準は厚生労働省の区分・国際的に用いられる評価尺度を参考に、独自の言葉で要約しています。
+  </footer>
+</div>
+
+<script>
+const DATA = {
+  physical: {
+    resultTitle: "障害高齢者の日常生活自立度",
+    options: [
+      { rank:"J1", title:"生活自立(交通機関などを使って外出できる)",
+        desc:"何らかの障害はあるが、日常生活はほぼ自立しており、バスや電車などの交通機関を利用して一人で外出できる。" },
+      { rank:"J2", title:"生活自立(近所への外出はできる)",
+        desc:"日常生活はほぼ自立しているが、外出の範囲は隣近所程度にとどまる。" },
+      { rank:"A1", title:"準寝たきり(介助があれば日中は起きて過ごす)",
+        desc:"屋内での生活はおおむね自立しているが、一人での外出は難しい。介助を受ければ外出でき、日中はベッドから離れて過ごすことが多い。" },
+      { rank:"A2", title:"準寝たきり(外出の機会が少ない)",
+        desc:"屋内での生活はおおむね自立しているが、外出の頻度は少なく、日中も寝たり起きたりを繰り返す生活になっている。" },
+      { rank:"B1", title:"寝たきり(車いすで座って過ごせる)",
+        desc:"日中もベッド上で過ごすことが多いが、自分で車いすに移り、食事や排泄はベッドから離れて行うことができる。" },
+      { rank:"B2", title:"寝たきり(車いすへの移乗に介助が必要)",
+        desc:"日中もベッド上で過ごすことが多く、車いすへの移乗にも介助が必要な状態。" },
+      { rank:"C1", title:"寝たきり(自分で寝返りができる)",
+        desc:"一日中ベッド上で過ごし、食事・排泄・着替えのいずれにも介助が必要だが、自分で寝返りをうつことはできる。" },
+      { rank:"C2", title:"寝たきり(自分で寝返りができない)",
+        desc:"一日中ベッド上で過ごし、食事・排泄・着替えのいずれにも介助が必要で、自分で寝返りをうつこともできない。" }
+    ]
+  },
+  dementia: {
+    resultTitle: "認知症高齢者の日常生活自立度",
+    options: [
+      { rank:"Ⅰ", title:"ほぼ自立",
+        desc:"何らかの認知症の症状はあるが、家庭内でも社会的にも、日常生活はほぼ自立している。" },
+      { rank:"Ⅱa", title:"見守りがあれば自立(家庭外中心)",
+        desc:"一人で外出した時に道に迷う、買い物や事務・金銭管理などそれまでできたことにミスが目立つなど、家庭外での生活のしづらさが見られるが、誰かが気にかけていれば自立できる。" },
+      { rank:"Ⅱb", title:"見守りがあれば自立(家庭内でも)",
+        desc:"服薬管理ができない、電話の応対や来客対応など一人で留守番ができないなど、家庭内でも生活のしづらさが見られるが、誰かが気にかけていれば自立できる。" },
+      { rank:"Ⅲa", title:"日中を中心に介護が必要",
+        desc:"着替え・食事・排泄がうまくできない、時間がかかる、やたらに物を口に入れる、徘徊、火の不始末などが日中を中心に見られ、介護を必要とする。" },
+      { rank:"Ⅲb", title:"夜間を中心に介護が必要",
+        desc:"Ⅲaと同様の症状・行動が、主に夜間を中心に見られ、介護を必要とする。" },
+      { rank:"Ⅳ", title:"常に介護が必要",
+        desc:"Ⅲの状態が頻繁に見られ、常に介護を必要とする状態。" },
+      { rank:"M", title:"専門医療が必要",
+        desc:"著しい精神症状や問題行動、あるいは重い身体疾患が見られ、専門医療機関での治療を必要とする状態。" }
+    ]
+  },
+  mrs: {
+    resultTitle: "modified Rankin Scale(mRS)",
+    options: [
+      { rank:"0", title:"まったく症候がない",
+        desc:"症状がなく、発症前と同じ生活を送れている。" },
+      { rank:"1", title:"症候はあるが明らかな障害はない",
+        desc:"何らかの症状はあるものの、仕事や普段の活動は問題なく行える。" },
+      { rank:"2", title:"軽度の障害",
+        desc:"以前の活動すべてはできないが、身の回りのことは介助なしに行える。" },
+      { rank:"3", title:"中等度の障害",
+        desc:"何らかの介助を必要とするが、歩行は介助なしに可能な状態。" },
+      { rank:"4", title:"中等度から重度の障害",
+        desc:"歩行や身の回りのことに介助が必要で、一人で過ごすことは難しい状態。" },
+      { rank:"5", title:"重度の障害",
+        desc:"寝たきりで失禁があり、常に介護と見守りを必要とする状態。" },
+      { rank:"6", title:"死亡",
+        desc:"（評価尺度上の区分として設けられている項目です）" }
+    ]
+  }
+};
+
+const AGE_OPTIONS = [
+  { title:"65歳以上(第1号被保険者)",
+    desc:"原因となる病気を問わず、要介護認定の対象になります。特定疾病の判定は不要です。" },
+  { title:"40〜64歳(第2号被保険者)",
+    desc:"介護保険を利用するには、下記16種類の「特定疾病」のいずれかに該当している必要があります。" }
+];
+
+const DISEASE16 = [
+  { title:"がん(医師が回復の見込みがないと判断したもの、いわゆるがん末期)" },
+  { title:"関節リウマチ" },
+  { title:"筋萎縮性側索硬化症(ALS)" },
+  { title:"後縦靱帯骨化症" },
+  { title:"骨折を伴う骨粗鬆症" },
+  { title:"初老期における認知症(アルツハイマー病、脳血管性認知症など)" },
+  { title:"パーキンソン病関連疾患(進行性核上性麻痺・大脳皮質基底核変性症・パーキンソン病)" },
+  { title:"脊髄小脳変性症" },
+  { title:"脊柱管狭窄症" },
+  { title:"早老症(ウェルナー症候群など)" },
+  { title:"多系統萎縮症" },
+  { title:"糖尿病性神経障害・糖尿病性腎症・糖尿病性網膜症" },
+  { title:"脳血管疾患(脳出血・脳梗塞など)" },
+  { title:"閉塞性動脈硬化症" },
+  { title:"慢性閉塞性肺疾患(肺気腫・慢性気管支炎など)" },
+  { title:"両側の膝関節または股関節に著しい変形を伴う変形性関節症" },
+  { title:"上記のいずれにも該当しない、またはわからない" }
+];
+
+let ageChoice = null;
+let diseaseChoice = null;
+
+function buildAgeOptions(){
+  const wrap = document.getElementById("opts-age");
+  wrap.innerHTML = "";
+  AGE_OPTIONS.forEach((opt, idx)=>{
+    const card = document.createElement("div");
+    card.className = "option-card";
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    card.id = "opt-age-"+idx;
+    card.onclick = ()=>chooseAge(idx);
+    card.onkeydown = (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); chooseAge(idx); } };
+    card.innerHTML = `
+      <div class="option-head"><span class="option-title">${opt.title}</span></div>
+      <div class="option-desc">${opt.desc}</div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function chooseAge(idx){
+  ageChoice = idx;
+  AGE_OPTIONS.forEach((_, i)=>{
+    document.getElementById("opt-age-"+i).classList.toggle("selected", i===idx);
+  });
+  const diseaseBlock = document.getElementById("disease-block");
+  if(idx === 1){
+    diseaseBlock.style.display = "block";
+    if(!document.getElementById("opts-disease16").children.length) buildDiseaseOptions();
+  } else {
+    diseaseBlock.style.display = "none";
+    diseaseChoice = null;
+  }
+  renderSpecifiedResult();
+}
+
+function buildDiseaseOptions(){
+  const wrap = document.getElementById("opts-disease16");
+  wrap.innerHTML = "";
+  DISEASE16.forEach((d, idx)=>{
+    const card = document.createElement("div");
+    card.className = "option-card";
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    card.id = "opt-disease-"+idx;
+    card.onclick = ()=>chooseDisease(idx);
+    card.onkeydown = (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); chooseDisease(idx); } };
+    card.innerHTML = `<div class="option-head"><span class="option-title">${d.title}</span></div>`;
+    wrap.appendChild(card);
+  });
+}
+
+function chooseDisease(idx){
+  diseaseChoice = idx;
+  DISEASE16.forEach((_, i)=>{
+    document.getElementById("opt-disease-"+i).classList.toggle("selected", i===idx);
+  });
+  renderSpecifiedResult();
+}
+
+function renderSpecifiedResult(){
+  const box = document.getElementById("result-specified");
+  let html = "";
+
+  if(ageChoice === 0){
+    html = `
+      <div class="result-card">
+        <div class="stamp"><span>判定<br>結果</span></div>
+        <div class="result-label">特定疾病の判定</div>
+        <div class="result-rank">判断は不要です(第1号被保険者)</div>
+        <div class="result-text">65歳以上の方は、原因となる病気を問わず要介護認定の対象になります。特定疾病に該当するかどうかを気にする必要はありません。</div>
+        <button class="clear-btn" onclick="clearSpecified()">選択をクリアする</button>
+      </div>`;
+  } else if(ageChoice === 1 && diseaseChoice !== null){
+    const isNone = diseaseChoice === DISEASE16.length - 1;
+    if(isNone){
+      html = `
+        <div class="result-card">
+          <div class="stamp"><span>判定<br>結果</span></div>
+          <div class="result-label">特定疾病の判定</div>
+          <div class="result-rank">現時点では該当が見当たりません</div>
+          <div class="result-text">16種類の特定疾病に明確に当てはまるものが見当たらない場合、40〜64歳の方は原則として介護保険の対象外です(交通事故などが原因の場合も対象外)。主治医や自治体の窓口に、他の制度(医療保険の高額療養費制度、指定難病の医療費助成など)も含めて相談することをおすすめします。</div>
+          <button class="clear-btn" onclick="clearSpecified()">選択をクリアする</button>
+        </div>`;
+    } else {
+      html = `
+        <div class="result-card">
+          <div class="stamp"><span>判定<br>結果</span></div>
+          <div class="result-label">特定疾病の判定</div>
+          <div class="result-rank">${DISEASE16[diseaseChoice].title}</div>
+          <div class="result-text">選択した病気は、介護保険の特定疾病16種類に含まれています。実際の該当可否は主治医意見書の内容をもとに、市区町村の介護認定審査会が確認します。まずはお住まいの自治体窓口で要介護認定の申請をご検討ください。</div>
+          <button class="clear-btn" onclick="clearSpecified()">選択をクリアする</button>
+        </div>`;
+    }
+  }
+
+  box.classList.toggle("show", html !== "");
+  box.innerHTML = html;
+}
+
+function clearSpecified(){
+  ageChoice = null;
+  diseaseChoice = null;
+  AGE_OPTIONS.forEach((_, i)=>{ document.getElementById("opt-age-"+i)?.classList.remove("selected"); });
+  DISEASE16.forEach((_, i)=>{ document.getElementById("opt-disease-"+i)?.classList.remove("selected"); });
+  document.getElementById("disease-block").style.display = "none";
+  const box = document.getElementById("result-specified");
+  box.classList.remove("show");
+  box.innerHTML = "";
+}
+
+let currentMode = "family";
+let currentPanel = "physical";
+const selected = { physical:null, dementia:null, mrs:null };
+
+function buildOptions(key){
+  const wrap = document.getElementById("opts-"+key);
+  wrap.innerHTML = "";
+  DATA[key].options.forEach((opt, idx)=>{
+    const card = document.createElement("div");
+    card.className = "option-card";
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    card.onclick = ()=>choose(key, idx);
+    card.onkeydown = (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); choose(key, idx); } };
+    card.id = "opt-"+key+"-"+idx;
+    card.innerHTML = `
+      <div class="option-head">
+        <span class="rank-badge">${opt.rank}</span>
+        <span class="option-title">${opt.title}</span>
+      </div>
+      <div class="option-desc">${opt.desc}</div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function choose(key, idx){
+  selected[key] = idx;
+  DATA[key].options.forEach((_, i)=>{
+    document.getElementById("opt-"+key+"-"+i).classList.toggle("selected", i===idx);
+  });
+  renderResult(key);
+}
+
+function renderResult(key){
+  const opt = DATA[key].options[selected[key]];
+  const box = document.getElementById("result-"+key);
+  box.classList.add("show");
+
+  let note = "";
+  if(key === "mrs"){
+    note = `<div class="result-note pro-only">指定難病の重症度基準では、一般に「mRS 3以上」が申請検討の目安の一つとされます。実際の該当可否は疾患ごとの基準・診断書で必ずご確認ください。</div>`;
+  }
+  const proTag = currentMode === "pro" ? `<div class="pro-tag">正式区分：${DATA[key].resultTitle} ／ ${opt.rank}</div>` : "";
+
+  box.innerHTML = `
+    <div class="result-card">
+      <div class="stamp"><span>判定<br>結果</span></div>
+      <div class="result-label">${DATA[key].resultTitle}</div>
+      <div class="result-rank">${opt.rank} ｜ ${opt.title}</div>
+      <div class="result-text">${opt.desc}</div>
+      ${proTag}
+      ${note}
+      <button class="clear-btn" onclick="clearSelection('${key}')">選択をクリアする</button>
+    </div>
+  `;
+}
+
+function clearSelection(key){
+  selected[key] = null;
+  DATA[key].options.forEach((_, i)=>{
+    document.getElementById("opt-"+key+"-"+i).classList.remove("selected");
+  });
+  const box = document.getElementById("result-"+key);
+  box.classList.remove("show");
+  box.innerHTML = "";
+}
+
+function setMode(mode){
+  currentMode = mode;
+  document.body.classList.toggle("pro", mode === "pro");
+  document.querySelectorAll(".mode-btn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.mode === mode);
+  });
+  ["physical","dementia","mrs"].forEach(k=>{
+    if(selected[k] !== null) renderResult(k);
+  });
+}
+
+function setPanel(panel){
+  currentPanel = panel;
+  document.querySelectorAll(".cat-btn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.panel === panel);
+  });
+  document.querySelectorAll(".panel").forEach(p=>{
+    p.classList.toggle("active", p.id === "panel-"+panel);
+  });
+}
+
+buildOptions("physical");
+buildOptions("dementia");
+buildOptions("mrs");
+buildAgeOptions();
+</script>
+
+</body>
+</html>
