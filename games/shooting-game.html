@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>スターディフェンダー | mini GAME</title>
+<style>
+  :root{
+    --accent:#ffd166;
+    --accent2:#06d6a0;
+    --danger:#ef476f;
+    --bg-deep:#05070f;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    background:var(--bg-deep);
+    overflow:hidden;
+    font-family:"Hiragino Sans","Yu Gothic",sans-serif;
+    touch-action:none;
+    overscroll-behavior:none;
+  }
+  #gameWrap{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  canvas{
+    display:block;
+    background:radial-gradient(ellipse at 50% 20%, #101a33 0%, #05070f 70%);
+    touch-action:none;
+  }
+  #hud{
+    position:fixed; top:0; left:0; right:0;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+    color:#fff; font-size:14px; letter-spacing:0.05em;
+    pointer-events:none;
+    z-index:5;
+    font-variant-numeric: tabular-nums;
+  }
+  #hud .score{ font-size:20px; font-weight:700; color:var(--accent); }
+  #hud .lives{ display:flex; gap:4px; }
+  #hud .heart{ width:16px; height:16px; opacity:0.95; }
+  #hud .heart.off{ opacity:0.18; }
+
+  #startScreen, #overScreen{
+    position:fixed; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:#fff; text-align:center; z-index:10;
+    background:linear-gradient(180deg, rgba(5,7,15,0.75), rgba(5,7,15,0.96));
+    padding:24px;
+  }
+  #startScreen h1, #overScreen h1{
+    font-size:26px; margin:0 0 6px; letter-spacing:0.08em;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  #startScreen p, #overScreen p{ font-size:13px; opacity:0.75; line-height:1.7; margin:6px 0 22px; max-width:280px; }
+  .btn{
+    appearance:none; border:none; outline:none;
+    padding:14px 40px; border-radius:999px;
+    font-size:16px; font-weight:700; letter-spacing:0.05em;
+    background:linear-gradient(135deg,var(--accent),#ff9f6b);
+    color:#1a1200; box-shadow:0 8px 20px rgba(255,209,102,0.3);
+    cursor:pointer;
+  }
+  .btn:active{ transform:scale(0.96); }
+  #overScreen .finalScore{ font-size:44px; font-weight:800; color:var(--accent); margin:4px 0 2px; }
+  #overScreen .finalLabel{ font-size:12px; opacity:0.6; margin-bottom:8px; letter-spacing:0.15em; }
+  #overScreen{ display:none; }
+
+  .highscore{ font-size:13px; opacity:0.85; margin:4px 0 18px; letter-spacing:0.05em; }
+  .highscore .hsVal{ color:var(--accent2); font-weight:700; }
+  .highscore .hsDate{ font-size:11px; opacity:0.6; margin-left:4px; }
+  .newRecord{
+    display:none;
+    font-size:13px; font-weight:700; color:var(--accent2); letter-spacing:0.05em;
+    margin:0 0 4px;
+  }
+  .resetLink{
+    appearance:none; border:none; background:none; outline:none;
+    margin-top:16px; font-size:11px; color:#ffffff66;
+    text-decoration:underline; cursor:pointer; letter-spacing:0.05em;
+  }
+  .resetLink:active{ opacity:0.6; }
+
+  .backLink{
+    position:fixed; bottom:calc(14px + env(safe-area-inset-bottom)); left:0; right:0;
+    text-align:center; z-index:10;
+  }
+  .backLink a{
+    color:#ffffffaa; font-size:12px; text-decoration:none; border-bottom:1px solid #ffffff33;
+    padding-bottom:2px;
+  }
+</style>
+</head>
+<body>
+
+<div id="gameWrap">
+  <canvas id="game"></canvas>
+
+  <div id="hud">
+    <div class="score">SCORE <span id="scoreVal">0</span></div>
+    <div class="lives" id="livesWrap"></div>
+  </div>
+
+  <div id="startScreen">
+    <h1>STAR DEFENDER</h1>
+    <p>指でドラッグして自機を操作。<br>自動で弾が出るので、敵をよけながら撃破しよう。<br>敵に当たるとライフが減るよ。</p>
+    <div class="highscore">HIGH SCORE <span class="hsVal" id="startHighScoreVal">0</span><span class="hsDate" id="startHighScoreDate"></span></div>
+    <button class="btn" id="startBtn">スタート</button>
+    <button class="resetLink" id="resetHighScoreBtn">ハイスコアをリセット</button>
+  </div>
+
+  <div id="overScreen">
+    <h1>GAME OVER</h1>
+    <div class="finalScore" id="finalScoreVal">0</div>
+    <div class="finalLabel">FINAL SCORE</div>
+    <div class="newRecord" id="newRecordBadge">🎉 NEW HIGH SCORE!</div>
+    <div class="highscore">HIGH SCORE <span class="hsVal" id="overHighScoreVal">0</span><span class="hsDate" id="overHighScoreDate"></span></div>
+    <button class="btn" id="retryBtn">もう一度あそぶ</button>
+  </div>
+</div>
+
+<div class="backLink"><a href="mini-games.html">← miniGAMEトップへ戻る</a></div>
+
+<script>
+(function(){
+  "use strict";
+
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const scoreValEl = document.getElementById('scoreVal');
+  const livesWrapEl = document.getElementById('livesWrap');
+  const startScreen = document.getElementById('startScreen');
+  const overScreen = document.getElementById('overScreen');
+  const finalScoreValEl = document.getElementById('finalScoreVal');
+  const startHighScoreValEl = document.getElementById('startHighScoreVal');
+  const startHighScoreDateEl = document.getElementById('startHighScoreDate');
+  const overHighScoreValEl = document.getElementById('overHighScoreVal');
+  const overHighScoreDateEl = document.getElementById('overHighScoreDate');
+  const newRecordBadgeEl = document.getElementById('newRecordBadge');
+  const resetHighScoreBtn = document.getElementById('resetHighScoreBtn');
+
+  // ---------- high score (localStorage) ----------
+  const HS_KEY = 'starDefenderHighScore';
+  const HS_DATE_KEY = 'starDefenderHighScoreDate';
+
+  function loadHighScore(){
+    const v = parseInt(localStorage.getItem(HS_KEY) || '0', 10);
+    return isNaN(v) ? 0 : v;
+  }
+  function loadHighScoreDate(){
+    return localStorage.getItem(HS_DATE_KEY) || '';
+  }
+  function formatToday(){
+    const d = new Date();
+    return d.getFullYear() + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + String(d.getDate()).padStart(2,'0');
+  }
+  function refreshHighScoreDisplays(){
+    const hs = loadHighScore();
+    const hd = loadHighScoreDate();
+    startHighScoreValEl.textContent = hs;
+    startHighScoreDateEl.textContent = hd ? '(' + hd + ')' : '';
+    overHighScoreValEl.textContent = hs;
+    overHighScoreDateEl.textContent = hd ? '(' + hd + ')' : '';
+  }
+  refreshHighScoreDisplays();
+
+  resetHighScoreBtn.addEventListener('click', ()=>{
+    if(confirm('ハイスコアをリセットしますか？この操作は元に戻せません。')){
+      localStorage.removeItem(HS_KEY);
+      localStorage.removeItem(HS_DATE_KEY);
+      refreshHighScoreDisplays();
+    }
+  });
+
+  let DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W, H;
+
+  function resize(){
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ---------- state ----------
+  const MAX_LIVES = 3;
+  let state = 'idle'; // idle | playing | over
+  let score = 0;
+  let lives = MAX_LIVES;
+  let frame = 0;
+  let difficultyTimer = 0;
+  let spawnInterval = 70; // frames between enemy spawns, decreases over time
+  let lastShot = 0;
+  let shotInterval = 14; // frames between player shots
+
+  const player = { x:0, y:0, r:16, targetX:0 };
+  let bullets = [];   // player bullets
+  let enemies = [];
+  let particles = [];
+  let stars = [];
+
+  function resetGame(){
+    score = 0;
+    lives = MAX_LIVES;
+    frame = 0;
+    difficultyTimer = 0;
+    spawnInterval = 70;
+    lastShot = 0;
+    bullets = [];
+    enemies = [];
+    particles = [];
+    player.x = W/2;
+    player.y = H - Math.max(90, H*0.14);
+    player.targetX = player.x;
+    player.targetY = player.y;
+    updateHud();
+  }
+
+  function initStars(){
+    stars = [];
+    const count = Math.floor((W*H)/9000);
+    for(let i=0;i<count;i++){
+      stars.push({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: Math.random()*1.6+0.3,
+        speed: Math.random()*0.6+0.15,
+        a: Math.random()*0.6+0.3
+      });
+    }
+  }
+  initStars();
+  window.addEventListener('resize', initStars);
+
+  // ---------- input ----------
+  let pointerActive = false;
+
+  function setTargetFromClientX(clientX, clientY){
+    const rect = canvas.getBoundingClientRect();
+    player.targetX = clientX - rect.left;
+    if(clientY !== undefined){
+      let ty = clientY - rect.top;
+      // keep player within lower 65% of screen for comfort
+      ty = Math.max(H*0.25, Math.min(H-40, ty));
+      player.targetY = ty;
+    }
+  }
+
+  canvas.addEventListener('touchstart', (e)=>{
+    e.preventDefault();
+    pointerActive = true;
+    const t = e.touches[0];
+    setTargetFromClientX(t.clientX, t.clientY);
+  }, {passive:false});
+
+  canvas.addEventListener('touchmove', (e)=>{
+    e.preventDefault();
+    const t = e.touches[0];
+    setTargetFromClientX(t.clientX, t.clientY);
+  }, {passive:false});
+
+  canvas.addEventListener('touchend', (e)=>{
+    e.preventDefault();
+    pointerActive = false;
+  }, {passive:false});
+
+  // mouse support (desktop testing)
+  canvas.addEventListener('mousedown', (e)=>{
+    pointerActive = true;
+    setTargetFromClientX(e.clientX, e.clientY);
+  });
+  window.addEventListener('mousemove', (e)=>{
+    if(pointerActive) setTargetFromClientX(e.clientX, e.clientY);
+  });
+  window.addEventListener('mouseup', ()=>{ pointerActive = false; });
+
+  // ---------- helpers ----------
+  function rand(a,b){ return a + Math.random()*(b-a); }
+
+  function spawnEnemy(){
+    const kindRoll = Math.random();
+    let type = 'basic';
+    if(kindRoll > 0.85) type = 'fast';
+    else if(kindRoll > 0.7) type = 'tank';
+
+    let r, speed, hp, color, emoji;
+    if(type==='fast'){ r=14; speed=rand(2.6,3.4); hp=1; color='#ef476f'; emoji='☄️'; }
+    else if(type==='tank'){ r=24; speed=rand(0.9,1.2); hp=3; color='#7b61ff'; emoji='🛸'; }
+    else { r=17; speed=rand(1.3,1.9); hp=1; color='#06d6a0'; emoji='👾'; }
+
+    // slight speed scaling with score
+    speed += Math.min(score/400, 1.4);
+
+    enemies.push({
+      x: rand(r+10, W-r-10),
+      y: -r-10,
+      r, speed, hp, maxHp:hp, color, emoji,
+      wob: rand(0, Math.PI*2)
+    });
+  }
+
+  function spawnExplosion(x,y,color){
+    for(let i=0;i<10;i++){
+      particles.push({
+        x, y,
+        vx: rand(-3,3), vy: rand(-3,3),
+        life: rand(18,30), maxLife: 30,
+        color
+      });
+    }
+  }
+
+  function updateHud(){
+    scoreValEl.textContent = score;
+    livesWrapEl.innerHTML = '';
+    for(let i=0;i<MAX_LIVES;i++){
+      const s = document.createElement('span');
+      s.textContent = i < lives ? '❤' : '♡';
+      s.style.fontSize = '16px';
+      s.style.color = i < lives ? '#ef476f' : '#ffffff33';
+      livesWrapEl.appendChild(s);
+    }
+  }
+
+  function hitPlayer(){
+    lives--;
+    updateHud();
+    spawnExplosion(player.x, player.y, '#ffd166');
+    if(navigator.vibrate) navigator.vibrate(60);
+    if(lives <= 0){
+      gameOver();
+    }
+  }
+
+  function gameOver(){
+    state = 'over';
+    finalScoreValEl.textContent = score;
+
+    const hs = loadHighScore();
+    let isNew = false;
+    if(score > hs){
+      localStorage.setItem(HS_KEY, String(score));
+      localStorage.setItem(HS_DATE_KEY, formatToday());
+      isNew = true;
+    }
+    refreshHighScoreDisplays();
+    newRecordBadgeEl.style.display = isNew ? 'block' : 'none';
+
+    overScreen.style.display = 'flex';
+  }
+
+  // ---------- main loop ----------
+  function update(){
+    frame++;
+
+    // stars
+    for(const s of stars){
+      s.y += s.speed;
+      if(s.y > H){ s.y = 0; s.x = Math.random()*W; }
+    }
+
+    if(state !== 'playing') return;
+
+    // difficulty ramp
+    difficultyTimer++;
+    if(difficultyTimer % 300 === 0 && spawnInterval > 24){
+      spawnInterval -= 4;
+    }
+
+    // player smoothing toward target
+    if(player.targetX !== undefined){
+      player.x += (player.targetX - player.x) * 0.22;
+      player.x = Math.max(player.r+8, Math.min(W-player.r-8, player.x));
+    }
+    if(player.targetY !== undefined){
+      player.y += (player.targetY - player.y) * 0.22;
+    }
+
+    // auto-fire
+    if(frame - lastShot >= shotInterval){
+      lastShot = frame;
+      bullets.push({x:player.x-8, y:player.y-14, vy:-9, r:3.5});
+      bullets.push({x:player.x+8, y:player.y-14, vy:-9, r:3.5});
+    }
+
+    // spawn enemies
+    if(frame % spawnInterval === 0){
+      spawnEnemy();
+    }
+
+    // update bullets
+    for(let i=bullets.length-1;i>=0;i--){
+      const b = bullets[i];
+      b.y += b.vy;
+      if(b.y < -20) bullets.splice(i,1);
+    }
+
+    // update enemies
+    for(let i=enemies.length-1;i>=0;i--){
+      const en = enemies[i];
+      en.wob += 0.05;
+      en.y += en.speed;
+      en.x += Math.sin(en.wob) * 0.6;
+
+      // reached bottom
+      if(en.y - en.r > H){
+        enemies.splice(i,1);
+        hitPlayer();
+        continue;
+      }
+
+      // collide with player
+      const dx = en.x-player.x, dy = en.y-player.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      if(dist < en.r + player.r*0.7){
+        spawnExplosion(en.x,en.y,en.color);
+        enemies.splice(i,1);
+        hitPlayer();
+        continue;
+      }
+    }
+
+    // bullet-enemy collisions
+    for(let i=enemies.length-1;i>=0;i--){
+      const en = enemies[i];
+      for(let j=bullets.length-1;j>=0;j--){
+        const b = bullets[j];
+        const dx = en.x-b.x, dy = en.y-b.y;
+        if(dx*dx+dy*dy < (en.r+b.r)*(en.r+b.r)){
+          bullets.splice(j,1);
+          en.hp--;
+          if(en.hp <= 0){
+            score += en.maxHp >= 3 ? 30 : (en.maxHp===1 && en.color==='#ef476f' ? 15 : 10);
+            spawnExplosion(en.x,en.y,en.color);
+            enemies.splice(i,1);
+            updateHud();
+          }
+          break;
+        }
+      }
+    }
+
+    // particles
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.94; p.vy *= 0.94;
+      p.life--;
+      if(p.life<=0) particles.splice(i,1);
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // stars
+    ctx.save();
+    for(const s of stars){
+      ctx.globalAlpha = s.a;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    if(state === 'idle') return;
+
+    // bullets
+    ctx.fillStyle = '#ffd166';
+    for(const b of bullets){
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // enemies
+    for(const en of enemies){
+      ctx.save();
+      ctx.translate(en.x, en.y);
+      ctx.shadowColor = en.color;
+      ctx.shadowBlur = 16;
+      ctx.font = (en.r*2.1) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(en.emoji, 0, en.r*0.08);
+      ctx.restore();
+
+      // hp bar for tanks
+      if(en.maxHp > 1){
+        const w = en.r*1.8;
+        ctx.fillStyle = '#00000066';
+        ctx.fillRect(en.x-w/2, en.y-en.r-10, w, 4);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(en.x-w/2, en.y-en.r-10, w*(en.hp/en.maxHp), 4);
+      }
+    }
+
+    // particles
+    for(const p of particles){
+      ctx.globalAlpha = Math.max(p.life/p.maxLife, 0);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // player ship
+    if(state === 'playing' || state === 'over'){
+      ctx.save();
+      ctx.translate(player.x, player.y);
+      ctx.rotate(-Math.PI/4); // 🚀 glyph points NE by default, rotate to point up
+      ctx.shadowColor = '#06d6a0';
+      ctx.shadowBlur = 18;
+      ctx.font = (player.r*2.3) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🚀', 0, 0);
+      ctx.restore();
+    }
+  }
+
+  function loop(){
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // ---------- screen control ----------
+  document.getElementById('startBtn').addEventListener('click', ()=>{
+    startScreen.style.display = 'none';
+    resetGame();
+    state = 'playing';
+  });
+
+  document.getElementById('retryBtn').addEventListener('click', ()=>{
+    overScreen.style.display = 'none';
+    resetGame();
+    state = 'playing';
+  });
+
+})();
+</script>
+
+</body>
+</html>
