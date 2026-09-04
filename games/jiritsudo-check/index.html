@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<script src="../../redirect-to-vercel.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>生活自立度セルフチェック</title>
@@ -166,6 +165,42 @@
     .result-rank{ padding-right:0; }
     .stamp{ position:static; margin-bottom:12px; transform:rotate(-4deg); }
   }
+
+  /* ---------- 基本チェックリスト(checklist) ---------- */
+  .checklist-view{ display:none; margin-top:26px; }
+  .checklist-view.show{ display:block; animation:fade .25s ease; }
+  .kihon-group{
+    background:var(--white); border:1.5px solid var(--line); border-radius:var(--radius);
+    padding:16px 18px; margin-top:16px;
+  }
+  .kihon-group-title{
+    font-family:"Shippori Mincho", serif; font-weight:800; font-size:14.5px;
+    color:var(--moss-deep); margin-bottom:4px;
+  }
+  .kihon-group-range{ font-size:11px; color:var(--ink-soft); margin-bottom:10px; }
+  .kihon-item{
+    display:flex; align-items:flex-start; gap:10px; padding:9px 4px;
+    border-top:1px solid var(--paper-deep); font-size:13.5px; cursor:pointer;
+  }
+  .kihon-item:first-of-type{ border-top:none; }
+  .kihon-item input{ margin-top:3px; width:17px; height:17px; accent-color: var(--moss-deep); flex-shrink:0; }
+  .kihon-no{ color:var(--gold); font-weight:700; font-size:12px; margin-right:2px; }
+
+  .result-wrap-kihon{ display:none; margin-top:20px; }
+  .result-wrap-kihon.show{ display:block; animation:fade .3s ease; }
+  .kihon-overall{
+    font-family:"Shippori Mincho", serif; font-weight:800; font-size:22px; color:var(--moss-deep);
+  }
+  .kihon-domain-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:9px 2px; border-top:1px solid var(--line); font-size:13.5px;
+  }
+  .kihon-domain-row:first-of-type{ border-top:none; }
+  .kihon-tag{
+    font-weight:800; font-size:12px; border-radius:6px; padding:2px 9px;
+  }
+  .kihon-tag.hit{ background:var(--stamp); color:var(--paper); }
+  .kihon-tag.safe{ background:var(--paper-deep); color:var(--ink-soft); }
 </style>
 </head>
 <body>
@@ -174,7 +209,7 @@
   <header class="app-header">
     <div class="folder-tab">生活記録シート</div>
     <h1 class="title">生活自立度セルフチェック</h1>
-    <p class="subtitle">Yes / No に答えていくだけで、日常生活自立度・mRS・介護保険の特定疾病を自己評価できます。</p>
+    <p class="subtitle">Yes / No 形式のセルフチェックと、全項目チェック方式の基本チェックリストで、日常生活自立度・mRS・介護保険の特定疾病・事業対象者の目安を自己評価できます。</p>
 
     <div class="mode-row">
       <button class="mode-btn active" data-mode="family" onclick="setMode('family')">
@@ -193,30 +228,36 @@
     </div>
   </header>
 
-  <!-- ============ メニュー(4つのCTA) ============ -->
+  <!-- ============ メニュー(5つのCTA) ============ -->
   <div class="menu-grid" id="menu-grid">
     <div class="start-card" onclick="startQuiz('physical')">
-      <div class="start-num">01 / 04</div>
+      <div class="start-num">01 / 05</div>
       <div class="start-title">身体の自立度</div>
       <div class="start-desc">日中の過ごし方や外出のしやすさをYes/Noでチェックします。</div>
       <div class="start-cta">はじめる →</div>
     </div>
     <div class="start-card" onclick="startQuiz('dementia')">
-      <div class="start-num">02 / 04</div>
+      <div class="start-num">02 / 05</div>
       <div class="start-title">認知症の自立度</div>
       <div class="start-desc">認知面の症状が生活にどの程度影響しているかをチェックします。</div>
       <div class="start-cta">はじめる →</div>
     </div>
     <div class="start-card" onclick="startQuiz('mrs')">
-      <div class="start-num">03 / 04</div>
+      <div class="start-num">03 / 05</div>
       <div class="start-title">mRS(機能障害度)</div>
       <div class="start-desc">脳卒中などの神経疾患でよく使われる機能障害の評価です。</div>
       <div class="start-cta">はじめる →</div>
     </div>
     <div class="start-card" onclick="startQuiz('specified')">
-      <div class="start-num">04 / 04</div>
+      <div class="start-num">04 / 05</div>
       <div class="start-title">特定疾病(2号被保険者)</div>
       <div class="start-desc">40〜64歳の方が介護保険を使えるかの目安をチェックします。</div>
+      <div class="start-cta">はじめる →</div>
+    </div>
+    <div class="start-card" onclick="startKihon()">
+      <div class="start-num">05 / 05</div>
+      <div class="start-title">基本チェックリスト</div>
+      <div class="start-desc">25項目にチェックして、事業対象者に該当するかをまとめて判定します。</div>
       <div class="start-cta">はじめる →</div>
     </div>
   </div>
@@ -232,6 +273,18 @@
     </div>
 
     <div id="quiz-body"></div>
+  </div>
+
+  <!-- ============ 基本チェックリストビュー ============ -->
+  <div class="checklist-view" id="checklist-view">
+    <button class="back-link" onclick="backToMenu()">← メニューに戻る</button>
+    <div class="quiz-header">
+      <div class="quiz-name">基本チェックリスト(事業対象者の目安)</div>
+      <div class="progress-text">65歳以上の方が対象です。当てはまる項目にすべてチェックしてから、下の「判定する」ボタンを押してください。</div>
+    </div>
+    <div id="kihon-groups"></div>
+    <button class="action-btn primary" id="kihon-judge-btn" onclick="judgeKihon()" style="width:100%;padding:14px;font-size:15px;margin-top:10px;">判定する</button>
+    <div class="result-wrap-kihon" id="result-kihon"></div>
   </div>
 
   <footer class="app-footer">
@@ -359,6 +412,131 @@ const SPECIFIED = {
   ]
 };
 
+/* ===================== 基本チェックリスト(25項目・7領域) ===================== */
+const KIHON_ITEMS = [
+  { no:1,  text:"バスや電車を使って一人で外出することが難しい" },
+  { no:2,  text:"日用品の買い物を一人でしていない" },
+  { no:3,  text:"預貯金の出し入れを自分でしていない" },
+  { no:4,  text:"友人の家を訪ねることがなくなった" },
+  { no:5,  text:"家族や友人の相談に乗ることがなくなった" },
+  { no:6,  text:"手すりや壁をつたわらずに階段を昇るのが難しい" },
+  { no:7,  text:"椅子に座った状態から、何もつかまらずに立ち上がるのが難しい" },
+  { no:8,  text:"15分ぐらい続けて歩くのが難しい" },
+  { no:9,  text:"この1年間に転んだことがある" },
+  { no:10, text:"転倒に対する不安が大きい" },
+  { no:11, text:"6か月間で2〜3kg以上の体重減少があった" },
+  { no:12, text:"身長・体重から計算したBMI(体重kg÷身長m÷身長m)が18.5未満である" },
+  { no:13, text:"半年前と比べて固いものが食べにくくなった" },
+  { no:14, text:"お茶や汁物でむせることがある" },
+  { no:15, text:"口の渇きが気になる" },
+  { no:16, text:"週に1回も外出していない" },
+  { no:17, text:"昨年と比べて外出の回数が減っている" },
+  { no:18, text:"周りの人から「物忘れがある」と指摘されることがある" },
+  { no:19, text:"自分で電話番号を調べて電話をかけることをしなくなった" },
+  { no:20, text:"今日が何月何日かわからないことがある" },
+  { no:21, text:"(ここ2週間)毎日の生活に充実感がない" },
+  { no:22, text:"(ここ2週間)これまで楽しめていたことが楽しめなくなった" },
+  { no:23, text:"(ここ2週間)以前は楽にできていたことが今はおっくうに感じる" },
+  { no:24, text:"(ここ2週間)自分が役に立つ人間だと思えない" },
+  { no:25, text:"(ここ2週間)わけもなく疲れたような感じがする" }
+];
+
+const KIHON_GROUPS = [
+  { key:"iadl",       title:"IADL(手段的日常生活動作)", range:"No.1〜5",  from:0,  to:5  },
+  { key:"undou",      title:"運動機能",                 range:"No.6〜10", from:5,  to:10 },
+  { key:"eiyou",      title:"栄養状態",                 range:"No.11〜12",from:10, to:12 },
+  { key:"koku",       title:"口腔機能",                 range:"No.13〜15",from:12, to:15 },
+  { key:"tojikomori", title:"閉じこもり",               range:"No.16〜17",from:15, to:17 },
+  { key:"ninchi",     title:"認知機能",                 range:"No.18〜20",from:17, to:20 },
+  { key:"utsu",       title:"うつ傾向",                 range:"No.21〜25",from:20, to:25 }
+];
+
+const KIHON_DOMAINS = [
+  { key:"ippan",      label:"生活機能全般(No.1〜20)",   evaluate: c => c.slice(0,20).filter(Boolean).length >= 10,
+    detail: c => c.slice(0,20).filter(Boolean).length + " / 20項目" },
+  { key:"undou",      label:"運動機能(No.6〜10)",       evaluate: c => c.slice(5,10).filter(Boolean).length >= 3,
+    detail: c => c.slice(5,10).filter(Boolean).length + " / 5項目" },
+  { key:"eiyou",      label:"栄養状態(No.11・12)",      evaluate: c => c[10] && c[11],
+    detail: c => (c.slice(10,12).filter(Boolean).length) + " / 2項目(両方該当で対象)" },
+  { key:"koku",       label:"口腔機能(No.13〜15)",      evaluate: c => c.slice(12,15).filter(Boolean).length >= 2,
+    detail: c => c.slice(12,15).filter(Boolean).length + " / 3項目" },
+  { key:"tojikomori", label:"閉じこもり(No.16)",        evaluate: c => !!c[15],
+    detail: c => (c[15] ? "該当" : "非該当") },
+  { key:"ninchi",     label:"認知機能(No.18〜20)",      evaluate: c => c.slice(17,20).filter(Boolean).length >= 1,
+    detail: c => c.slice(17,20).filter(Boolean).length + " / 3項目" },
+  { key:"utsu",       label:"うつ傾向(No.21〜25)",      evaluate: c => c.slice(20,25).filter(Boolean).length >= 2,
+    detail: c => c.slice(20,25).filter(Boolean).length + " / 5項目" }
+];
+
+function buildKihonForm(){
+  const wrap = document.getElementById("kihon-groups");
+  wrap.innerHTML = "";
+  KIHON_GROUPS.forEach(group=>{
+    const items = KIHON_ITEMS.slice(group.from, group.to);
+    const div = document.createElement("div");
+    div.className = "kihon-group";
+    div.innerHTML = `
+      <div class="kihon-group-title">${group.title}</div>
+      <div class="kihon-group-range">${group.range}</div>
+      ${items.map(it => `
+        <label class="kihon-item">
+          <input type="checkbox" id="kihon-${it.no}">
+          <span><span class="kihon-no">No.${it.no}</span>${it.text}</span>
+        </label>
+      `).join("")}
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+function startKihon(){
+  document.getElementById("menu-grid").style.display = "none";
+  document.getElementById("checklist-view").classList.add("show");
+  document.getElementById("result-kihon").classList.remove("show");
+  document.getElementById("result-kihon").innerHTML = "";
+  if(!document.getElementById("kihon-groups").children.length) buildKihonForm();
+}
+
+function judgeKihon(){
+  const checks = KIHON_ITEMS.map(it => document.getElementById("kihon-"+it.no).checked);
+  const rows = KIHON_DOMAINS.map(d=>{
+    const hit = d.evaluate(checks);
+    return `
+      <div class="kihon-domain-row">
+        <span>${d.label}</span>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span style="color:var(--ink-soft);font-size:12px;">${d.detail(checks)}</span>
+          <span class="kihon-tag ${hit ? "hit" : "safe"}">${hit ? "該当" : "非該当"}</span>
+        </span>
+      </div>`;
+  }).join("");
+  const anyHit = KIHON_DOMAINS.some(d => d.evaluate(checks));
+
+  const box = document.getElementById("result-kihon");
+  box.classList.add("show");
+  box.innerHTML = `
+    <div class="result-card">
+      <div class="stamp"><span>判定<br>結果</span></div>
+      <div class="result-label">基本チェックリストの判定</div>
+      <div class="kihon-overall">${anyHit ? "事業対象者の基準に該当する可能性があります" : "事業対象者の基準には該当しませんでした"}</div>
+      <div class="result-text" style="margin-top:8px;">
+        ${anyHit
+          ? "いずれかの領域で基準に達しています。要介護認定を受けなくても、地域包括支援センターで介護予防・生活支援サービス事業(総合事業)の利用を相談できる可能性があります。"
+          : "現時点でいずれの領域も基準には達していません。ただし体調の変化があれば、いつでも地域包括支援センターに相談できます。"}
+      </div>
+      <div style="margin-top:16px;">
+        ${rows}
+      </div>
+      <div class="result-note">領域ごとの基準はいずれか1つでも満たせば「該当」となります(合計点数ではなく領域別判定です)。実際の事業対象者としての認定は、お住まいの地域包括支援センター・市区町村窓口で確定します。</div>
+      <div class="result-actions">
+        <button class="action-btn primary" onclick="startKihon()">もう一度チェックする</button>
+        <button class="action-btn" onclick="backToMenu()">メニューに戻る</button>
+      </div>
+    </div>
+  `;
+  box.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
 /* ===================== 状態 ===================== */
 let currentMode = "family";
 let state = { quizKey:null, stepIndex:0, subPhase:null };
@@ -375,6 +553,7 @@ function setMode(mode){
 function backToMenu(){
   document.getElementById("menu-grid").style.display = "grid";
   document.getElementById("quiz-view").classList.remove("show");
+  document.getElementById("checklist-view").classList.remove("show");
   state = { quizKey:null, stepIndex:0, subPhase:null };
 }
 
@@ -384,6 +563,7 @@ function startQuiz(key){
   document.getElementById("quiz-view").classList.add("show");
   state.quizKey = key;
   state.stepIndex = 0;
+  state.answers = [];
 
   if(key === "specified"){
     document.getElementById("quiz-name").textContent = SPECIFIED.name;
@@ -412,16 +592,25 @@ function renderLinearQuestion(key, idx){
 }
 
 function answerLinear(key, idx, isYes){
-  const quiz = QUIZZES[key];
-  if(isYes){
-    showResult(quiz.resultTitle, quiz.steps[idx]);
-    return;
-  }
+  state.answers[idx] = isYes;
   const next = idx + 1;
-  if(next < quiz.steps.length){
+  if(next < QUIZZES[key].steps.length){
     renderLinearQuestion(key, next);
   } else {
+    finishLinearQuiz(key);
+  }
+}
+
+function finishLinearQuiz(key){
+  const quiz = QUIZZES[key];
+  let matchIdx = -1;
+  for(let i = quiz.steps.length - 1; i >= 0; i--){
+    if(state.answers[i]){ matchIdx = i; break; }
+  }
+  if(matchIdx === -1){
     showFallback(quiz.resultTitle, quiz.fallback);
+  } else {
+    showResult(quiz.resultTitle, quiz.steps[matchIdx]);
   }
 }
 
