@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<script src="../../redirect-to-vercel.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生活自立度セルフチェック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE4;
+    --paper-deep:#ECE5D3;
+    --ink:#2B3328;
+    --ink-soft:#5C6459;
+    --moss:#5C7A5C;
+    --moss-deep:#3F5A41;
+    --gold:#B8935B;
+    --line:#D8CFB8;
+    --white:#FFFFFF;
+    --alert:#A65D4E;
+    --alert-soft:#F1E2DC;
+    --stamp:#8C4A3E;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 10% 0%, rgba(184,147,91,0.08), transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(92,122,92,0.08), transparent 45%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    line-height:1.75;
+    min-height:100vh;
+    padding:0 0 80px;
+  }
+  .sheet{ max-width:760px; margin:0 auto; padding:36px 20px 0; }
+
+  .folder-tab{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--moss-deep); color:var(--paper);
+    font-family:"Shippori Mincho", serif; font-size:13px; letter-spacing:.12em;
+    padding:7px 18px 8px; border-radius:8px 8px 0 0; font-weight:600;
+  }
+  header.app-header{ border-bottom:2px solid var(--moss-deep); padding-bottom:22px; margin-bottom:28px; }
+  h1.title{
+    font-family:"Shippori Mincho", serif; font-weight:800;
+    font-size:clamp(26px,5vw,36px); margin:14px 0 6px; letter-spacing:.03em;
+  }
+  .subtitle{ color:var(--ink-soft); font-size:14.5px; margin:0; }
+
+  .mode-row{ display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; }
+  .mode-btn{
+    flex:1; min-width:160px; border:1.5px solid var(--line); background:var(--white);
+    color:var(--ink-soft); font-family:"Zen Kaku Gothic New", sans-serif; font-weight:700;
+    font-size:14px; padding:12px 14px; border-radius:10px; cursor:pointer; text-align:left;
+    transition:all .15s ease;
+  }
+  .mode-btn small{ display:block; font-weight:400; font-size:11.5px; color:var(--ink-soft); margin-top:3px; }
+  .mode-btn.active{ border-color:var(--moss-deep); background:var(--moss-deep); color:var(--paper); }
+  .mode-btn.active small{ color:rgba(243,239,228,0.75); }
+
+  .disclaimer{
+    background:var(--alert-soft); border:1px solid #E1C2B7; color:#6B392E;
+    border-radius:10px; padding:14px 16px; font-size:13px; margin:20px 0 8px;
+  }
+  .disclaimer strong{ display:block; font-size:13.5px; margin-bottom:3px; }
+
+  /* ---------- Menu (4 CTA game cards) ---------- */
+  .menu-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:28px;
+  }
+  @media (max-width:520px){ .menu-grid{ grid-template-columns:1fr; } }
+  .start-card{
+    background:var(--white); border:1.5px solid var(--line); border-radius:var(--radius);
+    padding:20px 20px 18px; cursor:pointer; text-align:left; transition:all .15s ease;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .start-card:hover{ border-color:var(--gold); transform:translateY(-2px); }
+  .start-num{
+    font-family:"Shippori Mincho", serif; font-weight:800; font-size:12px;
+    color:var(--gold); letter-spacing:.1em;
+  }
+  .start-title{ font-family:"Shippori Mincho", serif; font-weight:800; font-size:19px; }
+  .start-desc{ font-size:13px; color:var(--ink-soft); }
+  .start-cta{
+    margin-top:6px; align-self:flex-start; font-size:12.5px; font-weight:700;
+    color:var(--moss-deep); border:1.5px solid var(--moss-deep); border-radius:20px;
+    padding:5px 14px;
+  }
+
+  /* ---------- Quiz view ---------- */
+  .quiz-view{ display:none; margin-top:26px; }
+  .quiz-view.show{ display:block; animation:fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+
+  .back-link{
+    background:none; border:none; color:var(--ink-soft); font-size:13px; font-weight:700;
+    cursor:pointer; padding:0; margin-bottom:16px; display:inline-flex; align-items:center; gap:4px;
+  }
+  .back-link:hover{ color:var(--moss-deep); }
+
+  .quiz-header{ margin-bottom:16px; }
+  .quiz-name{ font-family:"Shippori Mincho", serif; font-weight:800; font-size:18px; color:var(--moss-deep); }
+  .progress-text{ font-size:12px; color:var(--ink-soft); margin-top:4px; font-weight:700; letter-spacing:.05em; }
+  .progress-bar{ height:5px; background:var(--paper-deep); border-radius:3px; margin-top:6px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--gold); border-radius:3px; transition:width .25s ease; }
+
+  .question-card{
+    background:var(--white); border:1.5px solid var(--line); border-radius:var(--radius);
+    padding:32px 24px; margin-top:18px; text-align:center;
+  }
+  .question-text{
+    font-family:"Shippori Mincho", serif; font-weight:700; font-size:clamp(18px,4vw,22px);
+    line-height:1.6;
+  }
+  .yn-buttons{ display:flex; gap:14px; margin-top:26px; }
+  .yn-btn{
+    flex:1; padding:16px 10px; border-radius:12px; font-family:"Shippori Mincho", serif;
+    font-weight:800; font-size:17px; cursor:pointer; border:2px solid transparent; transition:all .12s ease;
+  }
+  .yn-yes{ background:var(--moss-deep); color:var(--paper); }
+  .yn-yes:hover{ background:var(--moss); }
+  .yn-no{ background:var(--white); color:var(--ink); border-color:var(--line); }
+  .yn-no:hover{ border-color:var(--alert); color:var(--alert); }
+
+  /* ---------- Result stamp ---------- */
+  .result-card{
+    border:1.5px dashed var(--stamp); border-radius:var(--radius); padding:22px 22px 20px;
+    background:#FDFBF6; position:relative; overflow:hidden; margin-top:18px;
+  }
+  .stamp{
+    position:absolute; top:16px; right:18px; width:76px; height:76px;
+    border:3px solid var(--stamp); border-radius:50%; display:flex; align-items:center;
+    justify-content:center; transform:rotate(-8deg); opacity:0.9;
+  }
+  .stamp span{ font-family:"Shippori Mincho", serif; font-weight:800; color:var(--stamp); font-size:12px; text-align:center; line-height:1.3; }
+  .result-label{ font-size:12px; letter-spacing:.1em; color:var(--ink-soft); font-weight:700; }
+  .result-rank{
+    font-family:"Shippori Mincho", serif; font-weight:800; font-size:26px; color:var(--moss-deep);
+    margin:4px 0 10px; padding-right:90px;
+  }
+  .result-text{ font-size:14.5px; max-width:520px; }
+  .result-note{ margin-top:14px; font-size:12.5px; color:var(--ink-soft); border-top:1px solid var(--line); padding-top:10px; }
+  .pro-only{ display:none; }
+  body.pro .pro-only{ display:inline-block; }
+  .result-actions{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+  .action-btn{
+    background:transparent; border:1px solid var(--line); color:var(--ink-soft);
+    font-family:"Zen Kaku Gothic New", sans-serif; font-size:12.5px; font-weight:700;
+    padding:8px 16px; border-radius:8px; cursor:pointer; transition:all .15s ease;
+  }
+  .action-btn.primary{ background:var(--moss-deep); color:var(--paper); border-color:var(--moss-deep); }
+  .action-btn:hover{ border-color:var(--gold); color:var(--gold); }
+  .action-btn.primary:hover{ background:var(--moss); color:var(--paper); }
+
+  footer.app-footer{
+    max-width:760px; margin:44px auto 0; padding:18px 20px 0; border-top:1px solid var(--line);
+    font-size:12px; color:var(--ink-soft); text-align:center;
+  }
+
+  @media (max-width:520px){
+    .result-rank{ padding-right:0; }
+    .stamp{ position:static; margin-bottom:12px; transform:rotate(-4deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <header class="app-header">
+    <div class="folder-tab">生活記録シート</div>
+    <h1 class="title">生活自立度セルフチェック</h1>
+    <p class="subtitle">Yes / No に答えていくだけで、日常生活自立度・mRS・介護保険の特定疾病を自己評価できます。</p>
+
+    <div class="mode-row">
+      <button class="mode-btn active" data-mode="family" onclick="setMode('family')">
+        ご本人・ご家族向け
+        <small>やさしい言葉での説明を中心に表示します</small>
+      </button>
+      <button class="mode-btn" data-mode="pro" onclick="setMode('pro')">
+        専門職向け
+        <small>正式なランク表記・補足情報も表示します</small>
+      </button>
+    </div>
+
+    <div class="disclaimer">
+      <strong>ご利用にあたって</strong>
+      これは医学的な診断を行うものではなく、あくまで自己評価・状況整理のためのツールです。要介護認定や障害申請、指定難病の重症度基準に該当するかどうかは、必ず医師・ケアマネジャー・お住まいの自治体窓口にご確認ください。
+    </div>
+  </header>
+
+  <!-- ============ メニュー(4つのCTA) ============ -->
+  <div class="menu-grid" id="menu-grid">
+    <div class="start-card" onclick="startQuiz('physical')">
+      <div class="start-num">01 / 04</div>
+      <div class="start-title">身体の自立度</div>
+      <div class="start-desc">日中の過ごし方や外出のしやすさをYes/Noでチェックします。</div>
+      <div class="start-cta">はじめる →</div>
+    </div>
+    <div class="start-card" onclick="startQuiz('dementia')">
+      <div class="start-num">02 / 04</div>
+      <div class="start-title">認知症の自立度</div>
+      <div class="start-desc">認知面の症状が生活にどの程度影響しているかをチェックします。</div>
+      <div class="start-cta">はじめる →</div>
+    </div>
+    <div class="start-card" onclick="startQuiz('mrs')">
+      <div class="start-num">03 / 04</div>
+      <div class="start-title">mRS(機能障害度)</div>
+      <div class="start-desc">脳卒中などの神経疾患でよく使われる機能障害の評価です。</div>
+      <div class="start-cta">はじめる →</div>
+    </div>
+    <div class="start-card" onclick="startQuiz('specified')">
+      <div class="start-num">04 / 04</div>
+      <div class="start-title">特定疾病(2号被保険者)</div>
+      <div class="start-desc">40〜64歳の方が介護保険を使えるかの目安をチェックします。</div>
+      <div class="start-cta">はじめる →</div>
+    </div>
+  </div>
+
+  <!-- ============ クイズビュー ============ -->
+  <div class="quiz-view" id="quiz-view">
+    <button class="back-link" onclick="backToMenu()">← メニューに戻る</button>
+
+    <div class="quiz-header">
+      <div class="quiz-name" id="quiz-name"></div>
+      <div class="progress-text" id="progress-text"></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="quiz-body"></div>
+  </div>
+
+  <footer class="app-footer">
+    自己評価の記録として、結果画面のスクリーンショット等をご活用ください。判定基準は厚生労働省の区分・国際的に用いられる評価尺度を参考に、独自の言葉で要約しています。
+  </footer>
+</div>
+
+<script>
+/* ===================== データ定義 ===================== */
+const QUIZZES = {
+  physical: {
+    name: "身体の自立度",
+    resultTitle: "障害高齢者の日常生活自立度",
+    fallback: { title:"どの段階にも明確に当てはまりませんでした",
+      desc:"いずれの状態にも明確に当てはまらない場合は、担当のケアマネジャーや主治医と一緒に状況を整理することをおすすめします。" },
+    steps: [
+      { rank:"J1", title:"生活自立(交通機関を使って外出できる)",
+        q:"バスや電車などの交通機関を使って、一人で外出できますか？",
+        desc:"何らかの障害はあるが、日常生活はほぼ自立しており、交通機関を利用して一人で外出できる状態です。" },
+      { rank:"J2", title:"生活自立(近所への外出はできる)",
+        q:"一人での外出は、隣近所程度にとどまりますか？",
+        desc:"日常生活はほぼ自立しているが、外出の範囲は隣近所程度にとどまる状態です。" },
+      { rank:"A1", title:"準寝たきり(介助があれば日中は起きて過ごす)",
+        q:"屋内の生活はほぼ一人でできるが、外出には介助が必要で、日中はベッドから離れて過ごすことが多いですか？",
+        desc:"屋内での生活はおおむね自立しているが、一人での外出は難しい。介助を受ければ外出でき、日中はベッドから離れて過ごすことが多い状態です。" },
+      { rank:"A2", title:"準寝たきり(外出の機会が少ない)",
+        q:"屋内の生活はほぼ一人でできるが、外出の頻度は少なく、日中も寝たり起きたりを繰り返していますか？",
+        desc:"屋内での生活はおおむね自立しているが、外出の頻度は少なく、日中も寝たり起きたりを繰り返す生活になっている状態です。" },
+      { rank:"B1", title:"寝たきり(車いすで座って過ごせる)",
+        q:"日中もベッドで過ごすことが多いが、自分で車いすに移り、食事や排泄はベッドを離れて行えますか？",
+        desc:"日中もベッド上で過ごすことが多いが、自分で車いすに移り、食事や排泄はベッドから離れて行うことができる状態です。" },
+      { rank:"B2", title:"寝たきり(車いすへの移乗に介助が必要)",
+        q:"日中もベッドで過ごすことが多く、車いすへの移乗にも介助が必要ですか？",
+        desc:"日中もベッド上で過ごすことが多く、車いすへの移乗にも介助が必要な状態です。" },
+      { rank:"C1", title:"寝たきり(自分で寝返りができる)",
+        q:"一日中ベッドで過ごし、食事・排泄・着替えに介助が必要だが、自分で寝返りはできますか？",
+        desc:"一日中ベッド上で過ごし、食事・排泄・着替えのいずれにも介助が必要だが、自分で寝返りをうつことはできる状態です。" },
+      { rank:"C2", title:"寝たきり(自分で寝返りができない)",
+        q:"一日中ベッドで過ごし、食事・排泄・着替えに介助が必要で、自分で寝返りもできませんか？",
+        desc:"一日中ベッド上で過ごし、食事・排泄・着替えのいずれにも介助が必要で、自分で寝返りをうつこともできない状態です。" }
+    ]
+  },
+  dementia: {
+    name: "認知症の自立度",
+    resultTitle: "認知症高齢者の日常生活自立度",
+    fallback: { title:"どの段階にも明確に当てはまりませんでした",
+      desc:"いずれの状態にも明確に当てはまらない場合は、かかりつけ医や地域包括支援センターに相談することをおすすめします。" },
+    steps: [
+      { rank:"Ⅰ", title:"ほぼ自立",
+        q:"認知症の症状はあっても、家庭内でも社会的にもほぼ自立した生活を送れていますか？",
+        desc:"何らかの認知症の症状はあるが、家庭内でも社会的にも、日常生活はほぼ自立している状態です。" },
+      { rank:"Ⅱa", title:"見守りがあれば自立(家庭外中心)",
+        q:"道に迷う、買い物や金銭管理でのミスなど、家庭の外での生活のしづらさがあるが、誰かが気にかけていれば自立できますか？",
+        desc:"一人で外出した時に道に迷う、買い物や金銭管理などでミスが目立つなど、家庭外での生活のしづらさが見られるが、誰かが気にかけていれば自立できる状態です。" },
+      { rank:"Ⅱb", title:"見守りがあれば自立(家庭内でも)",
+        q:"服薬管理や電話対応、留守番など、家庭の中でも生活のしづらさが見られるが、誰かが気にかけていれば自立できますか？",
+        desc:"服薬管理ができない、電話や来客対応が一人でできないなど、家庭内でも生活のしづらさが見られるが、誰かが気にかけていれば自立できる状態です。" },
+      { rank:"Ⅲa", title:"日中を中心に介護が必要",
+        q:"着替え・食事・排泄がうまくできない、徘徊、火の不始末などが主に日中に見られ、介護が必要ですか？",
+        desc:"着替え・食事・排泄がうまくできない、時間がかかる、徘徊、火の不始末などが日中を中心に見られ、介護を必要とする状態です。" },
+      { rank:"Ⅲb", title:"夜間を中心に介護が必要",
+        q:"同じような症状が主に夜間に見られ、介護が必要ですか？",
+        desc:"Ⅲaと同様の症状・行動が、主に夜間を中心に見られ、介護を必要とする状態です。" },
+      { rank:"Ⅳ", title:"常に介護が必要",
+        q:"そうした症状が頻繁に見られ、常に介護が必要ですか？",
+        desc:"Ⅲの状態が頻繁に見られ、常に介護を必要とする状態です。" },
+      { rank:"M", title:"専門医療が必要",
+        q:"著しい精神症状や問題行動、または重い身体疾患があり、専門的な医療が必要ですか？",
+        desc:"著しい精神症状や問題行動、あるいは重い身体疾患が見られ、専門医療機関での治療を必要とする状態です。" }
+    ]
+  },
+  mrs: {
+    name: "mRS(機能障害度)",
+    resultTitle: "modified Rankin Scale(mRS)",
+    fallback: { title:"どの段階にも明確に当てはまりませんでした",
+      desc:"いずれの段階にも明確に当てはまらない場合は、神経内科など専門の医療機関にご相談ください。" },
+    steps: [
+      { rank:"0", title:"まったく症候がない",
+        q:"症状はまったくなく、発症前と同じ生活を送れていますか？",
+        desc:"症状がなく、発症前と同じ生活を送れている状態です。" },
+      { rank:"1", title:"症候はあるが明らかな障害はない",
+        q:"何らかの症状はあるが、仕事や普段の活動は問題なく行えますか？",
+        desc:"何らかの症状はあるものの、仕事や普段の活動は問題なく行える状態です。" },
+      { rank:"2", title:"軽度の障害",
+        q:"以前の活動すべてはできないが、身の回りのことは介助なしに行えますか？",
+        desc:"以前の活動すべてはできないが、身の回りのことは介助なしに行える状態です。" },
+      { rank:"3", title:"中等度の障害",
+        q:"何らかの介助を必要とするが、歩行は介助なしに可能ですか？",
+        desc:"何らかの介助を必要とするが、歩行は介助なしに可能な状態です。" },
+      { rank:"4", title:"中等度から重度の障害",
+        q:"歩行や身の回りのことに介助が必要で、一人で過ごすのは難しいですか？",
+        desc:"歩行や身の回りのことに介助が必要で、一人で過ごすことが難しい状態です。" },
+      { rank:"5", title:"重度の障害",
+        q:"寝たきりで失禁があり、常に介護と見守りが必要ですか？",
+        desc:"寝たきりで失禁があり、常に介護と見守りを必要とする状態です。" }
+    ]
+  }
+};
+
+const SPECIFIED = {
+  name: "特定疾病(2号被保険者)",
+  ageQuestion: "65歳以上ですか？",
+  ageYesResult: { title:"判断は不要です(第1号被保険者)",
+    desc:"65歳以上の方は、原因となる病気を問わず要介護認定の対象になります。特定疾病に該当するかどうかを気にする必要はありません。" },
+  diseaseYesDesc: "選択の病気は、介護保険の特定疾病16種類に含まれています。実際の該当可否は主治医意見書の内容をもとに、市区町村の介護認定審査会が確認します。まずはお住まいの自治体窓口で要介護認定の申請をご検討ください。",
+  fallback: { title:"16種類のいずれにも該当しませんでした",
+    desc:"40〜64歳の方は、原則として介護保険の対象外です(交通事故などが原因の場合も対象外)。指定難病など他の制度に該当する可能性も考えられるため、かかりつけ医や市区町村の窓口、保健所にご相談ください。" },
+  diseases: [
+    "がん(医師が回復の見込みがないと判断したもの、いわゆるがん末期)",
+    "関節リウマチ",
+    "筋萎縮性側索硬化症(ALS)",
+    "後縦靱帯骨化症",
+    "骨折を伴う骨粗鬆症",
+    "初老期における認知症(アルツハイマー病、脳血管性認知症など)",
+    "パーキンソン病関連疾患(進行性核上性麻痺・大脳皮質基底核変性症・パーキンソン病)",
+    "脊髄小脳変性症",
+    "脊柱管狭窄症",
+    "早老症(ウェルナー症候群など)",
+    "多系統萎縮症",
+    "糖尿病性神経障害・糖尿病性腎症・糖尿病性網膜症",
+    "脳血管疾患(脳出血・脳梗塞など)",
+    "閉塞性動脈硬化症",
+    "慢性閉塞性肺疾患(肺気腫・慢性気管支炎など)",
+    "両側の膝関節または股関節に著しい変形を伴う変形性関節症"
+  ]
+};
+
+/* ===================== 状態 ===================== */
+let currentMode = "family";
+let state = { quizKey:null, stepIndex:0, subPhase:null };
+
+/* ===================== メニュー / モード ===================== */
+function setMode(mode){
+  currentMode = mode;
+  document.body.classList.toggle("pro", mode === "pro");
+  document.querySelectorAll(".mode-btn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.mode === mode);
+  });
+}
+
+function backToMenu(){
+  document.getElementById("menu-grid").style.display = "grid";
+  document.getElementById("quiz-view").classList.remove("show");
+  state = { quizKey:null, stepIndex:0, subPhase:null };
+}
+
+/* ===================== クイズ開始 ===================== */
+function startQuiz(key){
+  document.getElementById("menu-grid").style.display = "none";
+  document.getElementById("quiz-view").classList.add("show");
+  state.quizKey = key;
+  state.stepIndex = 0;
+
+  if(key === "specified"){
+    document.getElementById("quiz-name").textContent = SPECIFIED.name;
+    state.subPhase = "age";
+    renderAgeQuestion();
+  } else {
+    document.getElementById("quiz-name").textContent = QUIZZES[key].name;
+    renderLinearQuestion(key, 0);
+  }
+}
+
+/* ===================== 通常クイズ(身体・認知症・mRS) ===================== */
+function renderLinearQuestion(key, idx){
+  const quiz = QUIZZES[key];
+  updateProgress(idx, quiz.steps.length);
+  const step = quiz.steps[idx];
+  document.getElementById("quiz-body").innerHTML = `
+    <div class="question-card">
+      <div class="question-text">${step.q}</div>
+      <div class="yn-buttons">
+        <button class="yn-btn yn-no" onclick="answerLinear('${key}', ${idx}, false)">いいえ</button>
+        <button class="yn-btn yn-yes" onclick="answerLinear('${key}', ${idx}, true)">はい</button>
+      </div>
+    </div>
+  `;
+}
+
+function answerLinear(key, idx, isYes){
+  const quiz = QUIZZES[key];
+  if(isYes){
+    showResult(quiz.resultTitle, quiz.steps[idx]);
+    return;
+  }
+  const next = idx + 1;
+  if(next < quiz.steps.length){
+    renderLinearQuestion(key, next);
+  } else {
+    showFallback(quiz.resultTitle, quiz.fallback);
+  }
+}
+
+/* ===================== 特定疾病クイズ ===================== */
+function renderAgeQuestion(){
+  updateProgress(0, 1, "年齢区分");
+  document.getElementById("quiz-body").innerHTML = `
+    <div class="question-card">
+      <div class="question-text">${SPECIFIED.ageQuestion}</div>
+      <div class="yn-buttons">
+        <button class="yn-btn yn-no" onclick="answerAge(false)">いいえ(40〜64歳)</button>
+        <button class="yn-btn yn-yes" onclick="answerAge(true)">はい(65歳以上)</button>
+      </div>
+    </div>
+  `;
+}
+
+function answerAge(isYes){
+  if(isYes){
+    showResult("特定疾病の判定", { rank:"", title: SPECIFIED.ageYesResult.title, desc: SPECIFIED.ageYesResult.desc });
+  } else {
+    state.subPhase = "disease";
+    renderDiseaseQuestion(0);
+  }
+}
+
+function renderDiseaseQuestion(idx){
+  updateProgress(idx, SPECIFIED.diseases.length, "特定疾病");
+  document.getElementById("quiz-body").innerHTML = `
+    <div class="question-card">
+      <div class="question-text">${SPECIFIED.diseases[idx]}に該当しますか？</div>
+      <div class="yn-buttons">
+        <button class="yn-btn yn-no" onclick="answerDisease(${idx}, false)">いいえ</button>
+        <button class="yn-btn yn-yes" onclick="answerDisease(${idx}, true)">はい</button>
+      </div>
+    </div>
+  `;
+}
+
+function answerDisease(idx, isYes){
+  if(isYes){
+    showResult("特定疾病の判定", { rank:"", title: SPECIFIED.diseases[idx], desc: SPECIFIED.diseaseYesDesc });
+    return;
+  }
+  const next = idx + 1;
+  if(next < SPECIFIED.diseases.length){
+    renderDiseaseQuestion(next);
+  } else {
+    showFallback("特定疾病の判定", SPECIFIED.fallback);
+  }
+}
+
+/* ===================== 共通:進捗・結果 ===================== */
+function updateProgress(idx, total, label){
+  const n = idx + 1;
+  document.getElementById("progress-text").textContent = (label ? label + " " : "") + "Q. " + n + " / " + total;
+  document.getElementById("progress-fill").style.width = Math.round((n/total)*100) + "%";
+}
+
+function showResult(resultTitle, step){
+  const proTag = (currentMode === "pro" && step.rank) ? `<div class="pro-only" style="margin-top:8px;font-size:11px;color:var(--gold);border:1px solid var(--gold);border-radius:5px;padding:1px 7px;font-weight:700;">正式区分：${resultTitle} ／ ${step.rank}</div>` : "";
+  const specifiedNote = (resultTitle === "特定疾病の判定") ? `<div class="result-note pro-only">医療費助成の対象となる「指定難病」(約340疾患)とは別の制度です。実際の該当可否は主治医意見書に基づき、市区町村の介護認定審査会が確認します。</div>` : "";
+  const mrsNote = (resultTitle.indexOf("Rankin") !== -1) ? `<div class="result-note pro-only">指定難病の重症度基準では、一般に「mRS 3以上」が申請検討の目安の一つとされます。実際の該当可否は疾患ごとの基準・診断書で必ずご確認ください。</div>` : "";
+
+  document.getElementById("quiz-body").innerHTML = `
+    <div class="result-card">
+      <div class="stamp"><span>判定<br>結果</span></div>
+      <div class="result-label">${resultTitle}</div>
+      <div class="result-rank">${step.rank ? step.rank + " ｜ " : ""}${step.title}</div>
+      <div class="result-text">${step.desc}</div>
+      ${proTag}
+      ${specifiedNote}
+      ${mrsNote}
+      <div class="result-actions">
+        <button class="action-btn primary" onclick="startQuiz(state.quizKey)">もう一度チェックする</button>
+        <button class="action-btn" onclick="backToMenu()">メニューに戻る</button>
+      </div>
+    </div>
+  `;
+}
+
+function showFallback(resultTitle, fb){
+  document.getElementById("quiz-body").innerHTML = `
+    <div class="result-card">
+      <div class="stamp"><span>判定<br>結果</span></div>
+      <div class="result-label">${resultTitle}</div>
+      <div class="result-rank">${fb.title}</div>
+      <div class="result-text">${fb.desc}</div>
+      <div class="result-actions">
+        <button class="action-btn primary" onclick="startQuiz(state.quizKey)">もう一度チェックする</button>
+        <button class="action-btn" onclick="backToMenu()">メニューに戻る</button>
+      </div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
