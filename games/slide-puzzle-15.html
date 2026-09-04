@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15パズル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#1B1F2B;
+    --bg-deep-2:#12151E;
+    --bg-panel:#232839;
+    --bg-panel-2:#2B3147;
+    --accent:#F2A65A;
+    --accent-deep:#D98B3C;
+    --accent-2:#4FD1C5;
+    --text:#EDEEF2;
+    --text-soft:#9AA0B4;
+    --danger:#E8607A;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(242,166,90,0.10), transparent 45%),
+      radial-gradient(circle at 85% 100%, rgba(79,209,197,0.10), transparent 45%),
+      var(--bg-deep);
+    color:var(--text);
+    font-family:"Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    display:flex;
+    justify-content:center;
+    padding:36px 16px 60px;
+  }
+  .wrap{ width:100%; max-width:460px; }
+
+  header{ text-align:center; margin-bottom:20px; }
+  h1{
+    font-family:"Zen Maru Gothic", sans-serif;
+    font-weight:900;
+    font-size:clamp(26px,7vw,34px);
+    margin:0 0 6px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    letter-spacing:.02em;
+  }
+  .sub{ color:var(--text-soft); font-size:13.5px; margin:0; }
+
+  .controls{
+    display:flex; flex-direction:column; gap:14px; margin-bottom:18px;
+  }
+  .diff-toggle{ display:flex; gap:8px; }
+  .diff-btn{
+    flex:1; background:var(--bg-panel); border:1.5px solid transparent; color:var(--text-soft);
+    font-family:"Zen Kaku Gothic New", sans-serif; font-weight:700; font-size:13.5px;
+    padding:10px 8px; border-radius:10px; cursor:pointer; transition:all .15s ease;
+  }
+  .diff-btn.active{ border-color:var(--accent); color:var(--accent); background:rgba(242,166,90,0.08); }
+
+  .stats{ display:flex; gap:10px; }
+  .stat{
+    flex:1; background:var(--bg-panel); border-radius:10px; padding:10px 14px;
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .stat-label{ font-size:12px; color:var(--text-soft); font-weight:700; }
+  .stat span:last-child{
+    font-family:"Zen Maru Gothic", sans-serif; font-weight:700; font-size:18px; color:var(--text);
+  }
+
+  .board-outer{ position:relative; display:flex; justify-content:center; margin-bottom:16px; }
+  .board{
+    position:relative;
+    width:min(92vw,420px); height:min(92vw,420px);
+    background:var(--bg-panel-2);
+    border-radius:var(--radius);
+    padding:8px;
+    box-shadow:inset 0 2px 10px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  }
+  .cell-shadow{
+    position:absolute; border-radius:10px; background:rgba(0,0,0,0.18);
+  }
+  .tile{
+    position:absolute;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:10px;
+    background:linear-gradient(145deg, var(--accent), var(--accent-deep));
+    color:#1B1F2B;
+    font-family:"Zen Maru Gothic", sans-serif;
+    font-weight:900;
+    box-shadow:0 4px 10px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.35);
+    cursor:pointer;
+    user-select:none;
+    transition:left .16s ease, top .16s ease, transform .08s ease, box-shadow .15s ease;
+  }
+  .tile:active{ transform:scale(0.94); }
+  .tile.movable-hint:hover{ box-shadow:0 4px 14px rgba(242,166,90,.55), inset 0 1px 0 rgba(255,255,255,.4); }
+
+  .win-overlay{
+    position:absolute; inset:0; border-radius:var(--radius);
+    background:rgba(18,21,30,0.82);
+    display:none; align-items:center; justify-content:center; flex-direction:column;
+    animation:fade .25s ease;
+  }
+  .win-overlay.show{ display:flex; }
+  @keyframes fade{ from{opacity:0;} to{opacity:1;} }
+  .win-card{ text-align:center; padding:20px; }
+  .win-title{
+    font-family:"Zen Maru Gothic", sans-serif; font-weight:900; font-size:30px;
+    background:linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    margin-bottom:10px;
+  }
+  .win-stats{ color:var(--text-soft); font-size:14px; margin-bottom:18px; line-height:1.8; }
+  .win-stats strong{ color:var(--text); }
+
+  .best-row{
+    text-align:center; color:var(--text-soft); font-size:12.5px; margin-bottom:18px; min-height:16px;
+  }
+  .best-row strong{ color:var(--accent-2); }
+
+  .action-btn{
+    font-family:"Zen Kaku Gothic New", sans-serif; font-weight:800; font-size:14px;
+    border-radius:10px; padding:11px 24px; cursor:pointer; border:none;
+  }
+  .action-btn.primary{
+    background:linear-gradient(90deg, var(--accent), var(--accent-deep)); color:#1B1F2B;
+  }
+  .shuffle-btn{
+    display:block; margin:0 auto; background:var(--bg-panel); color:var(--text);
+    border:1.5px solid var(--bg-panel-2); font-family:"Zen Kaku Gothic New", sans-serif;
+    font-weight:800; font-size:14.5px; padding:13px 30px; border-radius:12px; cursor:pointer;
+    transition:all .15s ease;
+  }
+  .shuffle-btn:hover{ border-color:var(--accent); color:var(--accent); }
+
+  footer{
+    max-width:460px; margin:26px auto 0; text-align:center; color:var(--text-soft); font-size:11.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>15パズル</h1>
+    <p class="sub">タイルをタップして、数字を1から順番に並べよう</p>
+  </header>
+
+  <div class="controls">
+    <div class="diff-toggle">
+      <button class="diff-btn active" id="diff-4" onclick="setDifficulty(4)">ノーマル(4×4)</button>
+      <button class="diff-btn" id="diff-5" onclick="setDifficulty(5)">ハード(5×5)</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="stat-label">手数</span><span id="moves">0</span></div>
+      <div class="stat"><span class="stat-label">タイム</span><span id="timer">00:00</span></div>
+    </div>
+  </div>
+
+  <div class="board-outer">
+    <div class="board" id="board"></div>
+    <div class="win-overlay" id="win-overlay">
+      <div class="win-card">
+        <div class="win-title">クリア！</div>
+        <div class="win-stats" id="win-stats"></div>
+        <button class="action-btn primary" onclick="shuffleBoard()">もう一度遊ぶ</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="best-row" id="best-row"></div>
+
+  <button class="shuffle-btn" onclick="shuffleBoard()">シャッフルする</button>
+</div>
+
+<footer>ブラウザ内で完結するパズルです。記録はこの端末のブラウザにのみ保存されます。</footer>
+
+<script>
+let N = 4;
+let board = [];
+let moves = 0;
+let seconds = 0;
+let timerHandle = null;
+let timerStarted = false;
+let solved = false;
+
+const boardEl = document.getElementById("board");
+const movesEl = document.getElementById("moves");
+const timerEl = document.getElementById("timer");
+const winOverlay = document.getElementById("win-overlay");
+const winStats = document.getElementById("win-stats");
+const bestRow = document.getElementById("best-row");
+
+function solvedArray(n){
+  const arr = [];
+  for(let i=1;i<n*n;i++) arr.push(i);
+  arr.push(0);
+  return arr;
+}
+
+function setDifficulty(n){
+  N = n;
+  document.getElementById("diff-4").classList.toggle("active", n===4);
+  document.getElementById("diff-5").classList.toggle("active", n===5);
+  shuffleBoard();
+}
+
+function cellSize(){
+  const inner = boardEl.clientWidth - 16; // padding 8px x2
+  return inner / N;
+}
+
+function shuffleBoard(){
+  solved = false;
+  winOverlay.classList.remove("show");
+  moves = 0;
+  seconds = 0;
+  timerStarted = false;
+  movesEl.textContent = "0";
+  timerEl.textContent = "00:00";
+  clearInterval(timerHandle);
+
+  board = solvedArray(N);
+  // guaranteed-solvable shuffle: perform many random legal slides from the solved state
+  let blank = board.indexOf(0);
+  const shuffleMoves = N * N * 40;
+  let lastBlank = -1;
+  for(let i=0;i<shuffleMoves;i++){
+    const neighbors = getNeighbors(blank).filter(idx => idx !== lastBlank);
+    const pick = neighbors[Math.floor(Math.random()*neighbors.length)];
+    board[blank] = board[pick];
+    board[pick] = 0;
+    lastBlank = blank;
+    blank = pick;
+  }
+  renderBoard(true);
+  updateBestDisplay();
+}
+
+function getNeighbors(idx){
+  const row = Math.floor(idx / N);
+  const col = idx % N;
+  const list = [];
+  if(row > 0) list.push(idx - N);
+  if(row < N-1) list.push(idx + N);
+  if(col > 0) list.push(idx - 1);
+  if(col < N-1) list.push(idx + 1);
+  return list;
+}
+
+function renderBoard(rebuild){
+  const size = cellSize();
+  if(rebuild){
+    boardEl.innerHTML = "";
+    for(let v=1; v<N*N; v++){
+      const tile = document.createElement("div");
+      tile.className = "tile";
+      tile.dataset.value = v;
+      tile.textContent = v;
+      tile.style.width = size + "px";
+      tile.style.height = size + "px";
+      tile.style.fontSize = Math.max(16, size*0.42) + "px";
+      tile.onclick = () => handleTileClick(v);
+      boardEl.appendChild(tile);
+    }
+  }
+  positionTiles(size);
+}
+
+function positionTiles(size){
+  const s = size || cellSize();
+  board.forEach((v, idx)=>{
+    if(v === 0) return;
+    const tile = boardEl.querySelector('.tile[data-value="'+v+'"]');
+    if(!tile) return;
+    const row = Math.floor(idx / N);
+    const col = idx % N;
+    tile.style.left = (col * s) + "px";
+    tile.style.top = (row * s) + "px";
+  });
+}
+
+function handleTileClick(value){
+  if(solved) return;
+  const idx = board.indexOf(value);
+  const blankIdx = board.indexOf(0);
+  if(getNeighbors(idx).includes(blankIdx)){
+    board[blankIdx] = value;
+    board[idx] = 0;
+    moves++;
+    movesEl.textContent = moves;
+    if(!timerStarted){
+      timerStarted = true;
+      timerHandle = setInterval(tick, 1000);
+    }
+    positionTiles();
+    checkWin();
+  }
+}
+
+function tick(){
+  seconds++;
+  const m = String(Math.floor(seconds/60)).padStart(2,"0");
+  const s = String(seconds%60).padStart(2,"0");
+  timerEl.textContent = m + ":" + s;
+}
+
+function checkWin(){
+  const target = solvedArray(N);
+  for(let i=0;i<target.length;i++){
+    if(board[i] !== target[i]) return;
+  }
+  solved = true;
+  clearInterval(timerHandle);
+  winStats.innerHTML = "手数 <strong>" + moves + "</strong> ／ タイム <strong>" + timerEl.textContent + "</strong>";
+  winOverlay.classList.add("show");
+  saveBestIfNeeded();
+}
+
+function bestKey(){ return "slidepuzzle_best_" + N; }
+
+function saveBestIfNeeded(){
+  try{
+    const raw = localStorage.getItem(bestKey());
+    const current = raw ? JSON.parse(raw) : null;
+    const better = !current || moves < current.moves || (moves === current.moves && seconds < current.seconds);
+    if(better){
+      localStorage.setItem(bestKey(), JSON.stringify({ moves, seconds }));
+    }
+  }catch(e){ /* localStorageが使えない環境では記録をスキップ */ }
+  updateBestDisplay();
+}
+
+function updateBestDisplay(){
+  try{
+    const raw = localStorage.getItem(bestKey());
+    if(!raw){ bestRow.textContent = "まだこのモードの記録はありません"; return; }
+    const best = JSON.parse(raw);
+    const m = String(Math.floor(best.seconds/60)).padStart(2,"0");
+    const s = String(best.seconds%60).padStart(2,"0");
+    bestRow.innerHTML = "このモードのベスト記録：<strong>" + best.moves + "手 / " + m + ":" + s + "</strong>";
+  }catch(e){
+    bestRow.textContent = "";
+  }
+}
+
+window.addEventListener("resize", ()=>{ renderBoard(false); });
+
+shuffleBoard();
+</script>
+
+</body>
+</html>
