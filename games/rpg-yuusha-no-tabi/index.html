@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勇者の旅 〜三人のパーティー〜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#12101E;
+    --bg-deep-2:#1B1832;
+    --window:#1D1B33;
+    --gold:#E8C468;
+    --gold-deep:#B8934A;
+    --text:#F1EFEA;
+    --text-soft:#B4AFCB;
+    --hp:#6FCF97;
+    --hp-low:#E8607A;
+    --mp:#5AA9E6;
+    --enemy:#E86464;
+    --hero:#E8C468;
+    --aria:#B79CED;
+    --roi:#7FB0E0;
+    --radius:14px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; height:100%; }
+  body{
+    min-height:100vh;
+    background:var(--bg-deep);
+    color:var(--text);
+    font-family:"Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    overflow-x:hidden;
+  }
+  .screen{ display:none; min-height:100vh; }
+  .screen.show{ display:flex; }
+
+  /* ---------- Title ---------- */
+  #screen-title{
+    flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px 20px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(232,196,104,0.12), transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(127,176,224,0.10), transparent 45%),
+      var(--bg-deep);
+  }
+  .game-title{
+    font-family:"DotGothic16", monospace;
+    font-size:clamp(26px,7vw,40px);
+    color:var(--gold);
+    text-shadow:0 0 18px rgba(232,196,104,.5);
+    margin:0 0 10px;
+    letter-spacing:.06em;
+  }
+  .game-sub{ color:var(--text-soft); font-size:14px; margin-bottom:36px; max-width:360px; line-height:1.8; }
+  .start-game-btn{
+    font-family:"DotGothic16", monospace;
+    font-size:18px; letter-spacing:.1em;
+    background:linear-gradient(180deg, var(--gold), var(--gold-deep));
+    color:#241C0A; border:none; border-radius:10px; padding:16px 46px; cursor:pointer;
+    box-shadow:0 6px 0 #8a6a2c, 0 10px 18px rgba(0,0,0,.4);
+    transition:transform .1s ease;
+  }
+  .start-game-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #8a6a2c; }
+
+  /* ---------- Story / dialogue ---------- */
+  #screen-story{
+    flex-direction:column; justify-content:flex-end; min-height:100vh; position:relative;
+    transition:background 1.2s ease;
+  }
+  .bg-village{ background: linear-gradient(180deg, rgba(18,16,30,0.25), rgba(18,16,30,0.85)), url('bg_village.png') center/cover no-repeat; }
+  .bg-yamamichi{ background: linear-gradient(180deg, rgba(18,16,30,0.25), rgba(18,16,30,0.85)), url('bg_yamamichi.png') center/cover no-repeat; }
+  .bg-mori{ background: linear-gradient(180deg, rgba(18,16,30,0.25), rgba(18,16,30,0.85)), url('bg_mori.png') center/cover no-repeat; }
+  .bg-cave{ background: linear-gradient(180deg, rgba(18,16,30,0.25), rgba(18,16,30,0.85)), url('bg_dokutsu.png') center/cover no-repeat; }
+  .bg-ruins{ background: linear-gradient(180deg, rgba(18,16,30,0.25), rgba(18,16,30,0.85)), url('bg_iseki.png') center/cover no-repeat; }
+  .bg-castle{ background: linear-gradient(180deg, rgba(18,16,30,0.25), rgba(18,16,30,0.85)), url('bg_maoujou.png') center/cover no-repeat; }
+  .bg-end{ background: linear-gradient(180deg, rgba(18,16,30,0.25), rgba(18,16,30,0.85)), url('bg_ending.png') center/cover no-repeat; }
+
+  .story-stage{ flex:1; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; }
+  .story-portrait{ width:120px; height:auto; image-rendering:pixelated; filter:drop-shadow(0 10px 16px rgba(0,0,0,.5)); }
+
+  .dialogue-box{
+    margin:0 14px 20px; padding:18px 20px 20px;
+    background:var(--window);
+    border:2px solid var(--gold-deep);
+    border-radius:var(--radius);
+    box-shadow:0 12px 30px rgba(0,0,0,.5);
+    cursor:pointer;
+    min-height:100px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .dialogue-box.narration{ border-color:#575279; }
+  .dialogue-portrait{
+    width:56px; height:56px; flex-shrink:0; border-radius:10px; background:rgba(255,255,255,.05);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .dialogue-portrait img{ width:100%; height:100%; object-fit:contain; image-rendering:pixelated; }
+  .dialogue-body{ flex:1; }
+  .speaker-tag{
+    display:inline-block; margin-bottom:6px;
+    font-family:"DotGothic16", monospace;
+    font-size:13px; padding:3px 14px; border-radius:8px;
+    background:var(--gold); color:#241C0A; font-weight:700;
+  }
+  .dialogue-text{
+    font-size:15.5px; line-height:1.85; white-space:pre-wrap;
+  }
+  .dialogue-text.narration-text{
+    color:var(--text-soft); text-align:center; width:100%;
+  }
+  .next-hint{
+    position:absolute; bottom:6px; right:16px; font-size:11.5px; color:var(--gold);
+    animation:blink 1.3s infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.2;} }
+
+  /* ---------- Battle ---------- */
+  #screen-battle{
+    flex-direction:column; padding:18px 14px 24px; min-height:100vh;
+    transition:background 1.2s ease;
+  }
+  .battle-field{
+    display:flex; gap:14px; margin-bottom:14px;
+    background:rgba(15,14,28,0.55); border-radius:12px; padding:12px;
+  }
+  .enemy-side{ flex:1; min-width:0; }
+  .enemy-panel{ text-align:center; }
+  .enemy-name{ font-family:"DotGothic16", monospace; font-size:18px; color:var(--enemy); margin-bottom:8px; }
+  .enemy-avatar-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-bottom:10px; }
+  .enemy-avatar{
+    width:84px; max-width:100%; height:auto; image-rendering:pixelated;
+    filter:drop-shadow(0 0 16px rgba(232,100,100,.4));
+  }
+  .enemy-avatar.small{ width:44px; }
+  .hp-bar-wrap{ width:100%; max-width:220px; margin:0 auto; }
+  .bar-track{ background:#0F0E1C; border-radius:8px; height:12px; overflow:hidden; border:1px solid rgba(255,255,255,.08); }
+  .bar-fill{ height:100%; border-radius:8px; transition:width .3s ease; }
+  .bar-fill.hp{ background:linear-gradient(90deg, var(--hp), #4FAF77); }
+  .bar-fill.hp.low{ background:linear-gradient(90deg, var(--hp-low), #B8425A); }
+  .bar-fill.mp{ background:linear-gradient(90deg, var(--mp), #3A82B8); }
+  .bar-label{ font-size:11px; color:var(--text-soft); margin-top:3px; text-align:center; }
+
+  .party-row{ flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
+  .member-card{
+    background:var(--window); border:2px solid rgba(255,255,255,.06); border-radius:12px;
+    padding:10px 8px; text-align:center; transition:border-color .2s ease, opacity .2s ease;
+  }
+  .member-card.active-turn{ border-color:var(--gold); box-shadow:0 0 14px rgba(232,196,104,.35); }
+  .member-card.fainted{ opacity:.35; }
+  .member-card.covering{ border-color:var(--roi); }
+  .member-avatar-wrap{
+    width:48px; height:48px; margin:0 auto 6px; display:flex; align-items:center; justify-content:center;
+  }
+  .member-avatar-wrap img{ width:100%; height:100%; object-fit:contain; image-rendering:pixelated; }
+  .member-name{ font-size:12px; font-weight:700; margin-bottom:5px; }
+  .member-hp-num{ font-size:10.5px; color:var(--text-soft); margin-top:2px; }
+
+  .battle-log{
+    background:#0F0E1C; border:1.5px solid rgba(255,255,255,.08); border-radius:10px;
+    padding:10px 14px; font-size:13px; color:var(--text-soft); min-height:56px;
+    margin-bottom:14px; line-height:1.7;
+  }
+  .battle-log strong{ color:var(--text); }
+
+  .command-area{
+    background:rgba(15,14,28,0.55); border-radius:12px; padding:12px;
+  }
+  .command-title{ font-size:12.5px; color:var(--gold); margin-bottom:8px; font-weight:700; }
+  .command-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  @media (max-width:480px){
+    .battle-field{ flex-direction:column; }
+  }
+  .cmd-btn{
+    font-family:"Zen Kaku Gothic New", sans-serif; font-weight:800; font-size:14px;
+    background:var(--window); border:1.5px solid var(--gold-deep); color:var(--text);
+    border-radius:10px; padding:13px 8px; cursor:pointer; transition:all .12s ease;
+  }
+  .cmd-btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .cmd-btn:not(:disabled):active{ transform:scale(0.96); }
+  .cmd-btn.attack{ border-color:#E8607A; }
+  .cmd-btn.magic{ border-color:#5AA9E6; }
+  .cmd-btn.defend{ border-color:#6FCF97; }
+  .cmd-btn.item{ border-color:var(--gold); }
+
+  .battle-overlay{
+    position:fixed; inset:0; background:rgba(10,9,20,0.88);
+    display:none; align-items:center; justify-content:center; flex-direction:column; z-index:20;
+    text-align:center; padding:20px;
+  }
+  .battle-overlay.show{ display:flex; }
+  .overlay-title{ font-family:"DotGothic16", monospace; font-size:28px; margin-bottom:14px; }
+  .overlay-title.win{ color:var(--gold); text-shadow:0 0 20px rgba(232,196,104,.5); }
+  .overlay-title.lose{ color:var(--enemy); }
+  .overlay-desc{ color:var(--text-soft); font-size:13.5px; margin-bottom:22px; max-width:300px; line-height:1.8; }
+
+  /* ---------- End ---------- */
+  #screen-end{
+    flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ タイトル ============ -->
+<div class="screen show" id="screen-title">
+  <div class="game-title">勇者の旅<br>〜三人のパーティー〜</div>
+  <p class="game-sub">さらわれた王女を救うため、仲間と力を合わせ、試練を乗り越えて魔王に挑む、短編ロールプレイングゲームです。</p>
+  <button class="start-game-btn" onclick="startGame()">はじめる</button>
+</div>
+
+<!-- ============ ストーリー(対話) ============ -->
+<div class="screen" id="screen-story">
+  <div class="story-stage" id="story-stage"></div>
+  <div class="dialogue-box" id="dialogue-box" onclick="nextScene()">
+    <div class="dialogue-portrait" id="dialogue-portrait" style="display:none;"></div>
+    <div class="dialogue-body">
+      <div class="speaker-tag" id="speaker-tag" style="display:none;"></div>
+      <div class="dialogue-text" id="dialogue-text"></div>
+    </div>
+    <div class="next-hint">▶ タップして次へ</div>
+  </div>
+</div>
+
+<!-- ============ 戦闘 ============ -->
+<div class="screen" id="screen-battle">
+  <div class="battle-field">
+    <div class="enemy-side">
+      <div class="enemy-panel">
+        <div class="enemy-name" id="enemy-name"></div>
+        <div class="enemy-avatar-row" id="enemy-avatar-row"></div>
+        <div class="hp-bar-wrap">
+          <div class="bar-track"><div class="bar-fill hp" id="enemy-hp-fill"></div></div>
+          <div class="bar-label" id="enemy-hp-label"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="party-row" id="party-row"></div>
+  </div>
+
+  <div class="battle-log" id="battle-log"></div>
+
+  <div class="command-area">
+    <div class="command-title" id="command-title"></div>
+    <div class="command-grid" id="command-grid"></div>
+  </div>
+</div>
+
+<div class="battle-overlay" id="battle-overlay">
+  <div class="overlay-title" id="overlay-title"></div>
+  <div class="overlay-desc" id="overlay-desc"></div>
+  <button class="start-game-btn" id="overlay-btn"></button>
+</div>
+
+<!-- ============ エンド ============ -->
+<div class="screen" id="screen-end">
+  <div class="game-title" style="font-size:30px;">THE END</div>
+  <p class="game-sub" id="end-text"></p>
+  <button class="start-game-btn" onclick="restartGame()">もう一度はじめから遊ぶ</button>
+</div>
+
+<script>
+/* ===================== 画像アセット ===================== */
+const IMG = {
+  yuto: "yuto.svg",
+  aria: "aria.svg",
+  roi: "roi.svg",
+  bandit: "bandit.svg",
+  goblin1: "goblin_1.svg",
+  goblin2: "goblin_2.svg",
+  goblin3: "goblin_3.svg",
+  bat_king: "bat_king.svg",
+  stone_golem: "stone_golem.svg",
+  demon_zorgas: "demon_zorgas.svg",
+  princess: "princess.svg",
+  princess_captured: "princess_captured.svg",
+  item_herb: "item_herb.svg",
+  item_mana_drop: "item_mana_drop.svg",
+  item_life_root: "item_life_root.svg",
+  item_bronze_sword: "item_bronze_sword.svg",
+  item_magic_bracelet: "item_magic_bracelet.svg",
+  item_iron_shield: "item_iron_shield.svg",
+  item_holy_charm: "item_holy_charm.svg",
+  item_legendary_sword: "item_legendary_sword.svg"
+};
+
+/* ===================== マスターデータ ===================== */
+const PARTY_MASTER = {
+  hero: { name:"ユウト", img:IMG.yuto, maxHp:60, maxMp:20, atk:12,
+          magic:{ name:"ファイア", power:20, cost:10 } },
+  aria: { name:"アリア", img:IMG.aria, maxHp:42, maxMp:34, atk:6,
+          magic:{ name:"ファイアボール", power:18, cost:8 } },
+  roi:  { name:"ロイ",  img:IMG.roi,  maxHp:58, maxMp:12, atk:13,
+          skill:{ name:"かばう" } }
+};
+
+const BATTLES = {
+  bandit:        { enemy:{ name:"野盗",             maxHp:40,  atk:6,  imgs:[IMG.bandit] },        partyIds:["hero"] },
+  goblins:       { enemy:{ name:"ゴブリンの群れ",   maxHp:70,  atk:8,  imgs:[IMG.goblin1,IMG.goblin2,IMG.goblin3] }, partyIds:["hero","aria"] },
+  cave_guardian: { enemy:{ name:"洞窟のコウモリ王", maxHp:90,  atk:10, imgs:[IMG.bat_king] },       partyIds:["hero","aria"] },
+  golem_guardian:{ enemy:{ name:"石のゴーレム",     maxHp:140, atk:13, imgs:[IMG.stone_golem] },    partyIds:["hero","aria","roi"] },
+  demon_king:    { enemy:{ name:"魔王ゾルガス",     maxHp:220, atk:16, imgs:[IMG.demon_zorgas] },   partyIds:["hero","aria","roi"] },
+  zako_yamamichi: { enemy:{ name:"ならず者の手下", maxHp:25, atk:4, imgs:[IMG.bandit] }, partyIds:["hero"] },
+  zako_mori:      { enemy:{ name:"はぐれゴブリン", maxHp:32, atk:5, imgs:[IMG.goblin1] }, partyIds:["hero","aria"] },
+  zako_dokutsu:   { enemy:{ name:"森のコウモリ", maxHp:38, atk:6, imgs:[IMG.bat_king] }, partyIds:["hero","aria"] },
+  zako_iseki:     { enemy:{ name:"小さな土人形", maxHp:48, atk:7, imgs:[IMG.stone_golem] }, partyIds:["hero","aria","roi"] },
+  zako_castle:    { enemy:{ name:"魔王軍の兵士", maxHp:58, atk:9, imgs:[IMG.bandit] }, partyIds:["hero","aria","roi"] }
+};
+
+const PORTRAITS = {
+  "ユウト": IMG.yuto,
+  "アリア": IMG.aria,
+  "ロイ": IMG.roi,
+  "ゾルガス": IMG.demon_zorgas,
+  "プリシラ": IMG.princess
+};
+
+/* ===================== ストーリースクリプト ===================== */
+const STORY = [
+  { type:"narration", bg:"bg-village", text:"小さな村で平和に暮らしていた青年ユウトは、ある日、魔王ゾルガスの軍勢に王女プリシラがさらわれたという知らせを聞いた。" },
+  { type:"dialogue", speaker:"ユウト", text:"王女を救い出すため、僕は旅に出ることを決めた。" },
+  { type:"narration", bg:"bg-yamamichi", text:"旅立ったユウトは、まず村はずれの街道を進むことにした。" },
+  { type:"battle", battleId:"zako_yamamichi" },
+  { type:"dialogue", speaker:"ユウト", text:"一人での旅か……ちょっと心細いな。でも、プリシラを助けるためだ。" },
+  { type:"battle", battleId:"zako_yamamichi" },
+  { type:"battle", battleId:"zako_yamamichi" },
+  { type:"battle", battleId:"zako_yamamichi" },
+  { type:"battle", battleId:"zako_yamamichi" },
+  { type:"narration", text:"街道を抜けると、やがて山道へと差し掛かった。" },
+  { type:"narration", bg:"bg-yamamichi", text:"旅の途中、山道で盗賊に襲われている一人の魔法使いに出くわす。" },
+  { type:"dialogue", speaker:"アリア", text:"くっ……数が多すぎる……！誰か、助けて……！" },
+  { type:"dialogue", speaker:"ユウト", text:"大丈夫か！？ 僕が加勢する！" },
+  { type:"battle", battleId:"bandit" },
+  { type:"narration", text:"戦いの中で、ユウトは盗賊が落とした一振りの剣を拾った。", effect: ()=>{ state.heroWeaponTier = Math.max(state.heroWeaponTier, 1); } },
+  { type:"dialogue", speaker:"アリア", text:"助かったわ、ありがとう。その若さで、なかなかやるじゃない。" },
+  { type:"dialogue", speaker:"アリア", text:"私はアリア。旅の魔法使いよ。あなたの旅、私にも手伝わせてくれない？" },
+  { type:"dialogue", speaker:"ユウト", text:"心強いよ。一緒に来てくれ！" },
+  { type:"narration", text:"こうしてユウトとアリアは、王女を救うための旅を共にすることになった。" },
+  { type:"narration", text:"アリアと共に、二人は山道をさらに進んでいく。" },
+  { type:"battle", battleId:"zako_mori" },
+  { type:"dialogue", speaker:"アリア", text:"ねえユウト、意外と剣の扱いが様になってるじゃない。前から鍛えてたの？" },
+  { type:"dialogue", speaker:"ユウト", text:"村の自警団に少し教わってたんだ。役に立ってよかったよ。" },
+  { type:"battle", battleId:"zako_mori" },
+  { type:"battle", battleId:"zako_mori" },
+  { type:"battle", battleId:"zako_mori" },
+  { type:"battle", battleId:"zako_mori" },
+  { type:"narration", bg:"bg-mori", text:"深い森を抜けようとした二人の前に、ゴブリンの群れが立ちはだかる。" },
+  { type:"battle", battleId:"goblins" },
+  { type:"narration", text:"ゴブリンの群れの中に、魔力を帯びた腕輪を身につけた個体がいた。アリアがそれを譲り受ける。", effect: ()=>{ state.ariaMagicBoost = true; } },
+  { type:"narration", text:"ゴブリンを退けた先にあった古い祠で、ユウトは炎の魔法の心得が記された石板を見つけた。" },
+  { type:"dialogue", speaker:"ユウト", text:"……これは、炎の魔法……！ 僕にも使えるようになるかもしれない。" },
+  { type:"narration", text:"ユウトはファイアの魔法を身につけた。", effect: ()=>{ state.heroLearnedMagic = true; } },
+  { type:"narration", text:"森を抜けた二人は、噂に聞く洞窟を目指してさらに歩みを進めた。" },
+  { type:"battle", battleId:"zako_dokutsu" },
+  { type:"dialogue", speaker:"アリア", text:"さっきの魔法、筋がいいわね。もしかしたら才能があるのかも。" },
+  { type:"dialogue", speaker:"ユウト", text:"ありがとう。アリアの魔法を見て、僕も頑張らないとって思ったんだ。" },
+  { type:"battle", battleId:"zako_dokutsu" },
+  { type:"battle", battleId:"zako_dokutsu" },
+  { type:"battle", battleId:"zako_dokutsu" },
+  { type:"battle", battleId:"zako_dokutsu" },
+  { type:"narration", bg:"bg-cave", text:"その先の洞窟の奥から、獣のうなり声と共に、誰かの怒声が聞こえてくる。" },
+  { type:"dialogue", speaker:"ロイ", text:"くそっ……このコウモリ、思ったより手強いな……！ 誰か手を貸してくれ！" },
+  { type:"battle", battleId:"cave_guardian" },
+  { type:"narration", text:"ロイは、コウモリの巣にあった頑丈な鉄の大盾を手に入れた。", effect: ()=>{ state.roiShieldObtained = true; } },
+  { type:"dialogue", speaker:"ロイ", text:"助かったぜ……！ 俺はロイ、流れの戦士だ。腕力にはちょっとした自信がある。" },
+  { type:"dialogue", speaker:"アリア", text:"頼れる戦士がいると心強いわね。一緒に来ない？" },
+  { type:"dialogue", speaker:"ロイ", text:"おう、面白そうだ。俺もその王女様とやらを助ける旅、乗らせてもらうぜ。" },
+  { type:"narration", text:"ユウト、アリア、ロイ。三人の絆が、ここに結ばれた。" },
+  { type:"narration", text:"ロイを加えた三人は、伝説の剣が眠るという遺跡を目指して洞窟を後にした。" },
+  { type:"battle", battleId:"zako_iseki" },
+  { type:"dialogue", speaker:"ロイ", text:"三人になると、やっぱり心強いな。俺は前衛に回るから、二人は後ろから援護を頼むぜ。" },
+  { type:"dialogue", speaker:"アリア", text:"了解。頼りにしてるわよ、ロイ。" },
+  { type:"battle", battleId:"zako_iseki" },
+  { type:"battle", battleId:"zako_iseki" },
+  { type:"battle", battleId:"zako_iseki" },
+  { type:"battle", battleId:"zako_iseki" },
+  { type:"narration", bg:"bg-ruins", text:"魔王城へ向かう途中、伝説の剣が眠るという遺跡にたどり着いた三人。しかし、剣は石のゴーレムに守られていた。" },
+  { type:"battle", battleId:"golem_guardian" },
+  { type:"narration", text:"ゴーレムを打ち破り、ユウトは伝説の剣を手に入れた！", effect: ()=>{ state.heroWeaponTier = 2; } },
+  { type:"dialogue", speaker:"ユウト", text:"この剣があれば……きっと魔王にも立ち向かえる。" },
+  { type:"narration", text:"伝説の剣を手にした三人は、いよいよ魔王城を目指して歩き出した。" },
+  { type:"dialogue", speaker:"ユウト", text:"いよいよだね……正直、少し怖いよ。" },
+  { type:"dialogue", speaker:"ロイ", text:"怖くて当然だ。それでも進むのが勇気ってもんだろ。" },
+  { type:"dialogue", speaker:"アリア", text:"大丈夫、私たちがついてるわ。" },
+  { type:"battle", battleId:"zako_castle" },
+  { type:"battle", battleId:"zako_castle" },
+  { type:"battle", battleId:"zako_castle" },
+  { type:"battle", battleId:"zako_castle" },
+  { type:"battle", battleId:"zako_castle" },
+  { type:"narration", text:"道中の祠で、聖なる力を宿したお守りを見つけた。", effect: ()=>{ state.holyCharmObtained = true; } },
+  { type:"narration", bg:"bg-castle", text:"ついに三人は魔王城にたどり着いた。玉座には、魔王ゾルガスと、囚われの王女プリシラの姿があった。" },
+  { type:"narration", bg:"bg-castle", image:IMG.princess_captured, imageAlt:"囚われのプリシラ", text:"鎖に繋がれたプリシラは、うつむいたまま静かに涙をこらえていた。" },
+  { type:"dialogue", speaker:"ゾルガス", text:"ほう、ここまで辿り着くとはな、小僧。だが……ここが貴様らの墓場だ。" },
+  { type:"dialogue", speaker:"プリシラ", text:"ユウト……！ 来てくれたのですね……！" },
+  { type:"dialogue", speaker:"ユウト", text:"プリシラ、必ず助け出す。みんな、行くぞ！" },
+  { type:"battle", battleId:"demon_king" },
+  { type:"narration", bg:"bg-end", text:"魔王ゾルガスは光の粒子となって消えていった。城を包んでいた禍々しい気配も、静かに晴れていく。" },
+  { type:"dialogue", speaker:"プリシラ", text:"ユウト、アリアさん、ロイさん……本当にありがとう。皆さんのおかげで助かりました。" },
+  { type:"dialogue", speaker:"ユウト", text:"無事でよかった……。これで、僕たちの旅も終わりだね。" },
+  { type:"narration", text:"こうして、ユウトたちの冒険は幕を閉じた。三人と王女の絆は、これからも続いていく。" },
+  { type:"end" }
+];
+
+/* ===================== 状態 ===================== */
+let state = {
+  heroLearnedMagic:false, heroWeaponTier:0,
+  ariaMagicBoost:false, roiShieldObtained:false, holyCharmObtained:false,
+  inventory:{ herb:2, manaDrop:0, lifeRoot:0 }
+};
+let sceneIndex = 0;
+let currentBg = "bg-village";
+let battleState = null;
+let currentBattleId = null;
+let itemMenuOpen = false;
+const BG_CLASSES = ["bg-village","bg-yamamichi","bg-mori","bg-cave","bg-ruins","bg-castle","bg-end"];
+const ZAKO_BATTLE_IDS = ["zako_yamamichi","zako_mori","zako_dokutsu","zako_iseki","zako_castle"];
+const ITEM_DEFS = {
+  herb:     { name:"やくそう",       kind:"hp" },
+  manaDrop: { name:"マナのしずく",   kind:"mp" },
+  lifeRoot: { name:"げんきのねっこ", kind:"hp" }
+};
+
+const screens = {
+  title: document.getElementById("screen-title"),
+  story: document.getElementById("screen-story"),
+  battle: document.getElementById("screen-battle"),
+  end: document.getElementById("screen-end")
+};
+
+function showScreen(name){
+  Object.values(screens).forEach(s => s.classList.remove("show"));
+  screens[name].classList.add("show");
+}
+
+/* ===================== ゲーム開始 / リスタート ===================== */
+function startGame(){
+  state = {
+    heroLearnedMagic:false, heroWeaponTier:0,
+    ariaMagicBoost:false, roiShieldObtained:false, holyCharmObtained:false,
+    inventory:{ herb:2, manaDrop:0, lifeRoot:0 }
+  };
+  sceneIndex = 0;
+  showScreen("story");
+  renderScene();
+}
+function restartGame(){ startGame(); }
+
+/* ===================== ストーリー進行 ===================== */
+function renderScene(){
+  const scene = STORY[sceneIndex];
+  if(!scene) return;
+  if(scene.effect) scene.effect();
+
+  if(scene.type === "battle"){
+    startBattle(scene.battleId);
+    return;
+  }
+  if(scene.type === "end"){
+    document.getElementById("end-text").textContent = "ユウトたちの物語は、ここで一区切り。もう一度最初から冒険をやり直すこともできます。";
+    showScreen("end");
+    return;
+  }
+
+  showScreen("story");
+  if(scene.bg){ currentBg = scene.bg; }
+  screens.story.className = "screen show " + currentBg;
+
+  const stage = document.getElementById("story-stage");
+  const box = document.getElementById("dialogue-box");
+  const portraitWrap = document.getElementById("dialogue-portrait");
+  const tag = document.getElementById("speaker-tag");
+  const text = document.getElementById("dialogue-text");
+
+  stage.innerHTML = "";
+
+  if(scene.type === "dialogue"){
+    box.classList.remove("narration");
+    tag.style.display = "inline-block";
+    tag.textContent = scene.speaker;
+    text.classList.remove("narration-text");
+
+    const portraitSrc = PORTRAITS[scene.speaker];
+    if(portraitSrc){
+      const smoothStyle = portraitSrc.endsWith(".png") ? ' style="image-rendering:auto;"' : "";
+      portraitWrap.style.display = "flex";
+      portraitWrap.innerHTML = '<img src="' + portraitSrc + '" alt="' + scene.speaker + '"' + smoothStyle + '>';
+      stage.innerHTML = '<img class="story-portrait" src="' + portraitSrc + '" alt="' + scene.speaker + '"' + smoothStyle + '>';
+    } else {
+      portraitWrap.style.display = "none";
+      portraitWrap.innerHTML = "";
+    }
+  } else {
+    box.classList.add("narration");
+    tag.style.display = "none";
+    text.classList.add("narration-text");
+    portraitWrap.style.display = "none";
+    portraitWrap.innerHTML = "";
+
+    if(scene.image){
+      stage.innerHTML = '<img class="story-portrait" style="width:70%;max-width:260px;image-rendering:auto;" src="' + scene.image + '" alt="' + (scene.imageAlt || "") + '">';
+    }
+  }
+  text.textContent = scene.text;
+}
+
+function nextScene(){
+  sceneIndex++;
+  renderScene();
+}
+
+/* ===================== 戦闘 ===================== */
+function startBattle(battleId){
+  currentBattleId = battleId;
+  itemMenuOpen = false;
+  const cfg = BATTLES[battleId];
+  const HERO_WEAPON_ATK_BONUS = { 0:0, 1:3, 2:8 };
+  const members = cfg.partyIds.map(id=>{
+    const base = PARTY_MASTER[id];
+    const atkBonus = (id === "hero") ? HERO_WEAPON_ATK_BONUS[state.heroWeaponTier] : 0;
+    let magic = (id === "hero" && !state.heroLearnedMagic) ? null : (base.magic ? { ...base.magic } : null);
+    if(magic && id === "aria" && state.ariaMagicBoost){ magic.power = base.magic.power + 4; }
+    return {
+      key:id, name:base.name, img:base.img,
+      maxHp:base.maxHp, hp:base.maxHp,
+      maxMp:base.maxMp, mp:base.maxMp,
+      atk: base.atk + atkBonus,
+      magic: magic,
+      skill: base.skill || null,
+      hasIronShield: (id === "roi" && state.roiShieldObtained),
+      defending:false, covering:false, alive:true
+    };
+  });
+  battleState = {
+    enemy:{ name:cfg.enemy.name, hp:cfg.enemy.maxHp, maxHp:cfg.enemy.maxHp, atk:cfg.enemy.atk, imgs:cfg.enemy.imgs },
+    members, turnIndex:0,
+    log:[cfg.enemy.name + "が現れた！"]
+  };
+  showScreen("battle");
+  screens.battle.classList.remove(...BG_CLASSES);
+  screens.battle.classList.add(currentBg);
+  document.getElementById("battle-overlay").classList.remove("show");
+  renderBattle();
+}
+
+function randDamage(power){
+  return Math.max(1, Math.round(power * (0.85 + Math.random()*0.3)));
+}
+
+function currentActor(){ return battleState.members[battleState.turnIndex]; }
+
+function renderBattle(){
+  const b = battleState;
+  document.getElementById("enemy-name").textContent = b.enemy.name;
+  const avatarRow = document.getElementById("enemy-avatar-row");
+  avatarRow.innerHTML = b.enemy.imgs.map(src =>
+    '<img class="enemy-avatar' + (b.enemy.imgs.length>1 ? ' small' : '') + '" src="' + src + '" alt="' + b.enemy.name + '">'
+  ).join("");
+
+  const enemyPct = Math.max(0, (b.enemy.hp / b.enemy.maxHp) * 100);
+  const enemyFill = document.getElementById("enemy-hp-fill");
+  enemyFill.style.width = enemyPct + "%";
+  enemyFill.className = "bar-fill hp" + (enemyPct <= 30 ? " low" : "");
+  document.getElementById("enemy-hp-label").textContent = "HP " + Math.max(0,b.enemy.hp) + " / " + b.enemy.maxHp;
+
+  const partyRow = document.getElementById("party-row");
+  partyRow.innerHTML = "";
+  b.members.forEach((m, idx)=>{
+    const card = document.createElement("div");
+    card.className = "member-card"
+      + (idx === b.turnIndex && m.alive ? " active-turn" : "")
+      + (!m.alive ? " fainted" : "")
+      + (m.covering ? " covering" : "");
+    const hpPct = Math.max(0,(m.hp / m.maxHp) * 100);
+    card.innerHTML = `
+      <div class="member-avatar-wrap"><img src="${m.img}" alt="${m.name}"></div>
+      <div class="member-name">${m.name}${!m.alive ? "(戦闘不能)" : ""}${m.covering ? "(かばう中)" : ""}</div>
+      <div class="bar-track"><div class="bar-fill ${hpPct<=30?'hp low':'hp'}" style="width:${hpPct}%;"></div></div>
+      <div class="member-hp-num">HP ${m.hp}/${m.maxHp}</div>
+      ${m.maxMp>0 ? `<div class="bar-track" style="margin-top:4px;"><div class="bar-fill mp" style="width:${(m.mp/m.maxMp)*100}%;"></div></div><div class="member-hp-num">MP ${m.mp}/${m.maxMp}</div>` : ""}
+    `;
+    partyRow.appendChild(card);
+  });
+
+  document.getElementById("battle-log").innerHTML = b.log.slice(-4).map(l=>"・"+l).join("<br>");
+
+  const actor = currentActor();
+  const cmdTitle = document.getElementById("command-title");
+  const cmdGrid = document.getElementById("command-grid");
+  if(!actor || !actor.alive){
+    cmdTitle.textContent = "";
+    cmdGrid.innerHTML = "";
+    return;
+  }
+  cmdGrid.innerHTML = "";
+
+  if(itemMenuOpen){
+    cmdTitle.textContent = "どうぐをえらぶ";
+    renderItemMenu(cmdGrid);
+    return;
+  }
+
+  cmdTitle.textContent = actor.name + " のターン";
+
+  const atkBtn = document.createElement("button");
+  atkBtn.className = "cmd-btn attack";
+  atkBtn.textContent = "たたかう";
+  atkBtn.onclick = doAttack;
+  cmdGrid.appendChild(atkBtn);
+
+  const secondBtn = document.createElement("button");
+  secondBtn.className = "cmd-btn magic";
+  if(actor.magic){
+    const canCast = actor.mp >= actor.magic.cost;
+    secondBtn.textContent = actor.magic.name + "(MP" + actor.magic.cost + ")";
+    secondBtn.disabled = !canCast;
+    secondBtn.onclick = doMagic;
+  } else if(actor.skill){
+    secondBtn.textContent = actor.skill.name;
+    secondBtn.disabled = actor.covering;
+    secondBtn.onclick = doGuardSkill;
+  } else {
+    secondBtn.textContent = "まほう(未習得)";
+    secondBtn.disabled = true;
+  }
+  cmdGrid.appendChild(secondBtn);
+
+  const defBtn = document.createElement("button");
+  defBtn.className = "cmd-btn defend";
+  defBtn.textContent = "ぼうぎょ";
+  defBtn.onclick = doDefend;
+  cmdGrid.appendChild(defBtn);
+
+  const itemBtn = document.createElement("button");
+  itemBtn.className = "cmd-btn item";
+  itemBtn.textContent = "どうぐ";
+  const totalItems = state.inventory.herb + state.inventory.manaDrop + state.inventory.lifeRoot;
+  itemBtn.disabled = totalItems <= 0;
+  itemBtn.onclick = () => { itemMenuOpen = true; renderBattle(); };
+  cmdGrid.appendChild(itemBtn);
+}
+
+function lowestHpAliveMember(){
+  const alive = battleState.members.filter(m=>m.alive);
+  if(alive.length === 0) return null;
+  return alive.reduce((a,b)=> (a.hp/a.maxHp) <= (b.hp/b.maxHp) ? a : b);
+}
+
+function lowestMpAliveMember(){
+  const alive = battleState.members.filter(m=>m.alive && m.maxMp > 0);
+  if(alive.length === 0) return null;
+  return alive.reduce((a,b)=> (a.mp/a.maxMp) <= (b.mp/b.maxMp) ? a : b);
+}
+
+function renderItemMenu(cmdGrid){
+  Object.keys(ITEM_DEFS).forEach(key=>{
+    const count = state.inventory[key];
+    if(count <= 0) return;
+    const def = ITEM_DEFS[key];
+    const btn = document.createElement("button");
+    btn.className = "cmd-btn item";
+    btn.textContent = def.name + "(" + count + ")";
+    if(def.kind === "mp" && !lowestMpAliveMember()){
+      btn.disabled = true;
+    } else {
+      btn.onclick = () => useItem(key);
+    }
+    cmdGrid.appendChild(btn);
+  });
+
+  const backBtn = document.createElement("button");
+  backBtn.className = "cmd-btn defend";
+  backBtn.textContent = "もどる";
+  backBtn.onclick = () => { itemMenuOpen = false; renderBattle(); };
+  cmdGrid.appendChild(backBtn);
+}
+
+function useItem(key){
+  if(state.inventory[key] <= 0) return;
+  const actor = currentActor();
+  let msg;
+  if(key === "herb"){
+    const target = lowestHpAliveMember();
+    const healed = Math.min(target.maxHp - target.hp, 25);
+    target.hp += healed;
+    msg = actor.name + "はやくそうを使った！ " + target.name + "のHPが" + healed + "回復した！";
+  } else if(key === "manaDrop"){
+    const target = lowestMpAliveMember();
+    if(!target) return;
+    const healed = Math.min(target.maxMp - target.mp, 15);
+    target.mp += healed;
+    msg = actor.name + "はマナのしずくを使った！ " + target.name + "のMPが" + healed + "回復した！";
+  } else if(key === "lifeRoot"){
+    const target = lowestHpAliveMember();
+    const healed = target.maxHp - target.hp;
+    target.hp = target.maxHp;
+    msg = actor.name + "はげんきのねっこを使った！ " + target.name + "のHPが" + healed + "回復した！";
+  }
+  state.inventory[key]--;
+  pushLog(msg);
+  itemMenuOpen = false;
+  advanceTurn();
+}
+
+function doAttack(){
+  const actor = currentActor();
+  const dmg = randDamage(actor.atk);
+  battleState.enemy.hp = Math.max(0, battleState.enemy.hp - dmg);
+  pushLog(actor.name + "の攻撃！ " + battleState.enemy.name + "に" + dmg + "のダメージ！");
+  afterPlayerAction();
+}
+
+function doMagic(){
+  const actor = currentActor();
+  if(!actor.magic || actor.mp < actor.magic.cost) return;
+  actor.mp -= actor.magic.cost;
+  const dmg = randDamage(actor.magic.power);
+  battleState.enemy.hp = Math.max(0, battleState.enemy.hp - dmg);
+  pushLog(actor.name + "の" + actor.magic.name + "！ " + battleState.enemy.name + "に" + dmg + "のダメージ！");
+  afterPlayerAction();
+}
+
+function doGuardSkill(){
+  const actor = currentActor();
+  battleState.members.forEach(m=> m.covering = false);
+  actor.covering = true;
+  pushLog(actor.name + "は「" + actor.skill.name + "」の構えを見せた！ 次の攻撃を引きつける！");
+  advanceTurn();
+}
+
+function doDefend(){
+  const actor = currentActor();
+  actor.defending = true;
+  pushLog(actor.name + "は身を守っている。");
+  advanceTurn();
+}
+
+function pushLog(msg){ battleState.log.push(msg); }
+
+function afterPlayerAction(){
+  if(battleState.enemy.hp <= 0){
+    renderBattle();
+    onVictory();
+    return;
+  }
+  advanceTurn();
+}
+
+function advanceTurn(){
+  battleState.turnIndex++;
+  while(battleState.turnIndex < battleState.members.length && !battleState.members[battleState.turnIndex].alive){
+    battleState.turnIndex++;
+  }
+  if(battleState.turnIndex >= battleState.members.length){
+    enemyTurn();
+  } else {
+    renderBattle();
+  }
+}
+
+function enemyTurn(){
+  const alive = battleState.members.filter(m=>m.alive);
+  if(alive.length === 0){ onDefeat(); return; }
+  const coveringMember = alive.find(m=>m.covering);
+  const target = coveringMember || alive[Math.floor(Math.random()*alive.length)];
+  let dmg = randDamage(battleState.enemy.atk);
+  if(target.defending) dmg = Math.round(dmg * 0.5);
+  if(target.hasIronShield) dmg = Math.floor(dmg * 0.8);
+  if(state.holyCharmObtained) dmg = Math.floor(dmg * 0.9);
+  target.hp = Math.max(0, target.hp - dmg);
+  pushLog(battleState.enemy.name + "の攻撃！ " + target.name + "に" + dmg + "のダメージ！"
+    + (target.defending ? "(防御で軽減)" : "")
+    + (coveringMember ? "(かばって受け止めた！)" : ""));
+  if(target.hp <= 0){
+    target.alive = false;
+    pushLog(target.name + "は倒れてしまった……");
+  }
+  battleState.members.forEach(m=>{ m.defending = false; m.covering = false; });
+  battleState.turnIndex = 0;
+  while(battleState.turnIndex < battleState.members.length && !battleState.members[battleState.turnIndex].alive){
+    battleState.turnIndex++;
+  }
+  if(battleState.members.every(m=>!m.alive)){
+    renderBattle();
+    onDefeat();
+    return;
+  }
+  renderBattle();
+}
+
+function rollItemDrop(){
+  if(Math.random() < 0.10){ state.inventory.lifeRoot++; return "げんきのねっこ"; }
+  if(Math.random() < 0.25){ state.inventory.manaDrop++; return "マナのしずく"; }
+  if(Math.random() < 0.40){ state.inventory.herb++; return "やくそう"; }
+  return null;
+}
+
+function onVictory(){
+  const overlay = document.getElementById("battle-overlay");
+  document.getElementById("overlay-title").className = "overlay-title win";
+  document.getElementById("overlay-title").textContent = "勝利！";
+  let desc = battleState.enemy.name + "を倒した！";
+  if(ZAKO_BATTLE_IDS.includes(currentBattleId)){
+    const item = rollItemDrop();
+    if(item) desc += " " + item + "を手に入れた！";
+  }
+  document.getElementById("overlay-desc").textContent = desc;
+  const btn = document.getElementById("overlay-btn");
+  btn.textContent = "つづきへ";
+  btn.onclick = () => { overlay.classList.remove("show"); nextScene(); };
+  overlay.classList.add("show");
+}
+
+function onDefeat(){
+  const overlay = document.getElementById("battle-overlay");
+  document.getElementById("overlay-title").className = "overlay-title lose";
+  document.getElementById("overlay-title").textContent = "全滅……";
+  document.getElementById("overlay-desc").textContent = "パーティーは力尽きてしまった。もう一度この戦いに挑戦しよう。";
+  const btn = document.getElementById("overlay-btn");
+  btn.textContent = "もう一度挑戦する";
+  btn.onclick = () => { overlay.classList.remove("show"); startBattle(currentBattleId); };
+  overlay.classList.add("show");
+}
+</script>
+
+</body>
+</html>
