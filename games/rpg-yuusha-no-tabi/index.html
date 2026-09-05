@@ -301,16 +301,16 @@ const PARTY_MASTER = {
 };
 
 const BATTLES = {
-  bandit:        { enemy:{ name:"野盗",             maxHp:40,  atk:6,  imgs:[IMG.bandit] },        partyIds:["hero"] },
-  goblins:       { enemy:{ name:"ゴブリンの群れ",   maxHp:70,  atk:8,  imgs:[IMG.goblin1,IMG.goblin2,IMG.goblin3] }, partyIds:["hero","aria"] },
-  cave_guardian: { enemy:{ name:"洞窟のコウモリ王", maxHp:90,  atk:10, imgs:[IMG.bat_king] },       partyIds:["hero","aria"] },
-  golem_guardian:{ enemy:{ name:"石のゴーレム",     maxHp:140, atk:13, imgs:[IMG.stone_golem] },    partyIds:["hero","aria","roi"] },
-  demon_king:    { enemy:{ name:"魔王ゾルガス",     maxHp:220, atk:16, imgs:[IMG.demon_zorgas] },   partyIds:["hero","aria","roi"] },
-  zako_yamamichi: { enemy:{ name:"ならず者の手下", maxHp:25, atk:4, imgs:[IMG.bandit] }, partyIds:["hero"] },
-  zako_mori:      { enemy:{ name:"はぐれゴブリン", maxHp:32, atk:5, imgs:[IMG.goblin1] }, partyIds:["hero","aria"] },
-  zako_dokutsu:   { enemy:{ name:"森のコウモリ", maxHp:38, atk:6, imgs:[IMG.bat_king] }, partyIds:["hero","aria"] },
-  zako_iseki:     { enemy:{ name:"小さな土人形", maxHp:48, atk:7, imgs:[IMG.stone_golem] }, partyIds:["hero","aria","roi"] },
-  zako_castle:    { enemy:{ name:"魔王軍の兵士", maxHp:58, atk:9, imgs:[IMG.bandit] }, partyIds:["hero","aria","roi"] }
+  bandit:        { enemy:{ name:"野盗",             maxHp:55,  atk:9,  imgs:[IMG.bandit], attacksPerRound:1 },        partyIds:["hero"] },
+  goblins:       { enemy:{ name:"ゴブリンの群れ",   maxHp:110, atk:13, imgs:[IMG.goblin1,IMG.goblin2,IMG.goblin3], attacksPerRound:1 }, partyIds:["hero","aria"] },
+  cave_guardian: { enemy:{ name:"洞窟のコウモリ王", maxHp:150, atk:16, imgs:[IMG.bat_king], attacksPerRound:1 },       partyIds:["hero","aria"] },
+  golem_guardian:{ enemy:{ name:"石のゴーレム",     maxHp:230, atk:18, imgs:[IMG.stone_golem], attacksPerRound:2 },   partyIds:["hero","aria","roi"] },
+  demon_king:    { enemy:{ name:"魔王ゾルガス",     maxHp:380, atk:12, imgs:[IMG.demon_zorgas], attacksPerRound:2 },  partyIds:["hero","aria","roi"] },
+  zako_yamamichi: { enemy:{ name:"ならず者の手下", maxHp:45, atk:9,  imgs:[IMG.bandit], attacksPerRound:1 }, partyIds:["hero"] },
+  zako_mori:      { enemy:{ name:"はぐれゴブリン", maxHp:60, atk:11, imgs:[IMG.goblin1], attacksPerRound:1 }, partyIds:["hero","aria"] },
+  zako_dokutsu:   { enemy:{ name:"森のコウモリ",   maxHp:75, atk:13, imgs:[IMG.bat_king], attacksPerRound:1 }, partyIds:["hero","aria"] },
+  zako_iseki:     { enemy:{ name:"小さな土人形",   maxHp:95, atk:15, imgs:[IMG.stone_golem], attacksPerRound:2 }, partyIds:["hero","aria","roi"] },
+  zako_castle:    { enemy:{ name:"魔王軍の兵士",   maxHp:120, atk:18, imgs:[IMG.bandit], attacksPerRound:2 }, partyIds:["hero","aria","roi"] }
 };
 
 const PORTRAITS = {
@@ -537,7 +537,7 @@ function startBattle(battleId){
     };
   });
   battleState = {
-    enemy:{ name:cfg.enemy.name, hp:cfg.enemy.maxHp, maxHp:cfg.enemy.maxHp, atk:cfg.enemy.atk, imgs:cfg.enemy.imgs },
+    enemy:{ name:cfg.enemy.name, hp:cfg.enemy.maxHp, maxHp:cfg.enemy.maxHp, atk:cfg.enemy.atk, imgs:cfg.enemy.imgs, attacksPerRound:cfg.enemy.attacksPerRound || 1 },
     members, turnIndex:0,
     log:[cfg.enemy.name + "が現れた！"]
   };
@@ -764,21 +764,25 @@ function advanceTurn(){
 }
 
 function enemyTurn(){
-  const alive = battleState.members.filter(m=>m.alive);
-  if(alive.length === 0){ onDefeat(); return; }
-  const coveringMember = alive.find(m=>m.covering);
-  const target = coveringMember || alive[Math.floor(Math.random()*alive.length)];
-  let dmg = randDamage(battleState.enemy.atk);
-  if(target.defending) dmg = Math.round(dmg * 0.5);
-  if(target.hasIronShield) dmg = Math.floor(dmg * 0.8);
-  if(state.holyCharmObtained) dmg = Math.floor(dmg * 0.9);
-  target.hp = Math.max(0, target.hp - dmg);
-  pushLog(battleState.enemy.name + "の攻撃！ " + target.name + "に" + dmg + "のダメージ！"
-    + (target.defending ? "(防御で軽減)" : "")
-    + (coveringMember ? "(かばって受け止めた！)" : ""));
-  if(target.hp <= 0){
-    target.alive = false;
-    pushLog(target.name + "は倒れてしまった……");
+  if(battleState.members.every(m=>!m.alive)){ onDefeat(); return; }
+  const attacksPerRound = battleState.enemy.attacksPerRound || 1;
+  for(let i=0; i<attacksPerRound; i++){
+    const alive = battleState.members.filter(m=>m.alive);
+    if(alive.length === 0) break;
+    const coveringMember = alive.find(m=>m.covering);
+    const target = coveringMember || alive[Math.floor(Math.random()*alive.length)];
+    let dmg = randDamage(battleState.enemy.atk);
+    if(target.defending) dmg = Math.round(dmg * 0.5);
+    if(target.hasIronShield) dmg = Math.floor(dmg * 0.8);
+    if(state.holyCharmObtained) dmg = Math.floor(dmg * 0.9);
+    target.hp = Math.max(0, target.hp - dmg);
+    pushLog(battleState.enemy.name + "の攻撃！ " + target.name + "に" + dmg + "のダメージ！"
+      + (target.defending ? "(防御で軽減)" : "")
+      + (coveringMember ? "(かばって受け止めた！)" : ""));
+    if(target.hp <= 0){
+      target.alive = false;
+      pushLog(target.name + "は倒れてしまった……");
+    }
   }
   battleState.members.forEach(m=>{ m.defending = false; m.covering = false; });
   battleState.turnIndex = 0;
