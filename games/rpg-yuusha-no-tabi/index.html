@@ -963,13 +963,19 @@ function eventIconSrc(key){ return (key && EVENT_ICON[key]) || null; }
 // ・音声ファイルが読めない/再生できない場合は無視して進行する(BGMなしで続行)。
 const BGM = {
   path: "assets/audio/",
+  // タイトル明け〜難易度選択の曲、本編プロローグの曲は assets/bgm/ に半角英数字の別名で
+  // 配置しているため、ここでベース名→フルパスを対応づける(未登録の曲は path + name + ".mp3")。
+  customPath: {
+    "bgm-opening":  "assets/bgm/new-chapter-portfolio.mp3", // タイトル明け〜オープニング〜難易度選択(New Chapter Portfolio)
+    "bgm-prologue": "assets/bgm/kurojiro-no-kane.mp3"       // 本編プロローグ3場面(「黒城の鐘」無印。ラスボスの「黒城の鐘2」とは別ファイル)
+  },
   volume: 0.55,
   fadeMs: 900,
   region: {
-    "bg-prologue":   "bgm-village",  // プロローグ(魔王がプリシラをさらう場面)。導入と同じ曲でつなぐ
-    "bg-prologue-2": "bgm-village",  // プロローグ(追放される青年)
-    "bg-prologue-3": "bgm-village",  // プロローグ(魔王として村に戻る)
-    "bg-village":  "bgm-village",  // 導入(村)
+    "bg-prologue":   "bgm-prologue", // プロローグ(魔王がプリシラをさらう場面)
+    "bg-prologue-2": "bgm-prologue", // プロローグ(追放される青年)
+    "bg-prologue-3": "bgm-prologue", // プロローグ(魔王として村に戻る)
+    "bg-village":  "bgm-village",  // 導入(村)。プロローグが明けてここで村の曲へ切り替わる
     "bg-yamamichi":"bgm-yamamichi",
     "bg-mori":     "bgm-mori",
     "bg-cave":     "bgm-doukutsu",
@@ -993,6 +999,9 @@ const BOSS_INTRO_LINES = {
   demon_king:     "「ほう、ここまで辿り着くとはな、小僧。だが……ここが貴様らの墓場だ」"
 };
 // ※ bgm-prep.mp3(準備画面用)は openPrep()/closePrep() 側で setBgm("bgm-prep") として使用。
+// ※ "bgm-opening"(タイトル明け〜難易度選択)は openDifficultySelect() で、
+//    "bgm-prologue"(本編プロローグ)は region マップ経由の renderScene() で切り替わる。
+//    どちらも実体は assets/bgm/ 配下(BGM.customPath 参照)。
 
 const audioMgr = { track:null, name:null, desired:null, unlocked:false };
 
@@ -1023,7 +1032,8 @@ function applyBgm(){
   audioMgr.track = null;
   audioMgr.name = target;
   if(!target) return; // 無音区間
-  const next = new Audio(BGM.path + target + ".mp3");
+  const src = (BGM.customPath && BGM.customPath[target]) || (BGM.path + target + ".mp3");
+  const next = new Audio(src);
   next.loop = (BGM.noLoop.indexOf(target) < 0); // エンディング曲などは1回再生で停止
   next.volume = 0;
   const p = next.play();
@@ -1139,6 +1149,10 @@ function openDifficultySelect(){
   // クリア率の表示を HARD_CLEAR_RATE の1箇所から流し込む
   const rateEls = document.querySelectorAll ? document.querySelectorAll(".js-hard-rate") : [];
   Array.prototype.forEach.call(rateEls, el => { el.textContent = HARD_CLEAR_RATE; });
+  // タイトル明け〜オープニング〜難易度選択の間はオープニング曲をループ。
+  // (初回はこの直前に enterFromTitle() が unlockAudio() 済みなので即再生。
+  //  エンディングからの「もう一度」でもここを通り、クロスフェードでオープニング曲へ戻る)
+  setBgm("bgm-opening");
   showScreen("difficulty");
 }
 
