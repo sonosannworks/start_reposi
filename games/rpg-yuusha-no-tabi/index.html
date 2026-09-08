@@ -1138,9 +1138,21 @@ function showScreen(name){
 }
 
 /* ===================== ゲーム開始 / リスタート ===================== */
-// タイトル画面のタップ: 初回タップで音声を解禁し、難易度選択へ進む
+// タイトル画面のタップは2段階:
+//  1回目 … ブラウザの自動再生制限は最初のユーザー操作までBGMを鳴らせないため、
+//           この1タップを解禁トリガーにして New Chapter Portfolio を鳴らし始め、
+//           タイトル画面はそのまま残す(ヒント文言だけ切り替える)。
+//  2回目 … 難易度選択へ進む。
+let titleArmed = false;
 function enterFromTitle(){
-  unlockAudio();          // この最初のタップを音声解禁のトリガーにする
+  if(!titleArmed){
+    titleArmed = true;
+    setBgm("bgm-opening"); // 予約
+    unlockAudio();         // この最初のタップで解禁 → 再生開始
+    const hint = document.querySelector("#screen-title .title-hint");
+    if(hint) hint.textContent = "▶ もう一度タップして はじめる";
+    return;
+  }
   openDifficultySelect(); // タイトル → 難易度選択 → プロローグ → 村 の順
 }
 
