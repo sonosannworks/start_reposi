@@ -128,10 +128,24 @@
     padding: 6px 10px;
     font-size: 13px;
   }
+  #muteBtn {
+    position: absolute;
+    top: 4px;
+    right: 88px;
+    z-index: 5;
+    background: #232738;
+    border: 1px solid #3a4058;
+    color: #eee;
+    border-radius: 6px;
+    padding: 6px 9px;
+    font-size: 15px;
+    line-height: 1;
+  }
 </style>
 </head>
 <body>
 <div id="app">
+  <audio id="bgm" src="assets/bgm/kodama-no-mori2.mp3" loop preload="none"></audio>
   <div id="topbar">
     <div class="stat"><div class="label">スコア</div><div class="value" id="scoreVal">0</div></div>
     <div class="stat"><div class="label">レベル</div><div class="value" id="levelVal">1</div></div>
@@ -151,6 +165,7 @@
       </div>
     </div>
     <button id="pauseBtn">一時停止</button>
+    <button id="muteBtn" type="button" aria-label="BGMのオン・オフ">🔊</button>
     <div id="overlay">
       <h2 id="overlayTitle">テトリス</h2>
       <p id="overlaySub">タップしてスタート</p>
@@ -314,6 +329,7 @@
       gameOver = true;
       showOverlay('ゲームオーバー', 'スコア: ' + score, 'もう一度');
       stopLoop();
+      fadeOutBgm();
     }
     draw();
   }
@@ -462,6 +478,49 @@
     loop();
   }
 
+  // ===== BGM =====
+  const BGM_VOL = 0.35;
+  const bgm = document.getElementById('bgm');
+  const muteBtn = document.getElementById('muteBtn');
+  let bgmMuted = false;
+  let bgmFadeTimer = null;
+
+  bgm.volume = BGM_VOL;
+
+  function playBgm(fromStart){
+    if (bgmFadeTimer){ clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
+    try {
+      bgm.muted = bgmMuted;
+      bgm.volume = BGM_VOL;
+      if (fromStart) bgm.currentTime = 0;
+      const p = bgm.play();
+      if (p && p.catch) p.catch(()=>{});
+    } catch(e){}
+  }
+  function pauseBgm(){
+    if (bgmFadeTimer){ clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
+    try { bgm.pause(); } catch(e){}
+  }
+  function fadeOutBgm(){
+    if (bgmFadeTimer) clearInterval(bgmFadeTimer);
+    bgmFadeTimer = setInterval(()=>{
+      const v = bgm.volume - BGM_VOL / 16;
+      if (v <= 0.02){
+        clearInterval(bgmFadeTimer); bgmFadeTimer = null;
+        try { bgm.pause(); bgm.currentTime = 0; } catch(e){}
+        bgm.volume = BGM_VOL;
+      } else {
+        bgm.volume = v;
+      }
+    }, 45);
+  }
+
+  muteBtn.addEventListener('click', ()=>{
+    bgmMuted = !bgmMuted;
+    bgm.muted = bgmMuted;
+    muteBtn.textContent = bgmMuted ? '🔇' : '🔊';
+  });
+
   const overlay = document.getElementById('overlay');
   const overlayTitle = document.getElementById('overlayTitle');
   const overlaySub = document.getElementById('overlaySub');
@@ -480,6 +539,7 @@
     resetGame();
     drawNext(); drawHold();
     startLoop();
+    playBgm(true);
   });
 
   document.getElementById('pauseBtn').addEventListener('click', ()=>{
@@ -487,8 +547,10 @@
     paused = !paused;
     if (paused){
       showOverlay('一時停止中', '', '再開');
+      pauseBgm();
     } else {
       hideOverlay();
+      playBgm(false);
     }
   });
 
