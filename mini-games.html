@@ -78,6 +78,41 @@
       opacity: .85;
       transform: translateY(-1px);
     }
+
+    /* ===== 寄り道コーナー(ホラー枠) ===== */
+    .section-horror {
+      background: #1c1b1f;
+      border-top: 1px solid #35323b;
+      border-bottom: 1px solid #35323b;
+    }
+    .section-horror .section-title {
+      color: #e9e3d8;
+    }
+    .section-horror .section-title::after {
+      background: #7a1620;
+    }
+    .horror-warning {
+      text-align: center;
+      color: #c78a90;
+      font-size: .8rem;
+      letter-spacing: .04em;
+      margin: 18px 0 44px;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    .section-horror .web-grid {
+      grid-template-columns: minmax(0, 340px);
+      justify-content: center;
+    }
+    .section-horror .web-card {
+      border-color: #3b3742;
+      background: #232227;
+    }
+    .section-horror .web-card-body h3 { color: #ece6dc; }
+    .section-horror .web-card-body p { color: #afa89d; }
+    .section-horror .web-card-tags span {
+      background: #332f39;
+      color: #d0c8bc;
+    }
   </style>
 </head>
 <body>
@@ -364,6 +399,41 @@
             <a href="games/otoshimono-puzzle/index.html" class="web-card-link game-play-btn" target="_blank" rel="noopener">プレイする →</a>
           </div>
         </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ちょっと寄り道コーナー(閲覧注意) -->
+  <section class="section section-horror" id="minigame-horror">
+    <div class="container">
+
+      <h2 class="section-title" style="font-size:1.4rem;">ちょっと寄り道コーナー(閲覧注意)</h2>
+      <p class="horror-warning">ホラー要素を含みます。苦手な方はご注意ください。</p>
+      <div class="web-grid">
+
+        <!-- 視られる場所 -->
+        <div class="web-card">
+          <div class="web-card-thumb game-thumb">
+            <img src="games/dark-horror-rpg/assets/img/title.jpg" alt="視られる場所" loading="lazy" class="web-card-thumb-img">
+            <span class="time-badge">15の結末</span>
+          </div>
+          <div class="web-card-body">
+            <h3>視られる場所</h3>
+            <p>選択によって結末が15通りに分岐する、ダークホラーの選択式ミニゲーム。キャラメイクした自分自身が主人公になり、優しさ・正義・打算・恐怖——選んだ答えが運命を決めます。</p>
+            <div class="web-card-tags"><span>ホラー</span><span>選択式</span></div>
+            <a href="games/dark-horror-rpg/dark-horror-rpg.html" class="web-card-link game-play-btn" target="_blank" rel="noopener">プレイする →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ゲーム一覧 (QRコード) -->
+  <section class="section section-light" id="minigame-share">
+    <div class="container">
+      <div class="web-grid">
 
         <!-- QRコード -->
         <div class="web-card">
