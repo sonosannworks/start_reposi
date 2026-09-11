@@ -83,6 +83,12 @@ const WEBAI_HEADER_FALLBACK = `
             ケアプラン作成支援アプリ
           </a>
         </li>
+        <li class="nav-item-app">
+          <a class="nav-app-link" href="https://sonosann-webai.net/certification-survey-app.html" target="_blank" rel="noopener">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            要介護認定シミュレーション
+          </a>
+        </li>
       </ul>
     </nav>
 
