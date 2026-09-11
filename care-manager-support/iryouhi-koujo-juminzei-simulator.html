@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>医療費控除による住民税軽減＆副次効果シミュレーター</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --accent-bg: #eef2ff;
+      --accent-border: #c7d2fe;
+      --notice-bg: #f0fdf4;
+      --notice-border: #bbf7d0;
+      --notice-text: #166534;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #92400e;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 24px 16px;
+      margin: 0;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px -2px rgba(0,0,0,0.06);
+      padding: 32px 24px;
+    }
+    h1 {
+      font-size: 1.35rem;
+      margin-top: 0;
+      margin-bottom: 6px;
+      text-align: center;
+      color: var(--primary);
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .summary-card {
+      background: var(--notice-bg);
+      border: 1px solid var(--notice-border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+      color: var(--notice-text);
+    }
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .step-badge {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .step-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      background: #fff;
+      outline: none;
+    }
+    select:focus, input:focus {
+      border-color: var(--primary);
+    }
+    .btn-calc {
+      width: 100%;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-calc:hover {
+      background-color: var(--primary-hover);
+    }
+    .result-box {
+      display: none;
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: 12px;
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-border);
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+    }
+    .result-row.total {
+      border-top: 2px dashed #a5b4fc;
+      padding-top: 14px;
+      margin-top: 14px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #3730a3;
+    }
+    .impact-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #c7d2fe;
+      font-size: 0.83rem;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>医療費控除による住民税軽減シミュレーター</h1>
+  <div class="subtitle">医療費控除を申告することで安くなる「翌年度の住民税」と副次効果を判定</div>
+
+  <div class="summary-card">
+    <strong>💡 住民税の仕組みと医療費控除の連動</strong><br>
+    住民税（所得割）の税率は、所得の多寡に関わらず**全国一律で約10%**です。確定申告で「医療費控除」を申請すると、課税所得が引き下がるため、**控除額の10%が丸ごと翌年度（6月〜翌5月）の住民税から減額**されます。
+  </div>
+
+  <!-- STEP 1: 申告予定の医療費実質額 -->
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">STEP 1</span>
+      <h2 class="step-title">年間の医療費控除額の確認</h2>
+    </div>
+    <label for="input-deduction">確定申告する医療費控除額（10万円を引いた後の額）（円）</label>
+    <input type="number" id="input-deduction" placeholder="例: 50000" min="0" step="1000" value="50000">
+    <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+      ※例：世帯医療費15万円 − 補填金0円 − 10万円 ＝ 医療費控除額 50,000円
+    </div>
+  </div>
+
+  <!-- STEP 2: 申告者の住民税納付方法 -->
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">STEP 2</span>
+      <h2 class="step-title">住民税の支払い方法</h2>
+    </div>
+    <label for="input-payment">納付区分</label>
+    <select id="input-payment">
+      <option value="special">特別徴収（給与天引き / 会社員・パート等）</option>
+      <option value="normal">普通徴収（納付書または口座振替 / 個人事業主・フリーランス等）</option>
+      <option value="pension">公的年金からの天引き（年金受給者）</option>
+    </select>
+  </div>
+
+  <button type="button" class="btn-calc" onclick="calculateResidentTax()">住民税の軽減額を計算する</button>
+
+  <!-- 結果表示 -->
+  <div id="result-box" class="result-box">
+    <div class="result-row">
+      <span>控除対象額:</span>
+      <span id="res-deduction-base" style="font-weight:600;">0 円</span>
+    </div>
+    <div class="result-row">
+      <span>住民税率（都道府県民税4%＋市区町村民税6%）:</span>
+      <span style="font-weight:600;">一律 10%</span>
+    </div>
+    <div class="result-row total">
+      <span>翌年度の住民税 減額総額:</span>
+      <span id="res-tax-discount">0 円</span>
+    </div>
+    <div class="result-row">
+      <span>毎月の負担軽減目安:</span>
+      <span id="res-monthly-discount" style="font-weight:bold; color:#4f46e5;">月あたり約 0 円 減額</span>
+    </div>
+
+    <div class="impact-box">
+      <strong>🔍 住民税が下がることによる副次効果（メリット）：</strong>
+      <ul style="margin: 6px 0 0 0; padding-left: 18px;">
+        <li><strong>介護保険料・国民健康保険料</strong>：自治体の保険料算定基準（所得割額や所得段階）が下がり、翌年度の保険料負担が軽減される場合があります。</li>
+        <li><strong>高額療養費・介護サービス費の自己負担区分</strong>：所得境目付近にいる場合、区分が引き下がり、医療や介護サービス利用時の上限負担額が下がる可能性があります。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+function calculateResidentTax() {
+  const deduction = parseFloat(document.getElementById("input-deduction").value) || 0;
+  const paymentType = document.getElementById("input-payment").value;
+  const resultBox = document.getElementById("result-box");
+
+  if (deduction <= 0) {
+    alert("0円より大きい医療費控除額を入力してください。");
+    return;
+  }
+
+  // 住民税所得割は一律10%
+  const taxDiscount = Math.round(deduction * 0.10);
+  
+  // 特別徴収（12分割）か普通徴収（4分割）か
+  let monthlyText = "";
+  if (paymentType === "special") {
+    const perMonth = Math.round(taxDiscount / 12);
+    monthlyText = `月あたり約 ${perMonth.toLocaleString()} 円 減額（6月〜翌年5月の給与手取りが増加）`;
+  } else if (paymentType === "normal") {
+    const perQuarter = Math.round(taxDiscount / 4);
+    monthlyText = `期あたり約 ${perQuarter.toLocaleString()} 円 減額（年4回の納付書の支払いが軽減）`;
+  } else {
+    const perBiMonth = Math.round(taxDiscount / 6);
+    monthlyText = `支給月あたり約 ${perBiMonth.toLocaleString()} 円 減額（年金支給時の天引き額が軽減）`;
+  }
+
+  resultBox.style.display = "block";
+  document.getElementById("res-deduction-base").textContent = deduction.toLocaleString() + " 円";
+  document.getElementById("res-tax-discount").textContent = "- " + taxDiscount.toLocaleString() + " 円";
+  document.getElementById("res-monthly-discount").textContent = monthlyText;
+}
+</script>
+</body>
+</html>
