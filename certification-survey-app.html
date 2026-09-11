@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <script src="redirect-to-vercel.js"></script>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PX15S7HJLN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PX15S7HJLN');
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>要介護認定 1次判定シミュレーター</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar for better UX */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .step-active {
+      border-bottom: 3px solid #0284c7;
+      color: #0284c7;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-2 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="bg-brand-500 text-white p-2 sm:p-2.5 rounded-xl shadow-sm shrink-0">
+          <i class="fa-solid fa-heart-pulse text-lg sm:text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-sm sm:text-lg text-slate-900 leading-tight">要介護認定 1次判定Webアプリ</h1>
+          <!-- モバイル（sm未満）で非表示にするクラス hidden sm:block を追加 -->
+          <p class="hidden sm:block text-xs text-slate-500">認定調査テキスト（厚生労働省）準拠判定フォーム</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap">
+        <button onclick="loadDemoData()" class="px-2.5 sm:px-3 py-1.5 text-xs font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg transition border border-brand-200 flex items-center gap-1">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> デモ入力
+        </button>
+        <button onclick="resetForm()" class="px-2.5 sm:px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition flex items-center gap-1">
+          <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">リセット</span>
+        </button>
+        <button onclick="exportPDF()" class="px-2.5 sm:px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg transition flex items-center gap-1">
+          <i class="fa-solid fa-file-pdf text-emerald-600"></i> <span class="hidden sm:inline">PDF出力</span><span class="sm:hidden">PDF</span>
+        </button>
+        <button onclick="calculateResult()" class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-sm transition flex items-center gap-1">
+          <i class="fa-solid fa-calculator"></i> <span class="hidden sm:inline">一次判定を実行</span><span class="sm:hidden">判定</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column: Input Form Tabs & Dropdowns -->
+    <div class="lg:col-span-8 flex flex-col space-y-4">
+      
+      <!-- Tab Navigation -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-1.5 shadow-sm overflow-x-auto flex space-x-1 text-sm font-medium text-slate-600 whitespace-nowrap">
+        <button onclick="switchTab('basic')" id="tab-btn-basic" class="tab-btn px-4 py-2.5 rounded-xl transition flex items-center gap-2 bg-brand-50 text-brand-600 font-semibold">
+          <i class="fa-solid fa-id-card text-brand-500"></i> 基本情報・概況
+        </button>
+        <button onclick="switchTab('group1')" id="tab-btn-group1" class="tab-btn px-4 py-2.5 rounded-xl transition flex items-center gap-2 hover:bg-slate-100">
+          <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs flex items-center justify-center font-bold">1</span> 身体機能
+        </button>
+        <button onclick="switchTab('group2')" id="tab-btn-group2" class="tab-btn px-4 py-2.5 rounded-xl transition flex items-center gap-2 hover:bg-slate-100">
+          <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs flex items-center justify-center font-bold">2</span> 生活機能
+        </button>
+        <button onclick="switchTab('group3')" id="tab-btn-group3" class="tab-btn px-4 py-2.5 rounded-xl transition flex items-center gap-2 hover:bg-slate-100">
+          <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs flex items-center justify-center font-bold">3</span> 認知機能
+        </button>
+        <button onclick="switchTab('group4')" id="tab-btn-group4" class="tab-btn px-4 py-2.5 rounded-xl transition flex items-center gap-2 hover:bg-slate-100">
+          <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs flex items-center justify-center font-bold">4</span> 精神・行動
+        </button>
+        <button onclick="switchTab('group5')" id="tab-btn-group5" class="tab-btn px-4 py-2.5 rounded-xl transition flex items-center gap-2 hover:bg-slate-100">
+          <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs flex items-center justify-center font-bold">5</span> 社会適応
+        </button>
+        <button onclick="switchTab('medical')" id="tab-btn-medical" class="tab-btn px-4 py-2.5 rounded-xl transition flex items-center gap-2 hover:bg-slate-100">
+          <i class="fa-solid fa-user-nurse text-slate-500"></i> 医療・自立度
+        </button>
+      </div>
+
+      <form id="assessmentForm" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+
+        <!-- Tab: Basic Info & Overview -->
+        <div id="tab-basic" class="tab-content space-y-6">
+          <div class="border-b border-slate-100 pb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-address-card text-brand-500"></i> 被保険者・基本概況
+            </h2>
+            <p class="text-xs text-slate-500">対象者の基本情報および調査対象エリアを入力してください。</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">氏名 / 被保険者番号 (任意)</label>
+              <input type="text" id="subject_name" placeholder="例: 介護 太郎" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">年齢区分</label>
+              <select id="age_category" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="65_plus">65歳以上 (第1号被保険者)</option>
+                <option value="40_64">40歳〜64歳 (第2号被保険者・特定疾患)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">調査申請区分</label>
+              <select id="apply_type" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="new">新規申請</option>
+                <option value="update">更新申請</option>
+                <option value="change">区分変更申請</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">現在のサービス利用場所</label>
+              <select id="location_type" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="home">自宅 (在宅)</option>
+                <option value="facility">介護保険施設 / 病院</option>
+                <option value="other">その他 (有料老人ホーム等)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Group 1 - 身体機能・起居動作 -->
+        <div id="tab-group1" class="tab-content hidden space-y-6">
+          <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+            <div>
+              <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs flex items-center justify-center font-bold">1</span>
+                第1群：身体機能・起居動作 (13項目)
+              </h2>
+              <p class="text-xs text-slate-500">麻痺、拘縮、起居動作、視力・聴力などの身体機能の評価</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-1 麻痺等の有無</label>
+              <select id="g1_paralysis" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="none">1. ない</option>
+                <option value="one_arm">2. 左上肢または右上肢あり</option>
+                <option value="one_leg">3. 左下肢または右下肢あり</option>
+                <option value="hemi">4. 片麻痺(一側の上下肢)</option>
+                <option value="quad">5. 四肢麻痺・対麻痺</option>
+                <option value="other">6. その他(四肢欠損等)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-2 拘縮の有無</label>
+              <select id="g1_contracture" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="none">1. ない</option>
+                <option value="shoulder">2. 肩関節あり</option>
+                <option value="hip_knee">3. 股関節・膝関節あり</option>
+                <option value="multiple">4. 複数関節に著しい制限あり</option>
+                <option value="other">5. その他</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-3 寝返り</label>
+              <select id="g1_rollover" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. つかまらないでできる</option>
+                <option value="2">2. 何かにつかまればできる</option>
+                <option value="3">3. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-4 起き上がり</label>
+              <select id="g1_situp" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. つかまらないでできる</option>
+                <option value="2">2. 何かにつかまればできる</option>
+                <option value="3">3. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-5 座位保持</label>
+              <select id="g1_sit_posture" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる</option>
+                <option value="2">2. 自分の手で支えればできる</option>
+                <option value="3">3. 支えてもらえればできる</option>
+                <option value="4">4. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-6 両足での立位保持</label>
+              <select id="g1_stand_posture" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 支えなしでできる</option>
+                <option value="2">2. 何か支えがあればできる</option>
+                <option value="3">3. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-7 歩行</label>
+              <select id="g1_walk" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. つかまらないでできる</option>
+                <option value="2">2. 何かにつかまればできる</option>
+                <option value="3">3. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-8 立ち上がり</label>
+              <select id="g1_standup" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. つかまらないでできる</option>
+                <option value="2">2. 何かにつかまればできる</option>
+                <option value="3">3. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-9 片足での立位保持</label>
+              <select id="g1_one_leg_stand" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 支えなしでできる</option>
+                <option value="2">2. 何か支えがあればできる</option>
+                <option value="3">3. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-10 洗身</label>
+              <select id="g1_wash_body" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 一部介助</option>
+                <option value="3">3. 全介助</option>
+                <option value="4">4. 行っていない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-11 つめ切り</label>
+              <select id="g1_nail_clip" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 一部介助</option>
+                <option value="3">3. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-12 視力</label>
+              <select id="g1_eyesight" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 普通 (日常生活に支障なし)</option>
+                <option value="2">2. 約1m離れた視力確認表の図が見える</option>
+                <option value="3">3. 目の前に置いた視力確認表の図が見える</option>
+                <option value="4">4. ほとんど見えない</option>
+                <option value="5">5. 判断不能</option>
+              </select>
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">1-13 聴力</label>
+              <select id="g1_hearing" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 普通</option>
+                <option value="2">2. 普通の声がやっと聞き取れる</option>
+                <option value="3">3. かなり大きな声なら何とか聞き取れる</option>
+                <option value="4">4. ほとんど聞こえない</option>
+                <option value="5">5. 判断不能</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Group 2 - 生活機能 -->
+        <div id="tab-group2" class="tab-content hidden space-y-6">
+          <div class="border-b border-slate-100 pb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs flex items-center justify-center font-bold">2</span>
+              第2群：生活機能 (12項目)
+            </h2>
+            <p class="text-xs text-slate-500">移乗、食事、排泄、着脱等の日常生活動作の介助状況評価</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-1 移乗</label>
+              <select id="g2_transfer" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-2 移動</label>
+              <select id="g2_move" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-3 えん下</label>
+              <select id="g2_swallow" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-4 食事摂取</label>
+              <select id="g2_eating" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-5 排尿</label>
+              <select id="g2_urination" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-6 排便</label>
+              <select id="g2_defecation" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-7 口腔清潔</label>
+              <select id="g2_oral_care" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 一部介助</option>
+                <option value="3">3. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-8 洗顔</label>
+              <select id="g2_face_wash" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 一部介助</option>
+                <option value="3">3. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-9 整髪</label>
+              <select id="g2_hair_care" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 一部介助</option>
+                <option value="3">3. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-10 上衣の着脱</label>
+              <select id="g2_top_clothes" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-11 ズボン等の着脱</label>
+              <select id="g2_bottom_clothes" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">2-12 外出頻度</label>
+              <select id="g2_go_out_freq" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 週1回以上</option>
+                <option value="2">2. 月1回以上</option>
+                <option value="3">3. 月1回未満</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Group 3 - 認知機能 -->
+        <div id="tab-group3" class="tab-content hidden space-y-6">
+          <div class="border-b border-slate-100 pb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs flex items-center justify-center font-bold">3</span>
+              第3群：認知機能 (9項目)
+            </h2>
+            <p class="text-xs text-slate-500">意思伝達、短期記憶、理解力、徘徊などの認知能力の評価</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-1 意思の伝達</label>
+              <select id="g3_communication" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 意思を他者に伝達できる</option>
+                <option value="2">2. ときどき伝達できる</option>
+                <option value="3">3. ほとんど伝達できない</option>
+                <option value="4">4. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-2 毎日の日課を理解</label>
+              <select id="g3_daily_routine" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる</option>
+                <option value="2">2. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-3 生年月日や年齢を言う</label>
+              <select id="g3_birth_date" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる</option>
+                <option value="2">2. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-4 短期記憶(直前の思い出)</label>
+              <select id="g3_short_memory" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる</option>
+                <option value="2">2. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-5 自分の名前を言う</label>
+              <select id="g3_own_name" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる</option>
+                <option value="2">2. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-6 今の季節を理解する</label>
+              <select id="g3_season_comprehension" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる</option>
+                <option value="2">2. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-7 場所の理解</label>
+              <select id="g3_place_comprehension" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる</option>
+                <option value="2">2. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-8 徘徊</label>
+              <select id="g3_wandering" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">3-9 外出すると戻れない</label>
+              <select id="g3_cannot_return" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Group 4 - 精神・行動障害 -->
+        <div id="tab-group4" class="tab-content hidden space-y-6">
+          <div class="border-b border-slate-100 pb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs flex items-center justify-center font-bold">4</span>
+              第4群：精神・行動障害 (BPSD 15項目)
+            </h2>
+            <p class="text-xs text-slate-500">過去1か月間の精神・行動面の問題（発生頻度）の評価</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-1 被害的(物を盗られた等)</label>
+              <select id="g4_persecutory" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-2 作話</label>
+              <select id="g4_confabulation" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-3 感情が不安定(泣く・怒る等)</label>
+              <select id="g4_unstable_emotion" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-4 昼夜逆転</label>
+              <select id="g4_day_night_reversal" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-5 しつこく同じ話をする</label>
+              <select id="g4_same_story" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-6 大声をだす</label>
+              <select id="g4_loud_voice" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-7 介護に抵抗する</label>
+              <select id="g4_care_resistance" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-8 「家に帰る」等言い落ち着きなし</label>
+              <select id="g4_restlessness" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-9 一人で外に出たがり目が離せない</label>
+              <select id="g4_want_go_out" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-10 収集癖(集める・無断で持つ)</label>
+              <select id="g4_collecting" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-11 物を壊す・衣類を破く</label>
+              <select id="g4_break_things" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-12 ひどい物忘れ</label>
+              <select id="g4_severe_forget" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-13 独り言・独り笑い</label>
+              <select id="g4_soliloquy" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-14 自分勝手に行動する</label>
+              <select id="g4_selfish_act" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">4-15 話がまとまらず会話にならない</label>
+              <select id="g4_incoherent" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Group 5 - 社会生活への適応 -->
+        <div id="tab-group5" class="tab-content hidden space-y-6">
+          <div class="border-b border-slate-100 pb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs flex items-center justify-center font-bold">5</span>
+              第5群：社会生活への適応 (6項目)
+            </h2>
+            <p class="text-xs text-slate-500">薬の内服、金銭管理、意思決定、買い物、調理などの社会活動評価</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">5-1 薬の内服</label>
+              <select id="g5_medication" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 一部介助</option>
+                <option value="3">3. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">5-2 金銭の管理</label>
+              <select id="g5_money_mgmt" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 一部介助</option>
+                <option value="3">3. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">5-3 日常の意思決定</label>
+              <select id="g5_decision_making" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. できる (特別な場合でもできる)</option>
+                <option value="2">2. 特別な場合を除いてできる</option>
+                <option value="3">3. 日常的に困難</option>
+                <option value="4">4. できない</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">5-4 集団への不適応</label>
+              <select id="g5_group_adaptation" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. ない</option>
+                <option value="2">2. ときどきある</option>
+                <option value="3">3. ある</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">5-5 買い物</label>
+              <select id="g5_shopping" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">5-6 簡単な調理</label>
+              <select id="g5_cooking" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="1">1. 介助されていない</option>
+                <option value="2">2. 見守り等</option>
+                <option value="3">3. 一部介助</option>
+                <option value="4">4. 全介助</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Special Medical Care & Independence Level -->
+        <div id="tab-medical" class="tab-content hidden space-y-6">
+          <div class="border-b border-slate-100 pb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-briefcase-medical text-brand-500"></i>
+              特別な医療 (過去14日間) ＆ 日常生活自立度
+            </h2>
+            <p class="text-xs text-slate-500">医師・看護師等による医療処置の実施状況および自立度の選択</p>
+          </div>
+
+          <!-- 特別な医療 -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">過去14日間に受けた特別な医療</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">1. 点滴の管理</label>
+                <select id="med_drip" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">2. 中心静脈栄養 (TPN)</label>
+                <select id="med_tpn" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">3. 透析</label>
+                <select id="med_dialysis" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">4. ストーマの処置</label>
+                <select id="med_stoma" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">5. 酸素療法</label>
+                <select id="med_oxygen" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">6. 人工呼吸器</label>
+                <select id="med_respirator" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">7. 気管切開の処置</label>
+                <select id="med_tracheostomy" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">8. 疼痛の看護(ペイン管理)</label>
+                <select id="med_pain_care" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">9. 経管栄養</label>
+                <select id="med_tube_feeding" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">10. 24時間モニター測定</label>
+                <select id="med_monitor" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">11. 褥瘡(じょくそう)の処置</label>
+                <select id="med_bedsore" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">12. カテーテルの管理</label>
+                <select id="med_catheter" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                  <option value="0">なし</option>
+                  <option value="1">あり</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 自立度 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">障害高齢者の日常生活自立度 (寝たきり度)</label>
+              <select id="indep_disability" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="J">自立・ランクJ (交通機関等利用可能 / 隣近所外出)</option>
+                <option value="A">ランクA (準寝たきり: 屋内自立・要介助外出)</option>
+                <option value="B">ランクB (寝たきり: 車椅子中心・座位保持)</option>
+                <option value="C">ランクC (寝たきり: Bed-bound 終日ベッド上)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">認知症高齢者の日常生活自立度</label>
+              <select id="indep_dementia" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="0">自立 (認知症症状なし)</option>
+                <option value="I">ランク I (日常生活ほぼ自立・一部ミス)</option>
+                <option value="II">ランク IIa/IIb (日常生活支障・見守り要)</option>
+                <option value="III">ランク IIIa/IIIb (日中/夜間中心の介護が必要)</option>
+                <option value="IV">ランク IV (頻繁な症状・常に介護が必要)</option>
+                <option value="M">ランク M (著しい精神症状・専門医療が必要)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">特記事項 (メモ)</label>
+            <textarea id="special_notes" rows="3" placeholder="判定に考慮すべき調査時の特記事項や状態の変化などを入力..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Right Column: Result Panel -->
+    <div class="lg:col-span-4 flex flex-col space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm sticky top-20 flex flex-col space-y-5">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h2 class="font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-square-poll-vertical text-brand-500"></i> 一次判定 算定結果
+          </h2>
+          <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium" id="status-badge">未計算</span>
+        </div>
+
+        <!-- Care Level Badge -->
+        <div class="text-center py-4 px-3 bg-slate-50 rounded-2xl border border-slate-200/80">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">推定要介護度 (概算)</p>
+          <div id="result-care-level" class="text-2xl font-extrabold text-slate-400 my-1">
+            未判定
+          </div>
+          <p id="result-care-desc" class="text-xs text-slate-500 mt-1">
+            項目を入力後「一次判定を実行」を押してください。
+          </p>
+        </div>
+
+        <!-- Care Time Breakdown -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-semibold text-slate-700">推定要介護認定等基準時間</span>
+            <span id="result-total-time" class="font-bold text-slate-900 text-sm">0.0 分/日</span>
+          </div>
+          <!-- Progress bar -->
+          <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div id="time-progress-bar" class="bg-brand-500 h-full w-0 transition-all duration-500"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400 pt-0.5">
+            <span>25分(要支援1)</span>
+            <span>50分(要介護2)</span>
+            <span>110分+(要介護5)</span>
+          </div>
+        </div>
+
+        <!-- Behavioral Breakdown -->
+        <div class="space-y-2 border-t border-slate-100 pt-3">
+          <h3 class="text-xs font-bold text-slate-700">分類別 介護時間の概算内訳</h3>
+          <div class="space-y-1.5 text-xs text-slate-600">
+            <div class="flex justify-between">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-utensils text-slate-400 w-3"></i> 食事・清潔・排泄</span>
+              <span id="time-adl" class="font-medium">0 分</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-walking text-slate-400 w-3"></i> 移動・起居動作</span>
+              <span id="time-mobility" class="font-medium">0 分</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-brain text-slate-400 w-3"></i> BPSD・認知行動対応</span>
+              <span id="time-bpsd" class="font-medium">0 分</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-suitcase-medical text-slate-400 w-3"></i> 医療関連処置</span>
+              <span id="time-medical" class="font-medium">0 分</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notice -->
+        <div class="bg-amber-50 rounded-xl p-3 border border-amber-200 text-amber-900 text-xs leading-relaxed space-y-1">
+          <div class="font-bold flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> 注意事項
+          </div>
+          <p class="text-[11px] text-amber-800">
+            本判定は認定調査テキストの項目に基づく独自の推計モデル（概算）です。実際の二次判定や市区町村の正式結果とは異なる場合があります。
+          </p>
+        </div>
+
+        <button onclick="calculateResult()" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+          <i class="fa-solid fa-calculator"></i> 判定を計算・更新
+        </button>
+
+      </div>
+    </div>
+
+  </main>
+
+  <div id="pdf-container" class="hidden">
+    <div id="pdf-report" class="p-8 bg-white text-slate-900 font-sans max-w-4xl mx-auto space-y-6">
+      
+      <!-- Report Header -->
+      <div class="border-b-2 border-slate-800 pb-4 flex justify-between items-end">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">要介護認定 1次判定結果報告書</h1>
+          <p class="text-xs text-slate-500 mt-1">認定調査テキスト（厚生労働省準拠）概算シミュレーション票</p>
+        </div>
+        <div class="text-right text-xs text-slate-600">
+          <p>作成日: <span id="pdf-date"></span></p>
+        </div>
+      </div>
+
+      <!-- Basic Profile Table -->
+      <div class="space-y-2">
+        <h2 class="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1 border-l-4 border-slate-700">1. 対象者基本情報</h2>
+        <table class="w-full text-xs border-collapse border border-slate-300">
+          <tr>
+            <th class="border border-slate-300 bg-slate-50 px-3 py-2 text-left w-1/4 font-semibold">氏名 / 被保険者番号</th>
+            <td class="border border-slate-300 px-3 py-2 w-1/4" id="pdf-subject-name">-</td>
+            <th class="border border-slate-300 bg-slate-50 px-3 py-2 text-left w-1/4 font-semibold">年齢区分</th>
+            <td class="border border-slate-300 px-3 py-2 w-1/4" id="pdf-age-category">-</td>
+          </tr>
+          <tr>
+            <th class="border border-slate-300 bg-slate-50 px-3 py-2 text-left font-semibold">調査申請区分</th>
+            <td class="border border-slate-300 px-3 py-2" id="pdf-apply-type">-</td>
+            <th class="border border-slate-300 bg-slate-50 px-3 py-2 text-left font-semibold">サービス利用場所</th>
+            <td class="border border-slate-300 px-3 py-2" id="pdf-location-type">-</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Result Summary Box -->
+      <div class="space-y-2">
+        <h2 class="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1 border-l-4 border-slate-700">2. 一次判定 推定結果</h2>
+        <div class="border-2 border-slate-800 rounded-lg p-4 bg-slate-50 grid grid-cols-12 gap-4">
+          <div class="col-span-5 border-r border-slate-300 pr-4 flex flex-col justify-center items-center text-center">
+            <span class="text-xs text-slate-500 font-semibold uppercase">推定要介護度</span>
+            <span class="text-2xl font-extrabold text-slate-900 mt-1" id="pdf-care-level">未判定</span>
+          </div>
+          <div class="col-span-7 flex flex-col justify-center space-y-2 text-xs">
+            <div class="flex justify-between border-b border-slate-200 pb-1">
+              <span class="font-semibold text-slate-700">推定基準時間 (合計):</span>
+              <span class="font-bold text-slate-900" id="pdf-total-time">0.0 分/日</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1 text-[11px] text-slate-600">
+              <div>・食事/清潔/排泄: <span id="pdf-time-adl" class="font-medium">0分</span></div>
+              <div>・移動/起居動作: <span id="pdf-time-mobility" class="font-medium">0分</span></div>
+              <div>・BPSD/認知行動: <span id="pdf-time-bpsd" class="font-medium">0分</span></div>
+              <div>・医療関連処置: <span id="pdf-time-medical" class="font-medium">0分</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Survey Items Matrix -->
+      <div class="space-y-2 pt-2">
+        <h2 class="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1 border-l-4 border-slate-700">3. 認定調査 基本調査項目 回答一覧</h2>
+        <div id="pdf-survey-grid" class="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px]">
+          <!-- Dynamic insertion by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Medical & Independence Summary -->
+      <div class="space-y-2 pt-2">
+        <h2 class="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1 border-l-4 border-slate-700">4. 特別な医療 ＆ 日常生活自立度</h2>
+        <table class="w-full text-xs border-collapse border border-slate-300">
+          <tr>
+            <th class="border border-slate-300 bg-slate-50 px-3 py-1.5 text-left w-1/3 font-semibold">障害高齢者の日常生活自立度</th>
+            <td class="border border-slate-300 px-3 py-1.5" id="pdf-indep-disability">-</td>
+          </tr>
+          <tr>
+            <th class="border border-slate-300 bg-slate-50 px-3 py-1.5 text-left font-semibold">認知症高齢者の日常生活自立度</th>
+            <td class="border border-slate-300 px-3 py-1.5" id="pdf-indep-dementia">-</td>
+          </tr>
+          <tr>
+            <th class="border border-slate-300 bg-slate-50 px-3 py-1.5 text-left font-semibold">実施された特別な医療 (12項目)</th>
+            <td class="border border-slate-300 px-3 py-1.5" id="pdf-medical-list">なし</td>
+          </tr>
+          <tr>
+            <th class="border border-slate-300 bg-slate-50 px-3 py-1.5 text-left font-semibold">特記事項 (メモ)</th>
+            <td class="border border-slate-300 px-3 py-1.5" id="pdf-special-notes">なし</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Footer Disclaimer -->
+      <div class="border-t border-slate-300 pt-3 text-[10px] text-slate-500 leading-tight">
+        ※ 本報告書は厚生労働省の認定調査テキストに基づいた概算推計シミュレーション結果です。実際の介護認定審査会による二次判定や正式決定とは異なる場合があります。
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function generatePDFReport() {
+      // 判定計算を最新状態に更新
+      calculateResult();
+
+      // 日付
+      const today = new Date();
+      document.getElementById('pdf-date').innerText = today.getFullYear() + '年' + (today.getMonth() + 1) + '月' + today.getDate() + '日';
+
+      // 基本情報
+      const name = document.getElementById('subject_name').value.trim() || '未入力';
+      const ageSelect = document.getElementById('age_category');
+      const ageText = ageSelect.options[ageSelect.selectedIndex].text;
+      const applySelect = document.getElementById('apply_type');
+      const applyText = applySelect.options[applySelect.selectedIndex].text;
+      const locationSelect = document.getElementById('location_type');
+      const locationText = locationSelect.options[locationSelect.selectedIndex].text;
+
+      document.getElementById('pdf-subject-name').innerText = name;
+      document.getElementById('pdf-age-category').innerText = ageText;
+      document.getElementById('pdf-apply-type').innerText = applyText;
+      document.getElementById('pdf-location-type').innerText = locationText;
+
+      // 判定結果
+      document.getElementById('pdf-care-level').innerText = document.getElementById('result-care-level').innerText;
+      document.getElementById('pdf-total-time').innerText = document.getElementById('result-total-time').innerText;
+      document.getElementById('pdf-time-adl').innerText = document.getElementById('time-adl').innerText;
+      document.getElementById('pdf-time-mobility').innerText = document.getElementById('time-mobility').innerText;
+      document.getElementById('pdf-time-bpsd').innerText = document.getElementById('time-bpsd').innerText;
+      document.getElementById('pdf-time-medical').innerText = document.getElementById('time-medical').innerText;
+
+      // 自立度 & メモ
+      const disSelect = document.getElementById('indep_disability');
+      document.getElementById('pdf-indep-disability').innerText = disSelect.options[disSelect.selectedIndex].text;
+      const demSelect = document.getElementById('indep_dementia');
+      document.getElementById('pdf-indep-dementia').innerText = demSelect.options[demSelect.selectedIndex].text;
+      document.getElementById('pdf-special-notes').innerText = document.getElementById('special_notes').value.trim() || '特記なし';
+
+      // 特別な医療
+      const medicalMap = {
+        'med_drip': '点滴の管理', 'med_tpn': '中心静脈栄養', 'med_dialysis': '透析', 'med_stoma': 'ストーマ処置',
+        'med_oxygen': '酸素療法', 'med_respirator': '人工呼吸器', 'med_tracheostomy': '気管切開処置',
+        'med_pain_care': '疼痛看護', 'med_tube_feeding': '経管栄養', 'med_monitor': '24hモニター',
+        'med_bedsore': '褥瘡処置', 'med_catheter': 'カテーテル管理'
+      };
+      const activeMed = [];
+      Object.keys(medicalMap).forEach(id => {
+        if (document.getElementById(id).value === '1') {
+          activeMed.push(medicalMap[id]);
+        }
+      });
+      document.getElementById('pdf-medical-list').innerText = activeMed.length > 0 ? activeMed.join(' / ') : '該当なし';
+
+      // 調査項目一覧の生成
+      const surveyGrid = document.getElementById('pdf-survey-grid');
+      surveyGrid.innerHTML = '';
+
+      const formSelects = document.querySelectorAll('#assessmentForm select');
+      formSelects.forEach(select => {
+        if (select.id.startsWith('g1_') || select.id.startsWith('g2_') || select.id.startsWith('g3_') || select.id.startsWith('g4_') || select.id.startsWith('g5_')) {
+          const label = select.previousElementSibling ? select.previousElementSibling.innerText : select.id;
+          const valueText = select.options[select.selectedIndex] ? select.options[select.selectedIndex].text : '';
+
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'flex justify-between border-b border-slate-200 py-0.5';
+          itemDiv.innerHTML = `<span class="font-medium text-slate-600 truncate pr-2">${label}</span><span class="font-bold text-slate-900 whitespace-nowrap">${valueText}</span>`;
+          surveyGrid.appendChild(itemDiv);
+        }
+      });
+    }
+
+    // PDFエクスポート実行関数
+    function exportPDF() {
+      generatePDFReport();
+
+      const element = document.getElementById('pdf-report');
+      const subjectName = document.getElementById('subject_name').value.trim() || '判定結果';
+      
+      // html2pdf 設定
+      const opt = {
+        margin:       [10, 10, 10, 10],
+        filename:     `要介護認定1次判定_${subjectName}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      // 表示一時解除してPDF出力後、戻す
+      document.getElementById('pdf-container').classList.remove('hidden');
+      
+      html2pdf().set(opt).from(element).save().then(() => {
+        document.getElementById('pdf-container').classList.add('hidden');
+      }).catch(err => {
+        console.error('PDF出力エラー:', err);
+        window.print(); // フォールバックとしてブラウザ印刷呼び出し
+        document.getElementById('pdf-container').classList.add('hidden');
+      });
+    }
+
+    // Tab Switching Function
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-brand-50', 'text-brand-600', 'font-semibold');
+        btn.classList.add('hover:bg-slate-100');
+      });
+
+      const targetTab = document.getElementById('tab-' + tabId);
+      const targetBtn = document.getElementById('tab-btn-' + tabId);
+      if (targetTab) targetTab.classList.remove('hidden');
+      if (targetBtn) {
+        targetBtn.classList.add('bg-brand-50', 'text-brand-600', 'font-semibold');
+        targetBtn.classList.remove('hover:bg-slate-100');
+      }
+    }
+
+    // Demo Data Loader
+    function loadDemoData() {
+      document.getElementById('subject_name').value = "山田 花子";
+      document.getElementById('age_category').value = "65_plus";
+      document.getElementById('apply_type').value = "update";
+      
+      // Group 1
+      document.getElementById('g1_paralysis').value = "one_leg";
+      document.getElementById('g1_contracture').value = "hip_knee";
+      document.getElementById('g1_rollover').value = "2";
+      document.getElementById('g1_situp').value = "2";
+      document.getElementById('g1_sit_posture').value = "1";
+      document.getElementById('g1_stand_posture').value = "2";
+      document.getElementById('g1_walk').value = "2";
+      document.getElementById('g1_standup').value = "2";
+      document.getElementById('g1_one_leg_stand').value = "3";
+      document.getElementById('g1_wash_body').value = "2";
+      document.getElementById('g1_nail_clip').value = "2";
+      document.getElementById('g1_eyesight').value = "1";
+      document.getElementById('g1_hearing').value = "2";
+
+      // Group 2
+      document.getElementById('g2_transfer').value = "2";
+      document.getElementById('g2_move').value = "2";
+      document.getElementById('g2_swallow').value = "1";
+      document.getElementById('g2_eating').value = "1";
+      document.getElementById('g2_urination').value = "2";
+      document.getElementById('g2_defecation').value = "2";
+      document.getElementById('g2_oral_care').value = "2";
+      document.getElementById('g2_face_wash').value = "2";
+      document.getElementById('g2_hair_care').value = "2";
+      document.getElementById('g2_top_clothes').value = "2";
+      document.getElementById('g2_bottom_clothes').value = "3";
+      document.getElementById('g2_go_out_freq').value = "2";
+
+      // Group 3
+      document.getElementById('g3_communication').value = "1";
+      document.getElementById('g3_daily_routine').value = "1";
+      document.getElementById('g3_birth_date').value = "1";
+      document.getElementById('g3_short_memory').value = "2";
+      document.getElementById('g3_own_name').value = "1";
+      document.getElementById('g3_season_comprehension').value = "1";
+      document.getElementById('g3_place_comprehension').value = "1";
+      document.getElementById('g3_wandering').value = "1";
+      document.getElementById('g3_cannot_return').value = "1";
+
+      // Group 4
+      document.getElementById('g4_severe_forget').value = "2";
+      document.getElementById('g4_same_story').value = "2";
+
+      // Group 5
+      document.getElementById('g5_medication').value = "2";
+      document.getElementById('g5_money_mgmt').value = "2";
+      document.getElementById('g5_decision_making').value = "2";
+      document.getElementById('g5_shopping').value = "3";
+      document.getElementById('g5_cooking').value = "3";
+
+      // Medical & Independence
+      document.getElementById('indep_disability').value = "A";
+      document.getElementById('indep_dementia').value = "II";
+
+      calculateResult();
+    }
+
+    // Reset Form
+    function resetForm() {
+      document.getElementById('assessmentForm').reset();
+      calculateResult();
+    }
+
+    // Main Primary Assessment Calculation Logic
+    function calculateResult() {
+      let totalMinutes = 0;
+      let timeAdl = 0;
+      let timeMobility = 0;
+      let timeBpsd = 0;
+      let timeMedical = 0;
+
+      // Group 1 & 2 Mobility / ADL Score Calculation
+      const walk = parseInt(document.getElementById('g1_walk').value) || 1;
+      const transfer = parseInt(document.getElementById('g2_transfer').value) || 1;
+      const move = parseInt(document.getElementById('g2_move').value) || 1;
+      const eating = parseInt(document.getElementById('g2_eating').value) || 1;
+      const urination = parseInt(document.getElementById('g2_urination').value) || 1;
+      const defecation = parseInt(document.getElementById('g2_defecation').value) || 1;
+      const washBody = parseInt(document.getElementById('g1_wash_body').value) || 1;
+      const topClothes = parseInt(document.getElementById('g2_top_clothes').value) || 1;
+      const bottomClothes = parseInt(document.getElementById('g2_bottom_clothes').value) || 1;
+
+      // ADL time estimation
+      timeAdl += (eating - 1) * 6;
+      timeAdl += (urination - 1) * 7;
+      timeAdl += (defecation - 1) * 8;
+      timeAdl += (washBody - 1) * 5;
+      timeAdl += (topClothes - 1) * 4;
+      timeAdl += (bottomClothes - 1) * 5;
+
+      // Mobility time estimation
+      timeMobility += (walk - 1) * 6;
+      timeMobility += (transfer - 1) * 7;
+      timeMobility += (move - 1) * 8;
+
+      // Group 3 & 4 BPSD & Cognitive Time Estimation
+      const wandering = parseInt(document.getElementById('g3_wandering').value) || 1;
+      const cannotReturn = parseInt(document.getElementById('g3_cannot_return').value) || 1;
+      const resistance = parseInt(document.getElementById('g4_care_resistance').value) || 1;
+      const restlessness = parseInt(document.getElementById('g4_restlessness').value) || 1;
+      const severeForget = parseInt(document.getElementById('g4_severe_forget').value) || 1;
+
+      timeBpsd += (wandering - 1) * 8;
+      timeBpsd += (cannotReturn - 1) * 6;
+      timeBpsd += (resistance - 1) * 10;
+      timeBpsd += (restlessness - 1) * 6;
+      timeBpsd += (severeForget - 1) * 4;
+
+      // Group 5 Social Adaptation
+      const med = parseInt(document.getElementById('g5_medication').value) || 1;
+      const money = parseInt(document.getElementById('g5_money_mgmt').value) || 1;
+      const cooking = parseInt(document.getElementById('g5_cooking').value) || 1;
+
+      timeAdl += (med - 1) * 3;
+      timeAdl += (money - 1) * 3;
+      timeAdl += (cooking - 1) * 5;
+
+      // Medical Care
+      const medIds = ['med_drip', 'med_tpn', 'med_dialysis', 'med_stoma', 'med_oxygen', 'med_respirator', 'med_tracheostomy', 'med_pain_care', 'med_tube_feeding', 'med_monitor', 'med_bedsore', 'med_catheter'];
+      let medicalCount = 0;
+      medIds.forEach(id => {
+        if (document.getElementById(id).value === "1") medicalCount++;
+      });
+      timeMedical += medicalCount * 8;
+
+      // Sum Total Standard Care Time
+      totalMinutes = timeAdl + timeMobility + timeBpsd + timeMedical;
+
+      let careLevel = "非該当 (自立)";
+      let careDesc = "日常生活の動作は概ね自立しており、介護サービスを要しない状態です。";
+      let badgeClass = "bg-slate-100 text-slate-700";
+
+      if (totalMinutes < 25) {
+        careLevel = "非該当 (自立)";
+        careDesc = "基準時間25分未満。基本動作は自立しています。";
+      } else if (totalMinutes >= 25 && totalMinutes < 32) {
+        careLevel = "要支援 1";
+        careDesc = "日常生活に部分的な支援を要する状態です (基準時間: 25分〜32分未満)";
+        badgeClass = "bg-emerald-100 text-emerald-800";
+      } else if (totalMinutes >= 32 && totalMinutes < 50) {
+        const dementiaLevel = document.getElementById('indep_dementia').value;
+        if (dementiaLevel === "0" || dementiaLevel === "I") {
+          careLevel = "要支援 2";
+          careDesc = "身体機能低下に伴い軽度の支援・介護を要する状態です";
+          badgeClass = "bg-teal-100 text-teal-800";
+        } else {
+          careLevel = "要介護 1";
+          careDesc = "認知機能低下や立ち上がり・歩行に一部介助を要する状態です";
+          badgeClass = "bg-sky-100 text-sky-800";
+        }
+      } else if (totalMinutes >= 50 && totalMinutes < 70) {
+        careLevel = "要介護 2";
+        careDesc = "立ち上がりや歩行、見守りや軽度の介助が必要な状態です (50分〜70分未満)";
+        badgeClass = "bg-amber-100 text-amber-800";
+      } else if (totalMinutes >= 70 && totalMinutes < 90) {
+        careLevel = "要介護 3";
+        careDesc = "歩行・排泄・入浴など全面的または一部介助が必要な状態です (70分〜90分未満)";
+        badgeClass = "bg-orange-100 text-orange-800";
+      } else if (totalMinutes >= 90 && totalMinutes < 110) {
+        careLevel = "要介護 4";
+        careDesc = "日常生活動作の多くに全面的な介助が必要な状態です (90分〜110分未満)";
+        badgeClass = "bg-rose-100 text-rose-800";
+      } else {
+        careLevel = "要介護 5";
+        careDesc = "生活全般にわたって全面的な介護を要する状態です (110分以上)";
+        badgeClass = "bg-purple-100 text-purple-800";
+      }
+
+      document.getElementById('result-care-level').innerText = careLevel;
+      document.getElementById('result-care-desc').innerText = careDesc;
+      document.getElementById('result-total-time').innerText = totalMinutes.toFixed(1) + " 分/日";
+
+      document.getElementById('time-adl').innerText = timeAdl.toFixed(1) + " 分";
+      document.getElementById('time-mobility').innerText = timeMobility.toFixed(1) + " 分";
+      document.getElementById('time-bpsd').innerText = timeBpsd.toFixed(1) + " 分";
+      document.getElementById('time-medical').innerText = timeMedical.toFixed(1) + " 分";
+
+      const badge = document.getElementById('status-badge');
+      badge.innerText = careLevel;
+      badge.className = "text-xs px-2.5 py-1 rounded-full font-bold " + badgeClass;
+
+      // Progress Bar width calculation (cap at 120 mins)
+      const progressPercent = Math.min(100, (totalMinutes / 120) * 100);
+      document.getElementById('time-progress-bar').style.width = progressPercent + "%";
+    }
+
+    // Initial load
+    window.onload = function() {
+      calculateResult();
+    };
+  </script>
+</body>
+</html>
