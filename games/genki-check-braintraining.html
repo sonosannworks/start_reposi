@@ -130,6 +130,32 @@
   }
   .cl-opt.selected{border-color:var(--pine);background:#E4F0E8;color:var(--pine-dark);}
 
+
+  /* checklist result (judgement) */
+  .cl-judge{text-align:center;padding:22px 14px;border-radius:18px;margin-bottom:14px;}
+  .cl-judge.ok{background:#E4F0E8;}
+  .cl-judge.watch{background:#F7E9CE;}
+  .cl-judge .label{font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;}
+  .cl-judge .big{font-family:'Zen Maru Gothic',sans-serif;font-size:22px;font-weight:900;line-height:1.4;color:var(--pine-dark);}
+  .cl-judge.watch .big{color:#9A6A1E;}
+  .cl-judge .sub{font-size:13px;color:var(--ink-soft);margin-top:6px;}
+  .advice-box{border:2px solid var(--gold);background:#FFF8E8;border-radius:16px;padding:14px 16px;margin-bottom:16px;}
+  .advice-box.ok{border-color:var(--pine);background:#F1F7F2;}
+  .advice-box h3{margin:0 0 6px;font-size:15px;color:var(--pine-dark);}
+  .advice-box p{margin:0 0 6px;font-size:13.5px;line-height:1.85;color:var(--ink);}
+  .advice-box p:last-child{margin-bottom:0;}
+  .res-h{font-family:'Zen Maru Gothic',sans-serif;font-weight:700;color:var(--pine);font-size:14px;margin:18px 0 8px;}
+  .res-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .res-table th,.res-table td{border-bottom:1px solid var(--line);padding:9px 4px;text-align:left;vertical-align:middle;}
+  .res-table th{font-size:12px;color:var(--ink-soft);font-weight:500;}
+  .res-table td.c{text-align:center;white-space:nowrap;}
+  .res-table .hit{color:#9A6A1E;font-weight:700;}
+  .res-table .no{color:var(--ink-soft);}
+  .hit-cat{margin-bottom:10px;}
+  .hit-cat .cat{font-size:13px;font-weight:700;color:var(--pine-dark);margin-bottom:4px;}
+  .hit-cat ul{margin:0;padding-left:1.3em;font-size:13px;line-height:1.75;color:var(--ink);}
+  .hit-cat ul li span{color:var(--ink-soft);font-size:12px;}
+
   .progress-wrap{background:#E9EFE3;border-radius:100px;height:10px;overflow:hidden;margin:2px 0 4px;}
   .progress-bar{height:100%;background:var(--gold);width:0%;transition:width .25s;}
 
@@ -377,6 +403,7 @@ function showScreen(name){
   document.getElementById('screen-'+name).classList.add('active');
   document.getElementById('topTitle').textContent = titles[name];
   document.getElementById('backBtn').classList.toggle('show', name!=='home');
+  if(name==='checklist'){ resetChecklistView(); }
   window.scrollTo(0,0);
 }
 function goHome(){
@@ -417,16 +444,26 @@ const CL_ITEMS = [
  {cat:'うつ', q:'（ここ2週間）自分が役に立つ人間だと思えない', yes:1},
  {cat:'うつ', q:'（ここ2週間）わけもなく疲れたような感じがする', yes:1},
 ];
-let clAnswers = new Array(25).fill(null);
+let clAnswers = new Array(25).fill(null);   // 1 = 該当
+let clRaw = new Array(25).fill(null);       // true = はい / false = いいえ
 let clIndex = 0;
 
+/* 導入画面に戻す（前回の結果が残らないようにする） */
+function resetChecklistView(){
+  document.getElementById('cl-intro').style.display='block';
+  document.getElementById('cl-quiz').style.display='none';
+  document.getElementById('cl-result').style.display='none';
+  document.getElementById('cl-progress').style.width='0%';
+}
 function startChecklist(){
   clAnswers = new Array(25).fill(null);
+  clRaw = new Array(25).fill(null);
   clIndex = 0;
   document.getElementById('cl-intro').style.display='none';
   document.getElementById('cl-result').style.display='none';
   document.getElementById('cl-quiz').style.display='block';
   renderClItem();
+  window.scrollTo(0,0);
 }
 function renderClItem(){
   const item = CL_ITEMS[clIndex];
@@ -443,43 +480,102 @@ function renderClItem(){
 }
 function answerCl(isYes){
   const item = CL_ITEMS[clIndex];
+  clRaw[clIndex] = isYes;
   clAnswers[clIndex] = (isYes ? 1 : 0) === item.yes ? 1 : 0; // 1 = 該当
   clIndex++;
   if(clIndex<25){ renderClItem(); }
   else { finishChecklist(); }
 }
+
+/* 基本チェックリストの該当基準（いずれか1つでも該当 → 事業対象者の基準に該当） */
+function sumRange(from, to){ // 質問番号(1始まり)で from〜to を合計
+  return clAnswers.slice(from-1, to).reduce((a,b)=>a+b,0);
+}
 function finishChecklist(){
   document.getElementById('cl-quiz').style.display='none';
   document.getElementById('cl-progress').style.width='100%';
-  const s1_20 = clAnswers.slice(0,20).reduce((a,b)=>a+b,0);
-  const s6_10 = clAnswers.slice(5,10).reduce((a,b)=>a+b,0);
-  const s11_12 = clAnswers.slice(10,12).reduce((a,b)=>a+b,0);
-  const s13_15 = clAnswers.slice(12,15).reduce((a,b)=>a+b,0);
-  const item16 = clAnswers[15];
-  const s18_20 = clAnswers.slice(17,20).reduce((a,b)=>a+b,0);
-  const s21_25 = clAnswers.slice(20,25).reduce((a,b)=>a+b,0);
 
-  const flags = [];
-  if(s1_20>=10) flags.push('日常生活全般（1〜20のうち10項目以上）');
-  if(s6_10>=3) flags.push('運動機能（6〜10のうち3項目以上）');
-  if(s11_12>=2) flags.push('栄養状態（11〜12の両方）');
-  if(s13_15>=2) flags.push('口腔機能（13〜15のうち2項目以上）');
-  if(item16>=1) flags.push('閉じこもり傾向（週1回以上の外出なし）');
-  if(s18_20>=1) flags.push('認知機能（18〜20のいずれか）');
-  if(s21_25>=2) flags.push('こころの健康（21〜25のうち2項目以上）');
+  const CRITERIA = [
+    {name:'日常生活全般', rule:'No.1〜20のうち10項目以上', got:sumRange(1,20),  total:20, need:10},
+    {name:'運動機能',     rule:'No.6〜10のうち3項目以上',  got:sumRange(6,10),  total:5,  need:3},
+    {name:'栄養状態',     rule:'No.11・12の2項目とも',     got:sumRange(11,12), total:2,  need:2},
+    {name:'口腔機能',     rule:'No.13〜15のうち2項目以上', got:sumRange(13,15), total:3,  need:2},
+    {name:'閉じこもり',   rule:'No.16に該当',              got:sumRange(16,16), total:1,  need:1},
+    {name:'認知機能',     rule:'No.18〜20のうち1項目以上', got:sumRange(18,20), total:3,  need:1},
+    {name:'こころの健康', rule:'No.21〜25のうち2項目以上', got:sumRange(21,25), total:5,  need:2},
+  ];
+  CRITERIA.forEach(c=>{ c.hit = c.got>=c.need; });
+  const hitCriteria = CRITERIA.filter(c=>c.hit);
+  const isTarget = hitCriteria.length>0;
 
-  const hit = flags.length>0;
+  /* 該当した質問を領域ごとにまとめる */
+  const cats = [];
+  CL_ITEMS.forEach((it,i)=>{
+    if(clAnswers[i]===1){
+      let g = cats.find(c=>c.cat===it.cat);
+      if(!g){ g={cat:it.cat, list:[]}; cats.push(g); }
+      g.list.push({no:i+1, q:it.q, a: clRaw[i] ? 'はい' : 'いいえ'});
+    }
+  });
+  const totalHit = clAnswers.reduce((a,b)=>a+b,0);
+
+  const judgeHtml = isTarget ? `
+    <div class="cl-judge watch">
+      <div class="label">基本チェックリストの判定（目安）</div>
+      <div class="big">事業対象者の基準に<br>該当します</div>
+      <div class="sub">該当した基準：${hitCriteria.map(c=>c.name).join('・')}</div>
+    </div>
+    <div class="advice-box">
+      <h3>📞 お住まいの地域の「地域包括支援センター」に相談してみましょう</h3>
+      <p>今回の結果は、介護予防の取り組みを始めるとよい方の目安に当てはまっています。「病気」や「要介護」という意味ではありませんので、ご安心ください。</p>
+      <p>地域包括支援センターでは、体操教室や生活支援サービスなど、今の生活を長く続けるためのお手伝いについて相談できます。お住まいの市区町村の窓口でも案内してもらえます。</p>
+      <p>結果の画面を見せながらお話しすると、伝わりやすくなります。</p>
+    </div>` : `
+    <div class="cl-judge ok">
+      <div class="label">基本チェックリストの判定（目安）</div>
+      <div class="big">事業対象者の基準には<br>該当しませんでした</div>
+      <div class="sub">該当した質問：${totalHit}／25問</div>
+    </div>
+    <div class="advice-box ok">
+      <h3>🌿 今の生活を無理なく続けていきましょう</h3>
+      <p>今回の結果では、事業対象者の基準に当てはまる領域はありませんでした。</p>
+      <p>それでも、体調や生活の変化が気になったときは、いつでも地域包括支援センターに相談できます。半年〜1年に1回など、定期的にふりかえるのもおすすめです。</p>
+    </div>`;
+
+  const tableHtml = `
+    <div class="res-h">📊 基準ごとの結果</div>
+    <table class="res-table">
+      <tr><th>領域</th><th>基準</th><th class="c">該当数</th><th class="c">判定</th></tr>
+      ${CRITERIA.map(c=>`
+        <tr>
+          <td>${c.name}</td>
+          <td>${c.rule}</td>
+          <td class="c">${c.got}／${c.total}</td>
+          <td class="c ${c.hit?'hit':'no'}">${c.hit?'該当':'−'}</td>
+        </tr>`).join('')}
+    </table>`;
+
+  const detailHtml = cats.length ? `
+    <div class="res-h">📝 「該当」になった質問（${totalHit}問）</div>
+    ${cats.map(g=>`
+      <div class="hit-cat">
+        <div class="cat">${g.cat}</div>
+        <ul>${g.list.map(x=>`<li>${x.q} <span>（No.${x.no}／回答：${x.a}）</span></li>`).join('')}</ul>
+      </div>`).join('')}` : `
+    <div class="res-h">📝 「該当」になった質問</div>
+    <div class="result-list">該当した質問はありませんでした。</div>`;
+
   const box = document.getElementById('cl-result');
   box.style.display='block';
   box.innerHTML = `
-    <div class="result-badge ${hit?'watch':'ok'}">
-      <div class="big">${hit?'気にかけたい項目があります':'該当する項目はありませんでした'}</div>
-      <div style="font-size:13px;color:var(--ink-soft);">全25問のふりかえり結果</div>
-    </div>
-    ${hit ? `<div class="result-list">${flags.map(f=>'・'+f).join('<br>')}</div>` : `<div class="result-list">今の生活を無理なく続けていきましょう。</div>`}
-    <div class="disclaimer">これは介護予防・日常生活支援総合事業で使われる「基本チェックリスト」と同じ質問による自己チェックです。正式な事業対象者の判定は市区町村・地域包括支援センターでの手続きが必要です。医学的な診断ではありません。</div>
-    <button class="btn ghost" style="margin-top:14px;" onclick="goHome()">トップへ戻る</button>
+    ${judgeHtml}
+    ${tableHtml}
+    ${detailHtml}
+    <div class="disclaimer" style="margin-top:16px;">この結果は、介護予防・日常生活支援総合事業で使われる「基本チェックリスト」と同じ質問による自己チェックです。事業対象者の基準は65歳以上の方が対象で、正式な判定は市区町村・地域包括支援センターでの手続きが必要です。医学的な診断ではありません。</div>
+    <button class="btn" style="margin-top:14px;" onclick="startChecklist()">もう一度チェックする</button>
+    <button class="btn ghost" style="margin-top:10px;" onclick="goHome()">トップへ戻る</button>
   `;
+  window.scrollTo(0,0);
 }
 
 /* ================= MEMORY GAME ================= */
