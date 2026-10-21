@@ -3,6 +3,8 @@
     { "source": "/kaigo/kobayashi", "destination": "https://sonosannworks.github.io/seikatsu/kobayashi-kaigo-search.html" },
     { "source": "/kaigo/ebino", "destination": "https://sonosannworks.github.io/seikatsu/ebino-kaigo-search.html" },
     { "source": "/kaigo/takaharu", "destination": "https://sonosannworks.github.io/seikatsu/takaharu-kaigo-search.html" },
-    { "source": "/kaigo/qr/:file", "destination": "https://sonosannworks.github.io/seikatsu/qr/:file" }
+    { "source": "/kaigo/qr/:file", "destination": "https://sonosannworks.github.io/seikatsu/qr/:file" },
+    { "source": "/kaigo", "destination": "https://sonosannworks.github.io/kaigo-search/" },
+    { "source": "/kaigo/data/:path*", "destination": "https://sonosannworks.github.io/kaigo-search/data/:path*" }
   ]
 }
