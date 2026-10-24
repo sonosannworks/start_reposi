@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ケアマネ転記アシスト(Web体験版) | sonosann Web&amp;AIサポート</title>
+<style>
+  :root{ --teal:#0E6B5C; --teal-deep:#0A5044; --teal-pale:#E4F0EC; --paper:#F7F6F2; --line:#D8D4CA; --ink:#2B2B28;
+         --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{display:flex; flex-direction:column; background:var(--paper); color:var(--ink); font-family:var(--gothic);}
+  .tabbar{display:flex; align-items:flex-end; gap:6px; padding:10px 16px 0; background:#fff; border-bottom:2px solid var(--teal); flex-wrap:wrap;}
+  .brand{font-size:13px; color:var(--teal-deep); font-weight:600; margin-right:10px; padding-bottom:9px;}
+  .tab{font-family:var(--gothic); font-size:15px; padding:9px 20px; border:1px solid var(--line); border-bottom:none;
+       border-radius:10px 10px 0 0; background:var(--paper); color:#555; cursor:pointer; position:relative; top:2px;}
+  .tab:hover{background:var(--teal-pale);}
+  .tab[aria-selected="true"]{background:var(--teal); color:#fff; border-color:var(--teal); font-weight:600;}
+  .tab .num{display:inline-flex; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,.08); font-size:12px;
+            align-items:center; justify-content:center; margin-right:6px;}
+  .tab[aria-selected="true"] .num{background:rgba(255,255,255,.25);}
+  .tab .new{display:none; margin-left:6px; font-size:11px; background:#E8A13A; color:#fff; border-radius:999px; padding:1px 7px;}
+  .tab.has-new .new{display:inline;}
+  .hint{margin-left:auto; font-size:12px; color:#777; padding-bottom:9px;}
+  .frames{flex:1; position:relative;}
+  iframe{position:absolute; inset:0; width:100%; height:100%; border:0; background:var(--paper);}
+  iframe[hidden]{display:none;}
+  @media (max-width:700px){ .hint{display:none;} .tab{padding:8px 12px; font-size:14px;} }
+  @media print{ .tabbar{display:none;} }
+  .fb-open{font-family:var(--gothic); font-size:13px; font-weight:600; margin-left:10px; margin-bottom:8px; padding:7px 14px; border:1px solid var(--teal); border-radius:999px; background:#fff; color:var(--teal-deep); cursor:pointer;}
+  .fb-open:hover{background:var(--teal-pale);}
+  .fb-back{position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; padding:16px; z-index:50;}
+  .fb-back[hidden]{display:none;}
+  .fb-modal{background:#fff; border-radius:14px; width:100%; max-width:560px; max-height:calc(100vh - 32px); overflow:auto; padding:22px 22px 18px; font-family:var(--gothic); color:var(--ink);}
+  .fb-modal h3{font-size:18px; color:var(--teal-deep); margin-bottom:4px;}
+  .fb-sub{font-size:12.5px; color:#666; margin-bottom:12px; line-height:1.6;}
+  .fb-persona{font-size:13px; background:var(--teal-pale); border-radius:8px; padding:6px 10px; margin-bottom:12px;}
+  .fb-modal fieldset{border:none; margin-bottom:12px;}
+  .fb-modal legend{font-size:14px; font-weight:600; margin-bottom:6px;}
+  .fb-modal legend .req{font-size:11px; color:#B4442C; margin-left:6px;}
+  .fb-opts{display:flex; flex-wrap:wrap; gap:6px;}
+  .fb-opts label{font-size:13.5px; border:1px solid var(--line); border-radius:999px; padding:5px 12px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;}
+  .fb-opts label:has(input:checked){border-color:var(--teal); background:var(--teal-pale); color:var(--teal-deep); font-weight:600;}
+  .fb-scale-note{font-size:11.5px; color:#777; margin-top:4px;}
+  .fb-modal .fb-txt{display:block; font-size:14px; font-weight:600; margin-bottom:12px;}
+  .fb-modal textarea{display:block; width:100%; margin-top:6px; min-height:72px; font-family:var(--gothic); font-size:14px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; resize:vertical;}
+  .fb-btns{display:flex; justify-content:flex-end; gap:8px; margin-top:4px;}
+  .fb-btns button{font-family:var(--gothic); font-size:14px; padding:9px 18px; border-radius:8px; border:1px solid var(--line); background:#fff; cursor:pointer;}
+  .fb-btns .fb-send{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600;}
+  .fb-btns .fb-send:disabled{opacity:.6; cursor:default;}
+  .fb-msg{font-size:13px; margin-top:10px; min-height:1em;}
+  .fb-msg.ok{color:var(--teal-deep); font-weight:600;} .fb-msg.err{color:#B4442C;}
+  @media (max-width:700px){ .fb-open{margin-left:auto;} }
+
+</style>
+</head>
+<body>
+  <nav class="tabbar" role="tablist" aria-label="ツールの切り替え">
+    <span class="brand">ケアマネ転記アシスト(Web体験版)</span>
+    <button class="tab" role="tab" id="tab-issue" aria-controls="f-issue" aria-selected="true"><span class="num">1</span>課題整理総括表</button>
+    <button class="tab" role="tab" id="tab-plan" aria-controls="f-plan" aria-selected="false"><span class="num">2</span>ケアプラン(第1・2表)<span class="new">結果が届きました</span></button>
+    <span class="hint">タブを切り替えても入力内容は消えません</span>
+    <button class="fb-open" id="fbOpen" type="button">感想を送る</button>
+  </nav>
+  <div class="frames">
+    <iframe id="f-issue" src="issue-summary-tool.html" title="課題整理総括表 転記アシスト"></iframe>
+    <iframe id="f-plan" src="careplan-tool.html" title="ケアプラン転記アシスト" hidden></iframe>
+  </div>
+<script>
+const tabs={issue:{tab:document.getElementById('tab-issue'),fr:document.getElementById('f-issue')},
+            plan:{tab:document.getElementById('tab-plan'),fr:document.getElementById('f-plan')}};
+function show(key){
+  Object.entries(tabs).forEach(([k,o])=>{ const on=k===key; o.tab.setAttribute('aria-selected',on); o.fr.hidden=!on; });
+  if(key==='plan') tabs.plan.tab.classList.remove('has-new');
+  try{ history.replaceState(null,'','#'+key); }catch(e){}
+}
+tabs.issue.tab.addEventListener('click',()=>show('issue'));
+tabs.plan.tab.addEventListener('click',()=>show('plan'));
+document.querySelector('.tabbar').addEventListener('keydown',e=>{
+  if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft') return;
+  const k=tabs.issue.fr.hidden?'issue':'plan'; show(k); tabs[k].tab.focus();
+});
+if(location.hash==='#plan') show('plan');
+
+/* 総括表タブ →(入れ物)→ ケアプランタブ */
+window.addEventListener('message',e=>{
+  if(e.source!==tabs.issue.fr.contentWindow) return;
+  const d=e.data; if(!d||d.cmTool!=='issue'||d.type!=='send-to-plan') return;
+  show('plan');
+  tabs.plan.fr.contentWindow.postMessage({cmTool:'hub',type:'receive-assess',text:d.text,name:d.name,wish:d.wish,extra:d.extra},'*');
+});
+
+/* 利用者名・意向の同期(どちらのタブで入力しても、もう一方に反映) */
+window.addEventListener('message',e=>{
+  const d=e.data; if(!d||d.type!=='sync') return;
+  let to=null;
+  if(e.source===tabs.issue.fr.contentWindow && d.cmTool==='issue') to=tabs.plan.fr;
+  else if(e.source===tabs.plan.fr.contentWindow && d.cmTool==='plan') to=tabs.issue.fr;
+  if(!to) return;
+  to.contentWindow.postMessage({cmTool:'hub',type:'sync',field:d.field,value:d.value},'*');
+});
+
+/* 入力途中で閉じようとしたときの確認 */
+window.addEventListener('beforeunload',e=>{ e.preventDefault(); e.returnValue=''; });
+</script>
+<div class="fb-back" id="fbBack" hidden>
+  <form class="fb-modal" id="fbForm" novalidate>
+    <h3>体験版の感想をお聞かせください</h3>
+    <p class="fb-sub">いただいた感想は、ツールの改善に使わせていただきます。お名前や事業所名など、個人や事業所が特定される情報は書かないでください。</p>
+    <div class="fb-persona" id="fbPersona">試したペルソナ:(まだ選ばれていません)</div>
+    <fieldset><legend>お立場</legend><div class="fb-opts">
+      <label><input type="radio" name="role" value="caremanager">ケアマネジャー</label>
+      <label><input type="radio" name="role" value="nurse">看護職</label>
+      <label><input type="radio" name="role" value="carer">介護職</label>
+      <label><input type="radio" name="role" value="other">その他</label></div></fieldset>
+    <fieldset><legend>試したもの</legend><div class="fb-opts">
+      <label><input type="radio" name="tried" value="issue">課題整理総括表</label>
+      <label><input type="radio" name="tried" value="plan">ケアプラン</label>
+      <label><input type="radio" name="tried" value="both">両方</label></div></fieldset>
+    <fieldset><legend>AIの下書きの出来ばえ<span class="req">必須</span></legend><div class="fb-opts">
+      <label><input type="radio" name="rating" value="1">1</label>
+      <label><input type="radio" name="rating" value="2">2</label>
+      <label><input type="radio" name="rating" value="3">3</label>
+      <label><input type="radio" name="rating" value="4">4</label>
+      <label><input type="radio" name="rating" value="5">5</label></div>
+      <div class="fb-scale-note">1:ほとんど使えない 〜 5:少し直せばそのまま使える</div></fieldset>
+    <fieldset><legend>実際の業務で使ってみたいですか？</legend><div class="fb-opts">
+      <label><input type="radio" name="wantUse" value="yes">ぜひ使いたい</label>
+      <label><input type="radio" name="wantUse" value="maybe">条件しだい</label>
+      <label><input type="radio" name="wantUse" value="no">今は使わない</label></div></fieldset>
+    <label class="fb-txt">良かった点<textarea name="good" maxlength="1000" placeholder="例)24項目の評価が早く出るので、たたき台として助かる"></textarea></label>
+    <label class="fb-txt">直してほしい点・気になった点<textarea name="improve" maxlength="1000" placeholder="例)第2表のサービス内容の言い回しが硬い"></textarea></label>
+    <div class="fb-btns"><button type="button" id="fbCancel">閉じる</button><button type="submit" class="fb-send" id="fbSend">送信する</button></div>
+    <div class="fb-msg" id="fbMsg" aria-live="polite"></div>
+  </form>
+</div>
+<script>
+(function(){
+  let persona={id:'',label:''};
+  const back=document.getElementById('fbBack'), form=document.getElementById('fbForm'), msg=document.getElementById('fbMsg'), send=document.getElementById('fbSend');
+  window.addEventListener('message',e=>{
+    if(e.source!==tabs.issue.fr.contentWindow) return;
+    const d=e.data; if(!d||d.cmTool!=='issue'||d.type!=='persona') return;
+    persona={id:d.id||'',label:d.label||''};
+    document.getElementById('fbPersona').textContent='試したペルソナ:'+(persona.label||'(まだ選ばれていません)');
+    tabs.plan.fr.contentWindow.postMessage({cmTool:'hub',type:'reset-plan'},'*');
+  });
+  function open(){ back.hidden=false; msg.textContent=''; msg.className='fb-msg'; }
+  function close(){ back.hidden=true; }
+  document.getElementById('fbOpen').addEventListener('click',open);
+  document.getElementById('fbCancel').addEventListener('click',close);
+  back.addEventListener('click',e=>{ if(e.target===back) close(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!back.hidden) close(); });
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const fd=new FormData(form), v=k=>(fd.get(k)||'').toString();
+    if(!v('rating')){ msg.className='fb-msg err'; msg.textContent='「AIの下書きの出来ばえ」を1〜5から選んでください。'; return; }
+    send.disabled=true; msg.className='fb-msg'; msg.textContent='送信しています…';
+    try{
+      const r=await fetch('/api/cm-feedback',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({personaId:persona.id,role:v('role'),tried:v('tried'),rating:+v('rating'),wantUse:v('wantUse'),good:v('good'),improve:v('improve')})});
+      const t=await r.text();
+      if(!r.ok) throw new Error(t||('HTTP '+r.status));
+      form.reset(); msg.className='fb-msg ok'; msg.textContent='送信しました。ご協力ありがとうございました！';
+      setTimeout(close,1800);
+    }catch(err){ msg.className='fb-msg err'; msg.textContent='送信できませんでした。'+(err.message||''); }
+    finally{ send.disabled=false; }
+  });
+})();
+</script>
+
+</body>
+</html>
