@@ -15,7 +15,7 @@ export function originOk(req){
 }
 
 export function tursoConf(){
-  const url = process.env.TURSO_DATABASE_URL, token = process.env.TURSO_AUTH_TOKEN;
+  const url = (process.env.TURSO_DATABASE_URL || '').trim(), token = (process.env.TURSO_AUTH_TOKEN || '').trim();
   if (!url || !token) return null;
   return { url: url.replace(/^libsql:\/\//, 'https://').replace(/\/+$/, ''), token };
 }
@@ -35,10 +35,13 @@ export async function tursoExec(conf, stmts){
     headers: { Authorization: 'Bearer ' + conf.token, 'Content-Type': 'application/json' },
     body: JSON.stringify({ requests })
   });
-  if (!r.ok) throw new Error('turso http ' + r.status);
+  if (!r.ok) {
+    const t = await r.text().catch(() => '');
+    throw new Error('turso http ' + r.status + ' ' + t.slice(0, 120));
+  }
   const j = await r.json();
   return j.results.slice(0, stmts.length).map(x => {
-    if (x.type !== 'ok') throw new Error('turso: ' + JSON.stringify(x.error || x));
+    if (x.type !== 'ok') throw new Error('turso: ' + JSON.stringify(x.error || x).slice(0, 160));
     return x.response.result;
   });
 }
@@ -60,3 +63,9 @@ export async function ipHash(req){
 }
 
 export const USAGE_TABLE = 'CREATE TABLE IF NOT EXISTS cm_usage (day TEXT NOT NULL, ip TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, ip))';
+
+// 失敗の原因を、秘密の値を含めずに短く表す(画面とログ用)
+export function errCode(e){
+  const m = String((e && e.message) || e || '').replace(/eyJ[\w.-]+/g, '***').slice(0, 160);
+  return m || 'unknown';
+}

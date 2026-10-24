@@ -1,5 +1,5 @@
 // ケアマネ転記アシスト Web体験版:感想フォームの保存(Turso)
-import { text, originOk, tursoConf, tursoExec, cell, jstDay, ipHash, USAGE_TABLE } from './_cm-lib.js';
+import { text, originOk, tursoConf, tursoExec, cell, jstDay, ipHash, USAGE_TABLE, errCode } from './_cm-lib.js';
 
 export const config = { runtime: 'edge' };
 
@@ -39,7 +39,8 @@ export default async function handler(req){
       { sql: 'INSERT INTO cm_usage (day, ip, count) VALUES (?, ?, 1) ON CONFLICT (day, ip) DO UPDATE SET count = count + 1', args: [day, ip] }
     ]);
   } catch (e) {
-    return text(503, 'ただいま混み合っています。時間をおいてお試しください。');
+    console.error('[cm] turso error:', errCode(e));
+    return text(503, 'ただいま混み合っています。時間をおいてお試しください。(記録の保存で問題が起きました:' + errCode(e) + ')');
   }
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
 }

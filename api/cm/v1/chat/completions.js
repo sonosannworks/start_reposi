@@ -1,6 +1,6 @@
 // ケアマネ転記アシスト Web体験版:AIの中継(Cloudflare Workers AI / OpenRouter)+1日の回数制限
 // 画面側は LM Studio と同じ形式(/v1/chat/completions)で呼び出す。APIキーはここ(サーバー)にだけ置く。
-import { text, originOk, tursoConf, tursoExec, cell, jstDay, ipHash, USAGE_TABLE } from '../../../_cm-lib.js';
+import { text, originOk, tursoConf, tursoExec, cell, jstDay, ipHash, USAGE_TABLE, errCode } from '../../../_cm-lib.js';
 
 export const config = { runtime: 'edge' };
 
@@ -14,13 +14,13 @@ export default async function handler(req){
   if (!originOk(req)) return text(403, 'このページからはご利用いただけません。');
   let endpoint, key, extra = {}, headers = {};
   if (PROVIDER === 'openrouter') {
-    key = process.env.OPENROUTER_API_KEY;
+    key = (process.env.OPENROUTER_API_KEY || '').trim();
     endpoint = 'https://openrouter.ai/api/v1/chat/completions';
     extra = { repetition_penalty: 1.1, provider: { data_collection: 'deny' } };
     headers = { 'HTTP-Referer': 'https://start-reposi.vercel.app/care-manager-support/web/', 'X-Title': 'CareManager Assist Web Trial' };
   } else {
-    key = process.env.CLOUDFLARE_API_TOKEN;
-    const acct = process.env.CLOUDFLARE_ACCOUNT_ID;
+    key = (process.env.CLOUDFLARE_API_TOKEN || '').trim();
+    const acct = (process.env.CLOUDFLARE_ACCOUNT_ID || '').trim();
     endpoint = acct ? 'https://api.cloudflare.com/client/v4/accounts/' + encodeURIComponent(acct) + '/ai/v1/chat/completions' : '';
     if (!endpoint) key = '';
   }
@@ -53,7 +53,8 @@ export default async function handler(req){
       if (cell(all) >= global) return text(429, '本日はたくさんの方にご利用いただき、全体の上限に達しました。また明日お試しください。');
       await tursoExec(conf, [{ sql: 'INSERT INTO cm_usage (day, ip, count) VALUES (?, ?, 1) ON CONFLICT (day, ip) DO UPDATE SET count = count + 1', args: [day, ip] }]);
     } catch (e) {
-      return text(503, 'ただいま混み合っています。時間をおいてお試しください。');
+      console.error('[cm] turso error:', errCode(e));
+    return text(503, 'ただいま混み合っています。時間をおいてお試しください。(記録の保存で問題が起きました:' + errCode(e) + ')');
     }
   }
 
@@ -74,6 +75,7 @@ export default async function handler(req){
   });
   if (!upstream.ok || !upstream.body) {
     const t = await upstream.text().catch(() => '');
+    console.error('[cm] ai error:', upstream.status, t.slice(0, 300));
     return text(502, 'AIサーバーで問題が起きました(HTTP ' + upstream.status + ')。時間をおいてお試しください。\n' + t.slice(0, 200));
   }
   return new Response(upstream.body, {
