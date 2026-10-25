@@ -32,6 +32,10 @@
   .step-num{display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; font-size:13px; align-items:center; justify-content:center; margin-right:8px; font-family:var(--gothic);}
   textarea#src{width:100%; min-height:190px; border:1px solid var(--line-2); border-radius:8px; padding:12px; font-family:"MS Gothic","Osaka-Mono",monospace; font-size:13px; line-height:1.7; color:var(--ink); background:#FCFCFA; resize:vertical;}
   textarea#src:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .lbl{display:block; font-size:13px; font-weight:600; color:var(--ink); margin:14px 0 6px;}
+  .lbl .nw{white-space:nowrap;}
+  textarea#wishText{width:100%; min-height:70px; border:1px solid var(--line-2); border-radius:8px; padding:12px; font-size:13px; line-height:1.7; color:var(--ink); background:#FCFCFA; resize:vertical; font-family:inherit;}
+  textarea#wishText:focus{outline:2px solid var(--teal); outline-offset:1px;}
   .btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;}
   button{font-family:var(--gothic); font-size:14px; border-radius:8px; border:1px solid var(--line-2); background:#fff; color:var(--ink); padding:8px 16px; cursor:pointer;}
   button:hover{background:#F3F2EC;}
@@ -134,6 +138,8 @@
   <section class="panel">
     <h2><span class="step-num">1</span>Claudeの出力を貼り付け</h2>
     <textarea id="src" placeholder="[issue-summary-v1] から始まるSkillの出力を、ここに貼り付けてください" aria-label="Skill出力の貼り付け欄"></textarea>
+    <label class="lbl" for="wishText">本人・家族の意向<span class="nw">(ヒアリング済みなら入力。任意)</span></label>
+    <textarea id="wishText" class="small" placeholder="例)本人:畑仕事を続けたい/長女:日中ひとりにするのが心配"></textarea>
     <div class="btnrow">
       <button class="primary" id="btnParse">様式に反映</button>
       <button id="btnSample">サンプルを読み込む</button>
@@ -408,7 +414,10 @@ function render(data){
     ? data.factors.map((f,i)=> f.match(/^[①②③④⑤⑥]/) ? f : nums[i]+f).join('\n')
     : '(記載なし。面談での確認が必要です)';
   body.appendChild(fieldEl({label:'自立した日常生活の阻害要因(心身の状態、環境等)', text:factorText}));
-  body.appendChild(fieldEl({label:'利用者及び家族の生活に対する意向', text:data.wish || '(記載なし。面談での確認が必要です)'}));
+  const wishIn=$('wishText').value.trim();
+  const skillWish = wishIn ? data.wish.split('\n').filter(l=>!/面談での確認が必要/.test(l)).join('\n').trim() : data.wish;
+  const wishText = wishIn ? (skillWish ? wishIn+'\n\n'+skillWish : wishIn) :(data.wish || '(記載なし。面談での確認が必要です)');
+  body.appendChild(fieldEl({label:'利用者及び家族の生活に対する意向', text:wishText}));
 
   const rows=[];
   CANON.forEach(g=>{
@@ -495,7 +504,7 @@ $('btnParse').addEventListener('click',()=>{
   render(data);
 });
 $('btnSample').addEventListener('click',()=>{ $('src').value=SAMPLE; $('btnParse').click(); });
-$('btnClear').addEventListener('click',()=>{ $('src').value=''; $('output').innerHTML=''; $('warn').style.display='none'; $('progressbar').style.display='none'; });
+$('btnClear').addEventListener('click',()=>{ $('src').value=''; $('wishText').value=''; $('output').innerHTML=''; $('warn').style.display='none'; $('progressbar').style.display='none'; });
 </script>
 </body>
 </html>

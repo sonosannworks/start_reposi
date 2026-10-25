@@ -33,6 +33,10 @@
   .step-num{display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; font-size:13px; align-items:center; justify-content:center; margin-right:8px; font-family:var(--gothic);}
   textarea#src{width:100%; min-height:180px; border:1px solid var(--line-2); border-radius:8px; padding:12px; font-family:"MS Gothic","Osaka-Mono",monospace; font-size:13px; line-height:1.7; color:var(--ink); background:#FCFCFA; resize:vertical;}
   textarea#src:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .lbl{display:block; font-size:13px; font-weight:600; color:var(--ink); margin:14px 0 6px;}
+  .lbl .nw{white-space:nowrap;}
+  textarea#wishText{width:100%; min-height:70px; border:1px solid var(--line-2); border-radius:8px; padding:12px; font-size:13px; line-height:1.7; color:var(--ink); background:#FCFCFA; resize:vertical; font-family:inherit;}
+  textarea#wishText:focus{outline:2px solid var(--teal); outline-offset:1px;}
   .btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;}
   button{font-family:var(--gothic); font-size:14px; border-radius:8px; border:1px solid var(--line-2); background:#fff; color:var(--ink); padding:8px 16px; cursor:pointer;}
   button:hover{background:#F3F2EC;}
@@ -140,6 +144,8 @@
   <section class="panel">
     <h2><span class="step-num">1</span>Claudeの出力を貼り付け</h2>
     <textarea id="src" placeholder="[careplan-v1] から始まるSkillの出力を、ここに貼り付けてください" aria-label="Skill出力の貼り付け欄"></textarea>
+    <label class="lbl" for="wishText">本人・家族の意向<span class="nw">(ヒアリング済みなら入力。任意)</span></label>
+    <textarea id="wishText" class="small" placeholder="例)本人:畑仕事を続けたい/長女:日中ひとりにするのが心配"></textarea>
     <div class="btnrow">
       <button class="primary" id="btnParse">様式に反映</button>
       <button id="btnSample">サンプルを読み込む</button>
@@ -335,6 +341,12 @@ function render(plan){
     const title=isT1?'居宅サービス計画書(1)':isT2?'居宅サービス計画書(2)':/第3表/.test(form.name)?'週間サービス計画表':form.name;
     sheet.innerHTML='<div class="sheet-head"><span class="tno">'+esc(tnoOf(form.name)||form.name)+'</span><h3>'+esc(title)+'</h3></div>';
     const body=document.createElement('div'); body.className='sheet-body'; sheet.appendChild(body);
+    const wishIn=$('wishText').value.trim();
+    if (isT1 && wishIn){
+      const wf=form.fields.find(f=>/意向を踏まえた課題分析/.test(f.label));
+      if (wf) wf.text = wf.text ? wishIn+'\n\n'+wf.text : wishIn;
+      else form.fields.unshift({label:'利用者及び家族の生活に対する意向を踏まえた課題分析の結果', text:wishIn});
+    }
     form.fields.forEach(f=>{ if(f.svcOnly) body.appendChild(svcEl(f.svcOnly)); else body.appendChild(fieldEl(f)); });
 
     form.needs.forEach((need,i)=>{
@@ -474,7 +486,7 @@ $('btnParse').addEventListener('click',()=>{
   render(plan);
 });
 $('btnSample').addEventListener('click',()=>{ $('src').value=SAMPLE; $('btnParse').click(); });
-$('btnClear').addEventListener('click',()=>{ $('src').value=''; $('output').innerHTML=''; $('warn').style.display='none'; $('progressbar').style.display='none'; });
+$('btnClear').addEventListener('click',()=>{ $('src').value=''; $('wishText').value=''; $('output').innerHTML=''; $('warn').style.display='none'; $('progressbar').style.display='none'; });
 if (DEMO_MODE) $('demoBadge').style.display='inline-block';
 </script>
 </body>
