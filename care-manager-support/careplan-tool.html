@@ -25,6 +25,7 @@
   header.app h1{font-family:var(--mincho); font-size:24px; font-weight:600; color:var(--teal-deep); letter-spacing:.04em;}
   .ver{font-size:12px; color:var(--ink-3); letter-spacing:.06em;}
   .badge-local{margin-left:auto; font-size:12px; background:var(--done-bg); color:var(--teal-deep); border:1px solid #BFE3D6; border-radius:999px; padding:3px 12px;}
+  .badge-local .nw{white-space:nowrap;}
   .badge-demo{font-size:12px; background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-line); border-radius:999px; padding:3px 12px;}
 
   .panel{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin-top:16px;}
@@ -110,7 +111,7 @@
   .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--teal-deep); color:#fff; font-size:13.5px; padding:9px 20px; border-radius:999px; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:20;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
-  @media (max-width:600px){ header.app h1{font-size:20px;} .badge-local{margin-left:0;} }
+  @media (max-width:600px){ header.app h1{font-size:20px;} .badge-local{margin-left:0; font-size:11px; padding:3px 10px;} }
 </style>
 </head>
 <body>
@@ -120,7 +121,7 @@
     <h1>ケアプラン転記アシスト</h1>
     <span class="ver">対応形式: careplan-v1</span>
     <span class="badge-demo" id="demoBadge" style="display:none;">デモ版</span>
-    <span class="badge-local">ローカル完結 ・ データは保存されません</span>
+    <span class="badge-local">ブラウザ内で処理 ・ <span class="nw">データは送信・保存されません</span></span>
   </header>
 
   <details class="howto">
