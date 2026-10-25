@@ -1,4 +1,7 @@
 {
+  "redirects": [
+    { "source": "/careplan-tool.html", "destination": "/care-manager-support/careplan-tool.html", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/kaigo/kobayashi", "destination": "https://sonosannworks.github.io/seikatsu/kobayashi-kaigo-search.html" },
     { "source": "/kaigo/ebino", "destination": "https://sonosannworks.github.io/seikatsu/ebino-kaigo-search.html" },
