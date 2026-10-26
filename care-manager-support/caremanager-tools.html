@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ケアマネ転記アシスト(Claude貼り付け版) | sonosann Web&amp;AIサポート</title>
+<style>
+  :root{ --teal:#0E6B5C; --teal-deep:#0A5044; --teal-pale:#E4F0EC; --paper:#F7F6F2; --line:#D8D4CA; --ink:#2B2B28;
+         --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{display:flex; flex-direction:column; background:var(--paper); color:var(--ink); font-family:var(--gothic);}
+  .tabbar{display:flex; align-items:flex-end; gap:6px; padding:10px 16px 0; background:#fff; border-bottom:2px solid var(--teal); flex-wrap:wrap;}
+  .brand{font-size:13px; color:var(--teal-deep); font-weight:600; margin-right:10px; padding-bottom:9px;}
+  .tab{font-family:var(--gothic); font-size:15px; padding:9px 20px; border:1px solid var(--line); border-bottom:none;
+       border-radius:10px 10px 0 0; background:var(--paper); color:#555; cursor:pointer; position:relative; top:2px;}
+  .tab:hover{background:var(--teal-pale);}
+  .tab[aria-selected="true"]{background:var(--teal); color:#fff; border-color:var(--teal); font-weight:600;}
+  .tab .num{display:inline-flex; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,.08); font-size:12px;
+            align-items:center; justify-content:center; margin-right:6px;}
+  .tab[aria-selected="true"] .num{background:rgba(255,255,255,.25);}
+  .tab .new{display:none; margin-left:6px; font-size:11px; background:#E8A13A; color:#fff; border-radius:999px; padding:1px 7px;}
+  .tab.has-new .new{display:inline;}
+  .hint{margin-left:auto; font-size:12px; color:#777; padding-bottom:9px;}
+  .badge{font-size:12px; background:#E1F5EE; color:var(--teal-deep); border:1px solid #BFE3D6; border-radius:999px; padding:3px 12px; margin-bottom:8px; white-space:nowrap;}
+  .frames{flex:1; position:relative;}
+  iframe{position:absolute; inset:0; width:100%; height:100%; border:0; background:var(--paper);}
+  iframe[hidden]{display:none;}
+  @media (max-width:700px){ .hint{display:none;} .tab{padding:8px 12px; font-size:14px;} .badge{margin-left:auto; white-space:normal;} }
+  @media print{ .tabbar{display:none;} }
+</style>
+</head>
+<body>
+  <nav class="tabbar" role="tablist" aria-label="ツールの切り替え">
+    <span class="brand">ケアマネ転記アシスト(Claude貼り付け版)</span>
+    <button class="tab" role="tab" id="tab-issue" aria-controls="f-issue" aria-selected="true"><span class="num">1</span>課題整理総括表<span class="new">結果が届きました</span></button>
+    <button class="tab" role="tab" id="tab-plan" aria-controls="f-plan" aria-selected="false"><span class="num">2</span>ケアプラン(第1・2表)<span class="new">結果が届きました</span></button>
+    <span class="hint">タブを切り替えても入力内容は消えません(ページを閉じる・再読み込みすると消えます)</span>
+    <span class="badge">ブラウザ内で処理 ・ データは送信・保存されません</span>
+  </nav>
+  <div class="frames">
+    <iframe id="f-issue" src="caremanager-tools-issue.html" title="課題整理総括表 転記アシスト"></iframe>
+    <iframe id="f-plan" src="caremanager-tools-plan.html" title="ケアプラン転記アシスト" hidden></iframe>
+  </div>
+<script>
+const tabs={issue:{tab:document.getElementById('tab-issue'),fr:document.getElementById('f-issue')},
+            plan:{tab:document.getElementById('tab-plan'),fr:document.getElementById('f-plan')}};
+function show(key){
+  Object.entries(tabs).forEach(([k,o])=>{ const on=k===key; o.tab.setAttribute('aria-selected',on); o.fr.hidden=!on; });
+  tabs[key].tab.classList.remove('has-new');
+  // 意向などの入力直後でも、切り替え先のタブの様式をすぐ最新にする
+  Object.values(tabs).forEach(o=>{ try{ o.fr.contentWindow.postMessage({cmTool:'hub',type:'flush'},'*'); }catch(e){} });
+  try{ history.replaceState(null,'','#'+key); }catch(e){}
+}
+tabs.issue.tab.addEventListener('click',()=>show('issue'));
+tabs.plan.tab.addEventListener('click',()=>show('plan'));
+document.querySelector('.tabbar').addEventListener('keydown',e=>{
+  if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft') return;
+  const k=tabs.issue.fr.hidden?'issue':'plan'; show(k); tabs[k].tab.focus();
+});
+if(location.hash==='#plan') show('plan');
+
+/* 貼り付けた内容の振り分け:一方のタブに貼られた、もう一方のタブの分を届ける */
+window.addEventListener('message',e=>{
+  const d=e.data; if(!d||d.type!=='route-paste') return;
+  let to=null;
+  if(e.source===tabs.issue.fr.contentWindow && d.cmTool==='issue') to='plan';
+  else if(e.source===tabs.plan.fr.contentWindow && d.cmTool==='plan') to='issue';
+  if(!to) return;
+  tabs[to].fr.contentWindow.postMessage({cmTool:'hub',type:'receive-paste',text:d.text,sample:!!d.sample,wish:d.wish||'',name:d.name||''},'*');
+  if(tabs[to].fr.hidden) tabs[to].tab.classList.add('has-new');
+});
+
+/* 利用者名・意向の同期(どちらのタブで入力しても、もう一方に反映) */
+window.addEventListener('message',e=>{
+  const d=e.data; if(!d||d.type!=='sync') return;
+  let to=null;
+  if(e.source===tabs.issue.fr.contentWindow && d.cmTool==='issue') to=tabs.plan.fr;
+  else if(e.source===tabs.plan.fr.contentWindow && d.cmTool==='plan') to=tabs.issue.fr;
+  if(!to) return;
+  to.contentWindow.postMessage({cmTool:'hub',type:'sync',field:d.field,value:d.value},'*');
+});
+
+/* 入力途中で閉じようとしたときの確認 */
+window.addEventListener('beforeunload',e=>{ e.preventDefault(); e.returnValue=''; });
+</script>
+</body>
+</html>
