@@ -7,6 +7,8 @@
    ===================================================== */
 (function(){
   const DIR='personas/';
+  /* PDFとデータ(personas/*.js)のバージョン。中身を作り直したら、この値を変える(ブラウザに残った古いファイルを使わせないため) */
+  const VER='20261030';
   const PERSONAS=[
     {no:1,  name:'森田 静江', kana:'もりた しずえ', age:80, sex:'女性', level:'要介護1', app:'新規申請', family:'夫(83歳)と二人暮らし(老老世帯)', file:'persona_01_morita_shizue.pdf'},
     {no:2,  name:'岡本 輝夫', kana:'おかもと てるお', age:76, sex:'男性', level:'要介護1', app:'更新申請(前回:要介護1)', family:'独居、長女は県外', file:'persona_02_okamoto_teruo.pdf'},
@@ -146,7 +148,7 @@
     const blobUrls={};
     function loadPdf(p){
       // サイトで公開しているときは、意味の分かる名前のPDFファイルをそのまま使う(別タブ・保存でもこの名前になる)
-      if(/^https?:$/.test(location.protocol)) return Promise.resolve(DIR+encodeURIComponent(pubName(p)));
+      if(/^https?:$/.test(location.protocol)) return Promise.resolve(DIR+encodeURIComponent(pubName(p))+'?v='+VER);
       if(blobUrls[p.file]) return Promise.resolve(blobUrls[p.file]);
       const make=()=>{
         const b64=(window.cmPersonaPdf||{})[p.file]; if(!b64) throw new Error('no data');
@@ -158,7 +160,7 @@
       if((window.cmPersonaPdf||{})[p.file]) return Promise.resolve(make());
       return new Promise((ok,ng)=>{
         const s=document.createElement('script');
-        s.src=DIR+p.file.replace(/\.pdf$/,'.js');
+        s.src=DIR+p.file.replace(/\.pdf$/,'.js')+'?v='+VER;
         s.onload=()=>{ try{ ok(make()); }catch(e){ ng(e); } };
         s.onerror=ng;
         document.head.appendChild(s);
