@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>課題整理総括表 転記アシスト(Claude貼り付け版) | sonosann Web&AIサポート</title>
+<title>課題整理総括表 転記アシスト(AI貼り付け版) | sonosann Web&AIサポート</title>
 <style>
   :root{
     --paper:#F5F4EF; --card:#FFFFFF;
@@ -73,7 +73,7 @@
   .svc-title{font-size:13px; font-weight:600; color:var(--form-green-ink); background:#F4F6EE; padding:8px 12px; border-bottom:1px solid var(--line);}
   .svc-scroll{overflow-x:auto;}
   table.svc-tbl{width:100%; border-collapse:collapse; font-size:13px; min-width:640px;}
-  table.svc-tbl th{background:var(--form-green); color:var(--form-green-ink); font-weight:600; font-size:12px; padding:6px 8px; border:1px solid var(--form-green-line); white-space:nowrap;}
+  table.svc-tbl th{text-align:center; line-height:1.4; vertical-align:middle; background:var(--form-green); color:var(--form-green-ink); font-weight:600; font-size:12px; padding:6px 8px; border:1px solid var(--form-green-line); white-space:nowrap;}
   table.svc-tbl td{border:1px solid var(--line); padding:6px 8px; vertical-align:top;}
   td.cell{cursor:pointer;}
   td.cell:hover{background:#F3F7F0;}
@@ -81,7 +81,7 @@
   td.pending{color:var(--ink-3); opacity:.6; text-align:center; font-size:12.5px;}
   td.rowbtn{white-space:nowrap; text-align:center; background:#FAFAF7;}
   .svc-note{font-size:12.5px; color:var(--amber); background:var(--amber-bg); border-top:1px solid var(--amber-line); padding:6px 12px;}
-  .pill{display:inline-block; font-size:11px; font-weight:700; padding:1px 9px; border-radius:999px; margin-right:4px;}
+  .pill{display:inline-block; font-size:11px; font-weight:700; padding:1px 9px; border-radius:999px; margin-right:4px; white-space:nowrap;}
   .pill.ok{background:var(--done-bg); color:var(--teal-deep);}
   .pill.warn{background:var(--amber-bg); color:var(--amber);}
   .pill.bad{background:#F8E9E7; color:#96351D;}
@@ -116,6 +116,8 @@
   .ai-status.done{color:var(--teal-deep); font-weight:600;}
   button:disabled{opacity:.5; cursor:not-allowed;}
   #saveRow{display:none; justify-content:flex-end; gap:8px; margin-top:16px;}
+  #saveRow{align-items:center; flex-wrap:wrap; border-top:2px solid var(--teal); padding-top:14px; margin-top:24px;}
+  #saveRow .save-note{margin-right:auto; font-size:13px; color:var(--teal-deep); font-weight:600;}
   #printMeta{display:none;}
   @media print{
     @page{size:A4 landscape; margin:10mm;}
@@ -151,6 +153,9 @@
   .mask-hint{display:block; margin:4px 0 6px;}
   /* サンプル選択・サンプルの意向 */
   #sampleSel{font-family:var(--gothic); font-size:14px; border-radius:8px; border:1px solid var(--line-2); background:#fff; color:var(--ink); padding:8px 12px; cursor:pointer; max-width:100%;}
+    .persona-row{align-items:center; background:#F7FBFA; border:1px dashed var(--teal); border-radius:8px; padding:8px 10px;}
+  .persona-row .row-lbl{font-size:12.5px; font-weight:600; color:var(--teal-deep); margin-right:2px;}
+  #sampleSel{width:min(100%,340px);}
   #sampleSel:focus-visible{outline:2px solid var(--teal-deep); outline-offset:2px;}
   .sample-wish{margin-top:12px; border:1px dashed var(--teal); border-radius:8px; padding:10px 14px; background:#F7FBFA;}
   .sample-wish .sw-head{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--teal-deep);}
@@ -171,10 +176,10 @@
     <summary>はじめての方へ(使い方)</summary>
     <div class="body">
       <ol>
-        <li>認定情報(認定調査票・主治医意見書・特記事項)の<b>個人情報をすべてマスキング</b>し、Claudeの課題整理総括表Skillに渡します。
+        <li>認定情報(認定調査票・主治医意見書・特記事項)の<b>個人情報をすべてマスキング</b>し、AIに添付して渡します。すると課題整理総括表のSkillが発動して、24項目の評価が作られます。
           <div class="tip">
-            <b>意向を伝えると、見通し・ニーズまで作成されます</b>
-            <p>Claudeに認定情報を添付するとき、面談で確認した本人・家族の意向もひと言添えてください。</p>
+            <b>本人・家族の意向を伝えると、見通し・ニーズまで作成されます</b>
+            <p>AIに認定情報を添付するとき、面談で確認した本人・家族の意向もひと言添えてください。</p>
             <ul>
               <li>意向を添えた場合:24項目の評価に加えて、「見通し」と「ニーズ【案】」まで作成されます。</li>
               <li>認定情報だけの場合:24項目の評価のみで、見通し・ニーズ欄は空欄になります(不具合ではありません)。</li>
@@ -184,17 +189,17 @@
             <p class="hint">※優先順位は、本人・家族と相談して決める項目のため、どちらの場合も空欄になります。</p>
           </div>
         </li>
-        <li>画面の「1」に利用者名を入れます。意向を入力した場合は、その内容が様式の意向欄に表示されます(Claudeの出力にある意向より優先されます)。</li>
-        <li>返ってきた <code>[issue-summary-v1]</code> から始まる出力を全文コピーし、「2」の欄に貼り付けます。ケアプランの出力(<code>[careplan-v1]</code>)が含まれていれば、ケアプランのタブに自動で送られます。</li>
+        <li>画面の①に利用者名を入れます(認定情報は名前をマスキングしているため、利用者の取り違えを防ぐために手入力してください。入力した名前は保存されません)。意向を入力した場合は、様式の意向欄に表示されます。さらに、ケアプランを作るときにAIに渡されるので、AIはその意向を考慮してケアプランを作成します(総括表の見通し・ニーズにも反映したいときは、1番のとおり認定情報と一緒にAIに伝えてください)。</li>
+        <li>返ってきた <code>[issue-summary-v1]</code> から始まる出力を全文コピーし、②の欄に貼り付けます。貼り付けると、自動で様式に反映されます。</li>
         <li>マス目をクリックするか「行コピー」でコピーし、<b>お使いの介護ソフトの同じ欄に貼り付けて</b>反映します。急ぎのときは「標準様式で印刷・PDF保存」でそのまま印刷もできます。</li>
         <li>見通し・ニーズ【案】は下書きです。優先順位は本人・家族と合意したうえでケアマネジャーが記入してください。見通し・ニーズが空欄のときは、「面談で確認すべき事項」を参考に面談を行ってください。</li>
-        <li>ケアプランを作るときは「ケアプラン用に全文コピー」を押し、Claudeのケアプラン作成Skillに渡します(意向が出力に含まれていない場合は、意向も一緒に伝えてください)。</li>
+        <li>ケアプランを作るときは「次へ:ケアプランをAIで作る(コピー)」を押し、AI(Claude・ChatGPT・Gemini)に貼り付けて送信します。するとケアプラン作成のSkillが発動して、第1表・第2表の下書きが作られます。依頼文も一緒にコピーされます。画面で入力した意向と、ケアプランのタブで入力した「利用したいサービス」も自動で一緒にコピーされます。</li>
       </ol>
       <div class="privacy">
         <b>個人情報の取り扱いについて</b>
-        <p>このページは、貼り付けた内容をブラウザの中だけで処理し、インターネットに送ることはありません。ただし、Claudeに渡した内容はClaudeのサービスに送られます。保存したファイルはパソコンに残ります。</p>
+        <p>このページは、貼り付けた内容をブラウザの中だけで処理し、インターネットに送ることはありません。ただし、AIに渡した内容は、そのAIのサービス(Claude・ChatGPT・Geminiなど)に送られます。保存したファイルはパソコンに残ります。</p>
         <ul>
-          <li>Claudeに渡す認定情報・アセスメントは、<b>すべての個人情報(氏名・住所・生年月日・電話番号・被保険者番号・家族の氏名・医療機関名など)をマスキングしてから</b>渡してください。</li>
+          <li>AIに渡す認定情報・アセスメントは、<b>すべての個人情報(氏名・住所・生年月日・電話番号・被保険者番号・家族の氏名・医療機関名など)をマスキングしてから</b>渡してください。</li>
           <li>どなたの情報かは、画面の「利用者名」欄に入力します。入力した名前は画面の表示と印刷にだけ使われ、<b>保存されません</b>(ページを閉じると消えます)。</li>
           <li>「テキストで保存」「PDFに保存」したファイルには名前が入ります。<b>OneDrive・Googleドライブなどの同期フォルダには保存しない</b>でください。不要になったファイルは削除してください。</li>
           <li>取り扱いは、事業所の個人情報保護の規程に従ってください。</li>
@@ -212,23 +217,33 @@
     </div>
     <label class="lbl" for="wishText">本人・家族の意向(ヒアリング済みなら入力。任意)</label>
     <textarea id="wishText" class="small" placeholder="例)本人:畑仕事を続けたい/長女様:日中ひとりにするのが心配"></textarea>
-    <p class="hint">※ 意向を入力すると、様式の「利用者及び家族の生活に対する意向」にはこの内容が表示されます(Claudeの出力にある意向より優先されます)。利用者名・意向はケアプランのタブと自動でそろいます(保存はされません)。</p>
+    <p class="hint">※ 意向を入力すると、様式の「利用者及び家族の生活に対する意向」にはこの内容が表示されます(AIの出力にある意向より優先されます)。利用者名・意向はケアプランのタブと自動でそろいます(保存はされません)。</p>
     <div id="sampleWish" class="sample-wish" hidden></div>
   </section>
 
   <section class="panel">
-    <h2><span class="step-num">2</span>Claudeの出力を貼り付け</h2>
-    <textarea id="src" placeholder="[issue-summary-v1] から始まるClaudeの出力を、ここに貼り付けてください(ケアプランの [careplan-v1] と一緒に貼り付けてもOK)" aria-label="Claudeの出力の貼り付け欄"></textarea>
+    <h2><span class="step-num">2</span>AIの出力を貼り付け<span style="font-size:12.5px; font-weight:400; color:var(--ink-2); margin-left:8px;">(貼り付けた内容は、ここで修正できます)</span></h2>
+    <textarea id="src" placeholder="[issue-summary-v1] から始まるAIの出力を、ここに貼り付けてください" aria-label="AIの出力の貼り付け欄"></textarea>
     <div id="piiBox" role="status"></div>
-    <div class="btnrow">
-      <button class="primary" id="btnParse">様式に反映</button>
-      <select id="sampleSel" aria-label="サンプル(架空の事例)を選んで読み込む"></select>
-      <button id="btnSample">サンプルを読み込む</button>
-      <button id="btnCopyAll">ケアプラン用に全文コピー</button>
-      <button id="btnClear">クリア</button>
+    <div class="btnrow persona-row" id="personaRow">
+      <span class="row-lbl">ペルソナで試す</span>
+      <select id="sampleSel" aria-label="ペルソナ(架空の事例)を選んで入力"></select>
+      <button id="btnSample">ペルソナを入力</button>
     </div>
+    <p class="hint" style="margin-top:4px; margin-bottom:4px;">※ ペルソナを選ぶと、この総括表に評価結果が入ります。ケアプランは下の手順で、AIで作ります。</p>
+    <div class="btnrow">
+      <button id="btnCopyAll" class="primary">次へ:ケアプランをAIで作る(コピー)</button>
+      <button id="btnClear">クリア</button>
+      <button id="btnParse">修正を様式に反映</button>
+    </div>
+    <ol class="hint ai-steps" style="margin:8px 0 0 1.4em; color:var(--teal-deep);">
+      <li>「次へ:ケアプランをAIで作る(コピー)」を押すと、総括表・意向・利用したいサービスがまとめてコピーされます</li>
+      <li>AI(Claude・ChatGPT・Gemini)に貼り付けて送信します(「ケアプランを作成してください」の依頼文も入っています)</li>
+      <li>返ってきた <code>[careplan-v1]</code> の結果を、ケアプランのタブに貼り付けます</li>
+    </ol>
     <div id="routeInfo" class="ai-status" aria-live="polite"></div>
-    <p class="hint">※ 貼り付けると自動で下の様式に反映されます。内容を直したいときは、この欄の文字を書き換えて「様式に反映」を押してください。<br>※ <code>[careplan-v1]</code> の部分が含まれていれば、ケアプランのタブに自動で送ります。</p>
+    <p class="hint" id="svcWishNote" style="color:var(--teal-deep);">※ ケアプランのタブで「利用したいサービス」を入力すると、ここで一緒にコピーされます。</p>
+    <p class="hint">※ 貼り付けると自動で下の様式に反映されます。内容を直したいときは、この欄の文字を書き換えて「修正を様式に反映」を押してください。</p>
   </section>
 
   <div id="warn" role="alert"></div>
@@ -240,10 +255,7 @@
   </div>
 
   <div id="printMeta"></div>
-  <div id="saveRow">
-    <button id="btnPrint" class="primary">標準様式で印刷・PDF保存</button>
-    <button id="btnSaveTxt">テキストで保存</button>
-  </div>
+  <div id="output"></div>
   <details id="printBox">
     <summary>印刷用の基本情報(任意・入力しなければ手書き用の空欄で印刷されます)</summary>
     <div class="pgrid">
@@ -253,16 +265,21 @@
     </div>
     <p class="note">※ ここに入力した内容は保存されません(ページを閉じると消えます)。印刷画面で送信先を「PDFに保存」にするとPDFになり、PDFから文字を選んでコピーできます。</p>
   </details>
-  <div id="output"></div>
+  <div id="saveRow">
+    <span class="save-note">※ 上の様式を一通り確認してから、保存・印刷してください</span>
+    <button id="btnPrint" class="primary">標準様式で印刷・PDF保存</button>
+    <button id="btnSaveTxt">テキストで保存</button>
+  </div>
 
   <footer class="app">
-    課題整理総括表 転記アシスト v1.0(Claude貼り付け版) ｜ sonosann Web&amp;AIサポート<br>
+    課題整理総括表 転記アシスト v1.0(AI貼り付け版) ｜ sonosann Web&amp;AIサポート<br>
     AIは情報、動くのは人。下書きの確定・本人家族への説明と同意は、必ずケアマネジャーご自身が行ってください。
   </footer>
 </div>
 <div class="toast" id="toast" aria-live="polite">コピーしました</div>
 
 <script src="samples.js"></script>
+<script src="personas.js"></script>
 <script>
 'use strict';
 
@@ -516,16 +533,21 @@ function svcEl(svc){
   wrap.innerHTML='<div class="svc-title">状況の事実 24項目(マス目クリックでその部分をコピー)</div>';
   const sc=document.createElement('div'); sc.className='svc-scroll';
   const tbl=document.createElement('table'); tbl.className='svc-tbl';
+  if(svc.widths){ const cg=document.createElement('colgroup'); svc.widths.forEach(w=>{ const c=document.createElement('col'); if(w) c.style.width=w; cg.appendChild(c); }); tbl.appendChild(cg); }   // 列の幅(指定がある表だけ)
   const thead=document.createElement('tr');
-  svc.header.forEach(h=>{ const th=document.createElement('th'); th.textContent=h; thead.appendChild(th); });
+  svc.header.forEach(h=>{ const th=document.createElement('th'); th.innerHTML=String(h).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(/\n/g,'<br>'); thead.appendChild(th); });   // 見出しの\nは改行
   const thb=document.createElement('th'); thb.textContent='行'; thead.appendChild(thb);
   tbl.appendChild(thead);
   svc.rows.forEach(row=>{
     totalUnits++;
     const remark=row[svc.header.length-1]!==undefined?row[svc.header.length-1]:'';
     const tr=document.createElement('tr');
+    const merge = svc.mergeSame && row[0]===row[1];   // 大項目と小項目が同じ名前なら、2マスをつなげて1つにする
     for (let c=0;c<svc.header.length;c++){
+      if (merge && c===1) continue;
       const td=document.createElement('td'); td.className='cell';
+      if (merge && c===0) td.colSpan=2;
+      if (svc.nowrapCols && svc.nowrapCols.includes(c)) td.style.whiteSpace='nowrap';   // 「悪化のおそれ」などを折り返さない
       const val=row[c]!==undefined?row[c]:'';
       if (c===2 && row._pillClass){
         td.innerHTML='<span class="pill '+row._pillClass+'">'+decorate(val)+'</span>';
@@ -585,7 +607,7 @@ function needsEl(needs){
 }
 
 /* 画面で入力した本人・家族の意向がある場合は、そちらを優先して意向欄に使う
-   (Claude出力側の意向は載せない。重複・表記ゆれを防ぐため。ケアプランのタブと同じ扱い) */
+   (AI出力側の意向は載せない。重複・表記ゆれを防ぐため。ケアプランのタブと同じ扱い) */
 function applyWishInput(data){
   const wishIn=$('wishText').value.trim();
   if (!wishIn) return data;
@@ -631,7 +653,10 @@ function render(data){
     });
   });
   body.appendChild(svcEl({
-    header:['大項目','小項目','現在','要因','改善/維持の可能性','備考(状況・支援内容等)'],
+    header:['大項目','小項目','現在の状態','要因','改善/維持の\n可能性','備考(状況・支援内容等)'],
+    widths:['3.5em','8em','6.5em','3.5em','6em','','6.5em'],
+    mergeSame:true,
+    nowrapCols:[4],
     rows: rows,
     notes: []
   }));
@@ -697,7 +722,7 @@ $('btnParse').addEventListener('click',()=>{
   if (!own) return;   // 貼り付けた内容がすべてもう一方のタブの分だった
   const text=$('src').value;
   const warn=$('warn'); warn.style.display='none'; warn.textContent='';
-  if (!text.trim()){ warn.style.display='block'; warn.textContent='入力が空です。Skillの出力を貼り付けてから「様式に反映」を押してください。'; $('output').innerHTML=''; $('progressbar').style.display='none'; return; }
+  if (!text.trim()){ warn.style.display='block'; warn.textContent='入力が空です。Skillの出力を貼り付けてから「修正を様式に反映」を押してください。'; $('output').innerHTML=''; $('progressbar').style.display='none'; return; }
   const data=parseIssueSummary(text);
   if (data.version!=='v1'){
     warn.style.display='block';
@@ -765,7 +790,7 @@ function stamp(){
   const d=new Date(), z=n=>String(n).padStart(2,'0');
   return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'_'+z(d.getHours())+z(d.getMinutes());
 }
-function usedModel(){ return 'Claudeからの貼り付け'; }
+function usedModel(){ return 'AIからの貼り付け'; }
 new MutationObserver(()=>{ const on=$('output').children.length>0; $('saveRow').style.display = on ? 'flex' : 'none'; $('printBox').style.display = on ? 'block' : 'none'; })
   .observe($('output'), {childList:true});
 $('btnPrint').addEventListener('click', ()=>{
@@ -834,7 +859,16 @@ function pfDate(v){
   const m=String(v).match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   return m ? m[1]+'年'+Number(m[2])+'月'+Number(m[3])+'日' : pfEsc(v);
 }
-function pfStripTags(s, on){ return on ? String(s||'').replace(/[(（](要確認|仮置き)[^)）]*[)）]/g,'').replace(/[ 　]+$/,'') : String(s||''); }
+/* 印刷用:空欄の印「______」の間に名前などを書き足した場合は、残った下線の記号を消す
+   (「長男様:__佐藤 太郎____」→「長男様:佐藤 太郎」。何も書き足していない「______」は手書き用の空欄として残す) */
+function pfCleanBlanks(s){
+  return String(s||'').replace(/_+/g,(m,i,all)=>{   // 1本だけ残った下線も対象
+    const prev=all[i-1]||'', next=all[i+m.length]||'';
+    const isText=c=>c!=='' && !/[\s:：(（)）、,/／・]/.test(c);
+    return (isText(prev)||isText(next)) ? '' : m;
+  });
+}
+function pfStripTags(s, on){ s=pfCleanBlanks(s); return on ? String(s||'').replace(/[(（](要確認|仮置き)[^)）]*[)）]/g,'').replace(/[ 　]+$/,'') : String(s||''); }
 function pfEnsureStyle(){
   if(document.getElementById('printStdStyle')) return;
   const st=document.createElement('style'); st.id='printStdStyle'; st.textContent=PRINT_STD_CSS; document.head.appendChild(st);
@@ -1006,10 +1040,38 @@ const PII_CSS=`
   piiCheck();
 })();
 
+/* ケアプランのタブで入力した「利用したいサービス」(タブの入れ物経由で届く) */
+let svcWishJson='[]';
+const SVC_MED_ISSUE=['訪問看護','訪問リハビリテーション','通所リハビリテーション','居宅療養管理指導','短期入所療養介護','看護小規模多機能型居宅介護'];
+function svcWishRows(){ try{ return (JSON.parse(svcWishJson)||[]).filter(r=>r && r.type); }catch(_){ return []; } }
+function issueRequestBlock(){
+  const parts=[];
+  const wish=$('wishText').value.trim();
+  if(wish) parts.push('【本人・家族の意向】\n'+wish);
+  const rows=svcWishRows();
+  if(rows.length) parts.push('【利用したいサービス(ケアマネ調整済み・予定)】\n'
+    + rows.map(r=>'・種別:'+r.type+'|頻度:'+((r.freq||'').trim()||'未定')+'|内容・目的:'+((r.memo||'').trim()||'指定なし')+'|状況:'+(r.status||'決定')+(SVC_MED_ISSUE.includes(r.type)?'|医療系:主治医の指示が必要':'')).join('\n')
+    + '\n※上記のサービスは第2表に必ず位置付け、対応するニーズに割り当ててください。頻度は指定どおりにし、未定のものは(仮置き)にしてください。');
+  return parts.join('\n\n');
+}
+function svcWishNote(){
+  const el=$('svcWishNote'); if(!el) return;
+  const n=svcWishRows().length;
+  el.textContent = n ? '※ ケアプランのタブで入力した「利用したいサービス」'+n+'件と意向も、一緒にコピーされます。' : '※ ケアプランのタブで「利用したいサービス」を入力すると、ここで一緒にコピーされます。';
+}
+window.addEventListener('message',e=>{
+  if(e.source!==window.parent) return;
+  const d=e.data; if(!d || d.cmTool!=='hub' || d.type!=='sync' || d.field!=='svcWish') return;
+  svcWishJson=d.value||'[]'; svcWishNote();
+});
 $('btnCopyAll').addEventListener('click',()=>{
   const t=$('src').value.trim();
-  if(!t){ setRouteInfo('コピーする出力結果がありません。先にClaudeの出力を「2」の欄に貼り付けてください。','err'); return; }
-  copyText(t,()=>{ const b=$('btnCopyAll'); b.textContent='✓ コピーしました'; setTimeout(()=>{ b.textContent='ケアプラン用に全文コピー'; },2000); });
+  if(!t){ setRouteInfo('コピーする出力結果がありません。先にAIの出力を②の欄に貼り付けてください。','err'); return; }
+  const extra=issueRequestBlock();
+  /* 1行目にAIへの依頼文を入れる(Claude・ChatGPT・Geminiのどれに貼っても、そのまま送信するだけで作成が始まるように) */
+  const ask='以下の内容で、居宅サービス計画書(ケアプラン)第1表・第2表の下書きを、[careplan-v1]の形式で作成してください。';
+  const all=ask+'\n\n'+(extra ? t+'\n\n――――――――――――――――\n'+extra : t);
+  copyText(all,()=>{ const b=$('btnCopyAll'); b.textContent='✓ コピーしました'+(svcWishRows().length?'(サービス'+svcWishRows().length+'件も同梱)':''); setTimeout(()=>{ b.textContent='次へ:ケアプランをAIで作る(コピー)'; },2500); });
 });
 
 /* =====================================================
@@ -1031,7 +1093,7 @@ function splitPaste(text){
   });
   return out;
 }
-/* Skillの出力は、最後の区切り線(――――)の次の1段落(決まった締めの文)で終わる。その後ろのClaudeの文は切り捨てる */
+/* Skillの出力は、最後の区切り線(――――)の次の1段落(決まった締めの文)で終わる。その後ろのAIの文は切り捨てる */
 function dropAfterClosing(part){
   const lines=part.split('\n');
   let sep=-1; lines.forEach((l,i)=>{ if(/^―{8,}\s*$/.test(l.trim())) sep=i; });
@@ -1069,10 +1131,10 @@ window.addEventListener('message',(e)=>{
   const d=e.data; if(!d || d.cmTool!=='hub' || d.type!=='receive-paste') return;
   const cur=$('src').value.trim(), txt=String(d.text||'');
   if(cur===txt.trim()) return;
-  if(cur && !d.sample && !confirm('「2」の欄にすでに文字があります。'+OTHER_LABEL+'のタブで貼り付けた内容で置き換えますか？')) return;
+  if(cur && !d.sample && !confirm('②の欄にすでに文字があります。'+OTHER_LABEL+'のタブで貼り付けた内容で置き換えますか？')) return;
   $('src').value=txt;
   $('btnParse').click();
-  if(d.sample){ if(window.cmIsSampleText) cmIsSampleText(txt); if(window.cmShowSampleWish) cmShowSampleWish(d); setRouteInfo('サンプル(架空の事例)を読み込みました。', 'done'); }
+  if(d.sample){ if(window.cmIsSampleText) cmIsSampleText(txt); if(window.cmShowSampleWish) cmShowSampleWish(d); setRouteInfo('ペルソナ(架空の事例)を入力しました。', 'done'); }
   else setRouteInfo(OTHER_LABEL+'のタブで貼り付けた内容を受け取り、様式に反映しました。', 'done');
 });
 

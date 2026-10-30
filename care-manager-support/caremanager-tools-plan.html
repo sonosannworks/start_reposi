@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ケアプラン転記アシスト(Claude貼り付け版) | sonosann Web&AIサポート</title>
+<title>ケアプラン転記アシスト(AI貼り付け版) | sonosann Web&AIサポート</title>
 <style>
   :root{
     --paper:#F5F4EF; --card:#FFFFFF;
@@ -122,6 +122,8 @@
   .ai-status.done{color:var(--teal-deep); font-weight:600;}
   button:disabled{opacity:.5; cursor:not-allowed;}
   #saveRow{display:none; justify-content:flex-end; gap:8px; margin-top:16px;}
+  #saveRow{align-items:center; flex-wrap:wrap; border-top:2px solid var(--teal); padding-top:14px; margin-top:24px;}
+  #saveRow .save-note{margin-right:auto; font-size:13px; color:var(--teal-deep); font-weight:600;}
   #printMeta{display:none;}
   @media print{
     @page{size:A4 landscape; margin:10mm;}
@@ -151,12 +153,57 @@
   .mask-hint{display:block; margin:4px 0 6px;}
   /* サンプル選択・サンプルの意向 */
   #sampleSel{font-family:var(--gothic); font-size:14px; border-radius:8px; border:1px solid var(--line-2); background:#fff; color:var(--ink); padding:8px 12px; cursor:pointer; max-width:100%;}
+    .persona-row{align-items:center; background:#F7FBFA; border:1px dashed var(--teal); border-radius:8px; padding:8px 10px;}
+  .persona-row .row-lbl{font-size:12.5px; font-weight:600; color:var(--teal-deep); margin-right:2px;}
+  #sampleSel{width:min(100%,340px);}
   #sampleSel:focus-visible{outline:2px solid var(--teal-deep); outline-offset:2px;}
   .sample-wish{margin-top:12px; border:1px dashed var(--teal); border-radius:8px; padding:10px 14px; background:#F7FBFA;}
   .sample-wish .sw-head{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--teal-deep);}
   .sample-wish .sw-tag{font-size:11.5px; border:1px solid var(--teal); color:var(--teal-deep); border-radius:999px; padding:1px 8px; background:#fff;}
   .sample-wish pre{white-space:pre-wrap; font-family:var(--gothic); font-size:13.5px; color:var(--ink); margin:8px 0 4px;}
   .sample-wish .sw-note{font-size:12.5px; color:var(--ink-2); margin:4px 0 8px;}
+
+  /* ===== 利用したいサービス(希望サービス)欄 ===== */
+  .svc-box{margin-top:16px; border-top:1px dashed var(--line-2); padding-top:14px;}
+  .svc-box .svc-title{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px;}
+  .svc-box .svc-title .lbl{margin:0;}
+  .svc-count{font-size:12px; font-weight:400; margin-left:6px; vertical-align:1px; color:var(--teal-deep); background:var(--teal-pale); border-radius:999px; padding:1px 10px;}
+  .svc-quick{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px;}
+  .svc-quick button{font-size:12.5px; padding:3px 10px; border-radius:999px; border-color:var(--line-2); background:#FCFCFA;}
+  .svc-quick button:hover{background:var(--teal-pale); border-color:var(--teal);}
+  .svc-list{display:flex; flex-direction:column; gap:8px; margin-top:8px;}
+  .svc-row{display:grid; grid-template-columns:minmax(150px,1.3fr) minmax(90px,.8fr) minmax(140px,1.6fr) 104px 34px; gap:6px; align-items:center; background:#FAFAF6; border:1px solid var(--line); border-radius:8px; padding:8px;}
+  .svc-row select, .svc-row input{font-family:var(--gothic); font-size:13.5px; padding:6px 8px; border:1px solid var(--line-2); border-radius:6px; background:#fff; color:var(--ink); width:100%; min-width:0;}
+  .svc-row select:focus, .svc-row input:focus{outline:2px solid var(--teal); outline-offset:0;}
+  .svc-row .svc-del{padding:4px 0; width:34px; height:32px; font-size:16px; line-height:1; color:var(--ink-3);}
+  .svc-row .svc-del:hover{color:#9B2C2C; border-color:#9B2C2C; background:#FFF5F5;}
+  .svc-row[data-status="決定"]{border-left:4px solid var(--teal);}
+  .svc-row[data-status="調整中"]{border-left:4px solid #E8A13A;}
+  .svc-row[data-status="検討中"]{border-left:4px solid var(--line-2);}
+  .svc-head{display:grid; grid-template-columns:minmax(150px,1.3fr) minmax(90px,.8fr) minmax(140px,1.6fr) 104px 34px; gap:6px; padding:0 9px 0 12px; font-size:11.5px; color:var(--ink-3);}
+  .svc-row .svc-med{grid-column:1 / -1; margin:0; font-size:12px; color:#8A5A1F; background:#FFF8EF; border-radius:6px; padding:3px 8px;}
+  .svc-quick button.med{border-color:#E5C9A8; background:#FFF8EF;}
+  .svc-quick{flex-direction:column; gap:6px;}
+  .svc-qhead{font-size:12px; color:var(--ink-2);}
+  .svc-qkey{display:inline-block; font-size:11px; border:1px solid var(--line-2); background:#FCFCFA; border-radius:999px; padding:0 8px; margin-left:4px;}
+  .svc-qkey.med{border-color:#E5C9A8; background:#FFF8EF; color:#8A5A1F;}
+  .svc-qrow{display:flex; flex-wrap:wrap; align-items:center; gap:6px;}
+  .svc-qrow .svc-qlabel{width:4.5em; font-size:12.5px; font-weight:600; color:var(--teal-deep); margin:0;}
+  .svc-empty{font-size:13px; color:var(--ink-3); padding:10px 12px; border:1px dashed var(--line-2); border-radius:8px; text-align:center;}
+  .svc-actions{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .svc-actions .add{border-style:dashed; color:var(--teal-deep); border-color:var(--teal);}
+  .svc-preview{margin-top:12px;}
+  .svc-preview summary{font-size:12.5px; color:var(--teal-deep); cursor:pointer;}
+  .svc-preview pre{white-space:pre-wrap; font-family:"MS Gothic","Osaka-Mono",monospace; font-size:12.5px; background:#FCFCFA; border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-top:6px; color:var(--ink);}
+  @media (max-width:640px){
+    .svc-head{display:none;}
+    .svc-row{grid-template-columns:1fr 1fr 34px;}
+    .svc-row .svc-type{grid-column:1 / 3; grid-row:1;}
+    .svc-row .svc-del{grid-column:3; grid-row:1;}
+    .svc-row .svc-freq{grid-column:1; grid-row:2;}
+    .svc-row .svc-st{grid-column:2 / 4; grid-row:2;}
+    .svc-row .svc-memo{grid-column:1 / 4; grid-row:3;}
+  }
 </style>
 </head>
 <body>
@@ -172,18 +219,18 @@
     <summary>はじめての方へ(使い方)</summary>
     <div class="body">
       <ol>
-        <li>画面の「1」に利用者名を入れます(課題整理総括表のタブで入力した名前・意向は自動でそろいます)。意向を入力した場合は、第1表「利用者及び家族の生活に対する意向を踏まえた課題分析の結果」の意向部分がこの内容に置き換わります(課題分析の結果の文章はそのまま残ります)。</li>
-        <li>課題整理総括表のタブで<b>「ケアプラン用に全文コピー」</b>を押し、Claudeのケアプラン作成Skillに貼り付けて、第1表・第2表の下書きを作ってもらいます。総括表に意向が含まれていない場合は、面談で確認した本人・家族の意向も一緒に伝えてください。</li>
-        <li>返ってきた <code>[careplan-v1]</code> から始まる出力を全文コピーし、「2」の欄に貼り付けます。課題整理総括表の出力(<code>[issue-summary-v1]</code>)も含まれていれば、その部分は自動で課題整理総括表のタブに送られます。</li>
-        <li>黄色のハイライト((要確認)・(仮置き)・空欄)を確認し、必要なら「2」の欄の文字を直して「様式に反映」を押します。</li>
+        <li>画面の①に利用者名を入れ(認定情報は名前をマスキングしているため、利用者の取り違えを防ぐために手入力してください。入力した名前は保存されません)、②に意向、③に利用したいサービスを入れます(課題整理総括表のタブで入力した名前・意向は自動でそろいます)。意向を入力した場合は、第1表「利用者及び家族の生活に対する意向を踏まえた課題分析の結果」の意向部分がこの内容に置き換わります(課題分析の結果の文章はそのまま残ります)。</li>
+        <li>課題整理総括表のタブで<b>「次へ:ケアプランをAIで作る(コピー)」</b>を押し、AI(Claude・ChatGPT・Gemini)に貼り付けて送信します。するとケアプラン作成のSkillが発動して、第1表・第2表の下書きが作られます。画面の②の意向と③の利用したいサービスも一緒にコピーされるので、そのまま貼り付けるだけでOKです(サービスが決まっていなければ空欄のままで構いません)。</li>
+        <li>返ってきた <code>[careplan-v1]</code> から始まる出力を全文コピーし、①の欄に貼り付けます。貼り付けると、自動で様式に反映されます。</li>
+        <li>黄色のハイライト((要確認)・(仮置き)・空欄)を確認し、必要なら①の欄の文字を直して「修正を様式に反映」を押します。</li>
         <li>欄ごとの「コピー」やマス目のクリックでコピーし、<b>お使いの介護ソフトの同じ欄に貼り付けて</b>反映します。急ぎのときは「標準様式で印刷・PDF保存」でそのまま印刷もできます(「印刷時に(要確認)(仮置き)を消す」にチェックを入れると、注意書きを消して印刷できます)。</li>
         <li>担当者会議・事業所との調整・本人への説明と同意を経て、ケアプランとして確定してください。</li>
       </ol>
       <div class="privacy">
         <b>個人情報の取り扱いについて</b>
-        <p>このページは、貼り付けた内容をブラウザの中だけで処理し、インターネットに送ることはありません。ただし、Claudeに渡した内容はClaudeのサービスに送られます。保存したファイルはパソコンに残ります。</p>
+        <p>このページは、貼り付けた内容をブラウザの中だけで処理し、インターネットに送ることはありません。ただし、AIに渡した内容は、そのAIのサービス(Claude・ChatGPT・Geminiなど)に送られます。保存したファイルはパソコンに残ります。</p>
         <ul>
-          <li>Claudeに渡す認定情報・アセスメントは、<b>すべての個人情報(氏名・住所・生年月日・電話番号・被保険者番号・家族の氏名・医療機関名など)をマスキングしてから</b>渡してください。</li>
+          <li>AIに渡す認定情報・アセスメントは、<b>すべての個人情報(氏名・住所・生年月日・電話番号・被保険者番号・家族の氏名・医療機関名など)をマスキングしてから</b>渡してください。</li>
           <li>どなたの情報かは、画面の「利用者名」欄に入力します。入力した名前は画面の表示と印刷にだけ使われ、<b>保存されません</b>(ページを閉じると消えます)。</li>
           <li>「テキストで保存」「PDFに保存」したファイルには名前が入ります。<b>OneDrive・Googleドライブなどの同期フォルダには保存しない</b>でください。不要になったファイルは削除してください。</li>
           <li>取り扱いは、事業所の個人情報保護の規程に従ってください。</li>
@@ -193,30 +240,53 @@
   </details>
 
   <section class="panel local-ai">
-    <h2><span class="step-num">1</span>利用者名と本人・家族の意向</h2>
+    <h2><span class="step-num">1</span>ケアプラン(AIの出力)の貼り付け</h2>
     <div class="name-row" style="margin-top:0;">
       <label for="userName">利用者名</label>
       <input type="text" id="userName" placeholder="例)山下 キヨ" autocomplete="off">
       <span class="hint">※ 画面の表示と印刷にだけ使い、保存されません(ページを閉じると消えます)</span>
     </div>
-    <label class="lbl" for="wishText">本人・家族の意向(ヒアリング済みなら入力。任意)</label>
+    <textarea id="src" style="margin-top:12px;" placeholder="[careplan-v1] から始まるAIの出力を、ここに貼り付けてください" aria-label="AIの出力の貼り付け欄"></textarea>
+    <div id="piiBox" role="status"></div>
+    <div class="btnrow persona-row" id="personaRow">
+      <span class="row-lbl">ペルソナで試す</span>
+      <select id="sampleSel" aria-label="ペルソナ(架空の事例)の見本プランを見る"></select>
+      <button id="btnSample">ペルソナの見本プランを見る</button>
+    </div>
+    <p class="hint" style="margin-top:4px; margin-bottom:4px;">※ ペルソナの見本プラン(AIで作成済みの例)を表示します。総括表のタブには反映されません。</p>
+    <div class="btnrow">
+      <button id="btnClear">クリア</button>
+      <button id="btnParse">修正を様式に反映</button>
+    </div>
+    <div id="routeInfo" class="ai-status" aria-live="polite"></div>
+    <p class="hint">※ 貼り付けると自動で下の第1表・第2表に反映されます。内容を直したいときは、この欄の文字を書き換えて「修正を様式に反映」を押してください。</p>
+  </section>
+
+  <section class="panel local-ai">
+    <h2><span class="step-num">2</span>本人・家族の意向</h2>
+    <label class="lbl" for="wishText" style="margin-top:0;">面談で確認した意向を入力(任意)</label>
     <textarea id="wishText" class="small" placeholder="例)本人:できるだけ家で暮らしたい。トイレは自分で行きたい/長女様:日中ひとりの時の転倒が心配"></textarea>
     <p class="hint">※ 意向を入力すると、第1表「利用者及び家族の生活に対する意向を踏まえた課題分析の結果」の意向部分がこの内容に置き換わります(課題分析の結果はそのまま残ります)。利用者名・意向は課題整理総括表のタブと自動でそろいます(保存はされません)。</p>
     <div id="sampleWish" class="sample-wish" hidden></div>
   </section>
 
-  <section class="panel">
-    <h2><span class="step-num">2</span>Claudeの出力を貼り付け</h2>
-    <textarea id="src" placeholder="[careplan-v1] から始まるClaudeの出力を、ここに貼り付けてください(課題整理総括表の [issue-summary-v1] と一緒に貼り付けてもOK)" aria-label="Claudeの出力の貼り付け欄"></textarea>
-    <div id="piiBox" role="status"></div>
-    <div class="btnrow">
-      <button class="primary" id="btnParse">様式に反映</button>
-      <select id="sampleSel" aria-label="サンプル(架空の事例)を選んで読み込む"></select>
-      <button id="btnSample">サンプルを読み込む</button>
-      <button id="btnClear">クリア</button>
-    </div>
-    <div id="routeInfo" class="ai-status" aria-live="polite"></div>
-    <p class="hint">※ 貼り付けると自動で下の第1表・第2表に反映されます。内容を直したいときは、この欄の文字を書き換えて「様式に反映」を押してください。<br>※ <code>[issue-summary-v1]</code> の部分が含まれていれば、課題整理総括表のタブに自動で送ります。</p>
+  <section class="panel local-ai">
+    <h2><span class="step-num">3</span>利用したいサービス <span class="svc-count" id="svcCount">0件</span></h2>
+    <div class="svc-box" id="svcBox" style="margin-top:0; border-top:none; padding-top:0;">
+      <p class="hint" style="margin-top:0;">ケアマネが調整済み・予定のサービスを入れます(任意)。<br><b style="color:#8A5A1F;">※ 現在利用中で今後も続けるサービスも、ここに入れてください。</b>入っていない利用中のサービスは、AIが第2表に入れず「継続するか要確認」として知らせます。<br>※ 入力したサービスは、AIが第2表に必ず位置付け、どのニーズに対応するかを割り当てます。未入力の場合は、これまでどおりアセスメントから提案します。事業所名は入れず、種別だけ選んでください(事業所名は介護ソフト側で入力)。</p>
+      <div class="svc-quick" id="svcQuick" aria-label="よく使うサービスをワンタッチで追加"><div class="svc-qhead">よく使う(<span class="svc-qkey">介護</span><span class="svc-qkey med">医療</span>)</div></div>
+      <div class="svc-head" id="svcHead" hidden><span>サービス種別</span><span>頻度</span><span>内容・目的(任意)</span><span>状況</span><span></span></div>
+      <div class="svc-list" id="svcList"></div>
+      <div class="svc-empty" id="svcEmpty">まだ入っていません。「よく使う」から選ぶか、「+ サービスを追加」を押してください。</div>
+      <div class="svc-actions">
+        <button type="button" class="add" id="btnSvcAdd">+ サービスを追加</button>
+        <button type="button" id="btnSvcCopy">意向+利用したいサービスをコピー</button>
+      </div>
+      <details class="svc-preview" id="svcPreview">
+        <summary>AIに渡す内容を確認する</summary>
+        <pre id="svcPreviewText"></pre>
+      </details>
+      <p class="hint">※ 課題整理総括表のタブの「次へ:ケアプランをAIで作る(コピー)」を押すと、ここで入力した意向と利用したいサービスも一緒にコピーされます。AIにはそれを貼り付けて送信するだけでOKです。</p>
   </section>
 
   <div id="warn" role="alert"></div>
@@ -228,10 +298,7 @@
   </div>
 
   <div id="printMeta"></div>
-  <div id="saveRow">
-    <button id="btnPrint" class="primary">標準様式で印刷・PDF保存</button>
-    <button id="btnSaveTxt">テキストで保存</button>
-  </div>
+  <div id="output"></div>
   <details id="printBox">
     <summary>印刷用の基本情報(任意・入力しなければ手書き用の空欄で印刷されます)</summary>
     <div class="pgrid">
@@ -255,10 +322,14 @@
     </div>
     <p class="note">※ ここに入力した内容は保存されません(ページを閉じると消えます)。印刷画面で送信先を「PDFに保存」にするとPDFになり、PDFから文字を選んでコピーできます。</p>
   </details>
-  <div id="output"></div>
+  <div id="saveRow">
+    <span class="save-note">※ 上の様式を一通り確認してから、保存・印刷してください</span>
+    <button id="btnPrint" class="primary">標準様式で印刷・PDF保存</button>
+    <button id="btnSaveTxt">テキストで保存</button>
+  </div>
 
   <footer class="app">
-    ケアプラン転記アシスト v1.0(Claude貼り付け版) ｜ sonosann Web&amp;AIサポート<br>
+    ケアプラン転記アシスト v1.0(AI貼り付け版) ｜ sonosann Web&amp;AIサポート<br>
     AIは情報、動くのは人。下書きの確定・同意の取得はケアマネジャーご自身で行ってください。
   </footer>
 </div>
@@ -583,7 +654,7 @@ $('btnParse').addEventListener('click',()=>{
   if (!own) return;   // 貼り付けた内容がすべてもう一方のタブの分だった
   const text=$('src').value;
   const warn=$('warn'); warn.style.display='none'; warn.textContent='';
-  if (!text.trim()){ warn.style.display='block'; warn.textContent='入力が空です。Skillの出力を貼り付けてから「様式に反映」を押してください。'; $('output').innerHTML=''; $('progressbar').style.display='none'; return; }
+  if (!text.trim()){ warn.style.display='block'; warn.textContent='入力が空です。Skillの出力を貼り付けてから「修正を様式に反映」を押してください。'; $('output').innerHTML=''; $('progressbar').style.display='none'; return; }
   const plan=parsePlan(text);
   if (plan.version!=='v1'){
     warn.style.display='block';
@@ -650,7 +721,7 @@ if (DEMO_MODE) $('demoBadge').style.display='inline-block';
 
 /* --- 結果の保存(PDF/テキスト) --- */
 function stamp(){ const d=new Date(), z=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'_'+z(d.getHours())+z(d.getMinutes()); }
-function usedModel(){ return 'Claudeからの貼り付け'; }
+function usedModel(){ return 'AIからの貼り付け'; }
 new MutationObserver(()=>{ const on=$('output').children.length>0; $('saveRow').style.display=on?'flex':'none'; $('printBox').style.display=on?'block':'none'; }).observe($('output'),{childList:true});
 $('btnPrint').addEventListener('click',()=>{
   const v=id=>$(id).value.trim();
@@ -721,7 +792,16 @@ function pfDate(v){
   const m=String(v).match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   return m ? m[1]+'年'+Number(m[2])+'月'+Number(m[3])+'日' : pfEsc(v);
 }
-function pfStripTags(s, on){ return on ? String(s||'').replace(/[(（](要確認|仮置き)[^)）]*[)）]/g,'').replace(/[ 　]+$/,'') : String(s||''); }
+/* 印刷用:空欄の印「______」の間に名前などを書き足した場合は、残った下線の記号を消す
+   (「長男様:__佐藤 太郎____」→「長男様:佐藤 太郎」。何も書き足していない「______」は手書き用の空欄として残す) */
+function pfCleanBlanks(s){
+  return String(s||'').replace(/_+/g,(m,i,all)=>{   // 1本だけ残った下線も対象
+    const prev=all[i-1]||'', next=all[i+m.length]||'';
+    const isText=c=>c!=='' && !/[\s:：(（)）、,/／・]/.test(c);
+    return (isText(prev)||isText(next)) ? '' : m;
+  });
+}
+function pfStripTags(s, on){ s=pfCleanBlanks(s); return on ? String(s||'').replace(/[(（](要確認|仮置き)[^)）]*[)）]/g,'').replace(/[ 　]+$/,'') : String(s||''); }
 function pfEnsureStyle(){
   if(document.getElementById('printStdStyle')) return;
   const st=document.createElement('style'); st.id='printStdStyle'; st.textContent=PRINT_STD_CSS; document.head.appendChild(st);
@@ -861,7 +941,7 @@ function buildPlanPrint(plan, meta){
   /* ---------- 第1表 ---------- */
   if(f1){
     const kubun=['要介護１','要介護２','要介護３','要介護４','要介護５'];
-    /* 印刷用の基本情報で選んでいなければ、Claudeの出力(第1表「要介護状態区分」)から読み取る */
+    /* 印刷用の基本情報で選んでいなければ、AIの出力(第1表「要介護状態区分」)から読み取る */
     let kNum=meta.kubun ? Number(meta.kubun) : 0;
     if(!kNum){
       const kf=(f1.fields||[]).find(x=>/要介護状態区分/.test(x.label||''));
@@ -1015,7 +1095,7 @@ function splitPaste(text){
   });
   return out;
 }
-/* Skillの出力は、最後の区切り線(――――)の次の1段落(決まった締めの文)で終わる。その後ろのClaudeの文は切り捨てる */
+/* Skillの出力は、最後の区切り線(――――)の次の1段落(決まった締めの文)で終わる。その後ろのAIの文は切り捨てる */
 function dropAfterClosing(part){
   const lines=part.split('\n');
   let sep=-1; lines.forEach((l,i)=>{ if(/^―{8,}\s*$/.test(l.trim())) sep=i; });
@@ -1053,10 +1133,10 @@ window.addEventListener('message',(e)=>{
   const d=e.data; if(!d || d.cmTool!=='hub' || d.type!=='receive-paste') return;
   const cur=$('src').value.trim(), txt=String(d.text||'');
   if(cur===txt.trim()) return;
-  if(cur && !d.sample && !confirm('「2」の欄にすでに文字があります。'+OTHER_LABEL+'のタブで貼り付けた内容で置き換えますか？')) return;
+  if(cur && !d.sample && !confirm('①の欄にすでに文字があります。'+OTHER_LABEL+'のタブで貼り付けた内容で置き換えますか？')) return;
   $('src').value=txt;
   $('btnParse').click();
-  if(d.sample){ if(window.cmIsSampleText) cmIsSampleText(txt); if(window.cmShowSampleWish) cmShowSampleWish(d); setRouteInfo('サンプル(架空の事例)を読み込みました。', 'done'); }
+  if(d.sample){ if(window.cmIsSampleText) cmIsSampleText(txt); if(window.cmShowSampleWish) cmShowSampleWish(d); setRouteInfo('ペルソナ(架空の事例)を入力しました。', 'done'); }
   else setRouteInfo(OTHER_LABEL+'のタブで貼り付けた内容を受け取り、様式に反映しました。', 'done');
 });
 
@@ -1067,7 +1147,7 @@ window.addEventListener('message',(e)=>{
   ['userName','wishText'].forEach(id=>{
     const el=$(id); if(!el) return;
     el.addEventListener('input',()=>{
-      if(receiving) return;
+      if(receiving || window.cmSyncPaused) return;   // 見本プランの表示中は、総括表のタブに送らない
       window.parent.postMessage({cmTool:'plan', type:'sync', field:id, value:el.value},'*');
     });
   });
@@ -1082,6 +1162,137 @@ window.addEventListener('message',(e)=>{
     receiving=false;
   });
 })();
+
+/* =====================================================
+   利用したいサービス(ケアマネが調整済み・予定のサービス)
+   ・行を追加/削除して入力 → AIに渡す文章(【利用したいサービス】ブロック)を作る
+   ・課題整理総括表のタブにも送り、「ケアプラン用に全文コピー」に同梱させる
+   ・保存はしない(ページを閉じると消える)
+   ===================================================== */
+const SVC_TYPES=[
+  ['訪問系 ─ 介護',['訪問介護(身体介護)','訪問介護(生活援助)','訪問介護(身体・生活)','訪問入浴介護','定期巡回・随時対応型訪問介護看護','夜間対応型訪問介護']],
+  ['訪問系 ─ 医療(主治医の指示が必要)',['訪問看護','訪問リハビリテーション','居宅療養管理指導']],
+  ['通所系 ─ 介護',['通所介護','地域密着型通所介護','認知症対応型通所介護']],
+  ['通所系 ─ 医療(主治医の指示が必要)',['通所リハビリテーション']],
+  ['入所系(泊まり) ─ 介護',['短期入所生活介護']],
+  ['入所系(泊まり) ─ 医療(主治医の指示が必要)',['短期入所療養介護']],
+  ['複合型(通い・訪問・泊まり)',['小規模多機能型居宅介護','看護小規模多機能型居宅介護']],
+  ['環境整備',['福祉用具貸与','特定福祉用具販売','住宅改修']],
+  ['インフォーマル・その他',['家族の支援','地域の見守り・サロン','総合事業','配食サービス','移送・通院サービス','緊急通報装置','医療機関の受診','その他']]
+];
+/* 「よく使う」:大きく訪問系・通所系・入所系に分け、それぞれ介護→医療の順に並べる */
+const SVC_QUICK=[
+  ['訪問系',['訪問介護(身体介護)','訪問介護(生活援助)','訪問看護','訪問リハビリテーション']],
+  ['通所系',['通所介護','通所リハビリテーション']],
+  ['入所系',['短期入所生活介護','短期入所療養介護']],
+  ['複合型',['小規模多機能型居宅介護','看護小規模多機能型居宅介護']],
+  ['その他',['福祉用具貸与','家族の支援']]
+];
+/* 現場での呼び方(選択肢とボタンに併記。AIには正式名称で渡す) */
+const SVC_ALIAS={'訪問介護(身体介護)':'ヘルパー','訪問介護(生活援助)':'ヘルパー','訪問介護(身体・生活)':'ヘルパー','訪問リハビリテーション':'訪問リハ',
+  '通所介護':'デイサービス','地域密着型通所介護':'小規模デイ','通所リハビリテーション':'デイケア','認知症対応型通所介護':'認知症デイ',
+  '短期入所生活介護':'ショートステイ','短期入所療養介護':'医療型ショート','小規模多機能型居宅介護':'小多機','看護小規模多機能型居宅介護':'看多機',
+  '定期巡回・随時対応型訪問介護看護':'定期巡回'};
+const SVC_QUICK_LABEL={'通所介護':'デイサービス','通所リハビリテーション':'デイケア','訪問リハビリテーション':'訪問リハ','短期入所療養介護':'医療型ショート','訪問介護(身体介護)':'ヘルパー(身体)','訪問介護(生活援助)':'ヘルパー(生活)','短期入所生活介護':'ショートステイ','小規模多機能型居宅介護':'小多機','看護小規模多機能型居宅介護':'看多機'};
+/* 主治医の指示・意見が必要な医療系サービス */
+const SVC_MED=['訪問看護','訪問リハビリテーション','通所リハビリテーション','居宅療養管理指導','短期入所療養介護','看護小規模多機能型居宅介護'];
+const svcIsMed=t=>SVC_MED.includes(t);
+const SVC_STATUS=['決定','調整中','検討中'];
+const svcEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let svcRows=[];   // {type, freq, memo, status, other}
+let svcReceiving=false;
+
+function svcTypeOptions(sel){
+  let h='<option value="">(種別を選ぶ)</option>';
+  SVC_TYPES.forEach(([g,list])=>{
+    h+='<optgroup label="'+g+'">'+list.map(t=>'<option value="'+t+'"'+(t===sel?' selected':'')+'>'+t+(SVC_ALIAS[t]?'('+SVC_ALIAS[t]+')':'')+'</option>').join('')+'</optgroup>';
+  });
+  return h;
+}
+function svcRender(focusIdx){
+  const list=$('svcList');
+  list.innerHTML=svcRows.map((r,i)=>
+    '<div class="svc-row" data-i="'+i+'" data-status="'+svcEsc(r.status)+'">'
+    +'<select class="svc-type" data-k="type" aria-label="サービス種別">'+svcTypeOptions(r.type)+'</select>'
+    +'<input class="svc-freq" data-k="freq" type="text" value="'+svcEsc(r.freq)+'" placeholder="例)週2回" aria-label="頻度" list="svcFreqList">'
+    +'<input class="svc-memo" data-k="memo" type="text" value="'+svcEsc(r.memo)+'" placeholder="'+(r.type==='その他'?'サービス名と目的を入力':'例)入浴、下肢筋力の維持')+'" aria-label="内容・目的">'
+    +'<select class="svc-st" data-k="status" aria-label="調整の状況">'+SVC_STATUS.map(s=>'<option'+(s===r.status?' selected':'')+'>'+s+'</option>').join('')+'</select>'
+    +'<button type="button" class="svc-del" title="この行を削除" aria-label="この行を削除">×</button>'
+    +(svcIsMed(r.type)?'<p class="svc-med">※ 医療系サービスです。主治医の指示(指示書・意見)が必要です。AIにも「医療系」と伝わります。</p>':'')
+    +'</div>').join('');
+  $('svcEmpty').hidden=svcRows.length>0;
+  $('svcHead').hidden=svcRows.length===0;
+  $('svcCount').textContent=svcRows.filter(r=>r.type).length+'件';
+  svcUpdatePreview();
+  if(focusIdx!=null){ const row=list.children[focusIdx]; if(row){ const el=row.querySelector(svcRows[focusIdx].type?'.svc-freq':'.svc-type'); el && el.focus(); } }
+}
+function svcAdd(type){ svcRows.push({type:type||'',freq:'',memo:'',status:'決定'}); svcRender(svcRows.length-1); svcChanged(); }
+
+/* AIに渡す文章(Skillはこの見出しを目印に読み取る) */
+function svcBlockText(){
+  const rows=svcRows.filter(r=>r.type);
+  if(!rows.length) return '';
+  return '【利用したいサービス(ケアマネ調整済み・予定)】\n'
+    + rows.map(r=>'・種別:'+r.type+'|頻度:'+(r.freq.trim()||'未定')+'|内容・目的:'+(r.memo.trim()||'指定なし')+'|状況:'+r.status+(svcIsMed(r.type)?'|医療系:主治医の指示が必要':'')).join('\n')
+    + '\n※上記のサービスは第2表に必ず位置付け、対応するニーズに割り当ててください。頻度は指定どおりにし、未定のものは(仮置き)にしてください。';
+}
+function cmRequestBlock(){
+  const wish=$('wishText').value.trim();
+  const parts=[];
+  if(wish) parts.push('【本人・家族の意向】\n'+wish);
+  const sv=svcBlockText(); if(sv) parts.push(sv);
+  return parts.join('\n\n');
+}
+window.cmRequestBlock=cmRequestBlock;
+function svcUpdatePreview(){
+  const t=cmRequestBlock();
+  $('svcPreviewText').textContent=t||'(意向・利用したいサービスとも未入力です)';
+}
+function svcChanged(){
+  svcUpdatePreview();
+  if(svcReceiving || window.parent===window) return;
+  window.parent.postMessage({cmTool:'plan', type:'sync', field:'svcWish', value:JSON.stringify(svcRows)},'*');
+}
+
+$('svcList').addEventListener('input',e=>{
+  const row=e.target.closest('.svc-row'); if(!row) return;
+  const i=+row.dataset.i, k=e.target.dataset.k; if(!k) return;
+  svcRows[i][k]=e.target.value;
+  if(k==='status') row.dataset.status=e.target.value;
+  if(k==='type'){ if(e.type==='input') svcRender(i); }   // 医療系の注意書き・件数を出し直す
+  svcChanged();
+});
+$('svcList').addEventListener('change',e=>{ if(e.target.matches('select')) e.target.dispatchEvent(new Event('input',{bubbles:true})); });
+$('svcList').addEventListener('click',e=>{
+  const b=e.target.closest('.svc-del'); if(!b) return;
+  svcRows.splice(+b.closest('.svc-row').dataset.i,1); svcRender(); svcChanged();
+});
+$('btnSvcAdd').addEventListener('click',()=>svcAdd(''));
+(function(){
+  const q=$('svcQuick');
+  SVC_QUICK.forEach(([g,list])=>{
+    const row=document.createElement('div'); row.className='svc-qrow';
+    const lb=document.createElement('span'); lb.className='svc-qlabel'; lb.textContent=g; row.appendChild(lb);
+    list.forEach(t=>{ const b=document.createElement('button'); b.type='button'; b.textContent='+ '+(SVC_QUICK_LABEL[t]||t); if(svcIsMed(t)) b.className='med'; b.title=t+(svcIsMed(t)?'(医療系)':''); b.addEventListener('click',()=>svcAdd(t)); row.appendChild(b); });
+    q.appendChild(row);
+  });
+  const dl=document.createElement('datalist'); dl.id='svcFreqList';
+  ['週1回','週2回','週3回','毎日','月2回','月1回','随時','常時(貸与)','1回のみ'].forEach(v=>{ const o=document.createElement('option'); o.value=v; dl.appendChild(o); });
+  document.body.appendChild(dl);
+})();
+$('wishText').addEventListener('input',svcUpdatePreview);
+$('btnSvcCopy').addEventListener('click',()=>{
+  const t=cmRequestBlock();
+  if(!t){ setRouteInfo('意向・利用したいサービスがまだ入力されていません。','err'); return; }
+  copyText(t,()=>{ const b=$('btnSvcCopy'); b.textContent='✓ コピーしました'; setTimeout(()=>{ b.textContent='意向+利用したいサービスをコピー'; },2000); });
+});
+/* もう一方のタブ(または読み込み直後)から受け取ったとき */
+window.addEventListener('message',e=>{
+  if(e.source!==window.parent) return;
+  const d=e.data; if(!d || d.cmTool!=='hub' || d.type!=='sync' || d.field!=='svcWish') return;
+  try{ svcReceiving=true; svcRows=JSON.parse(d.value)||[]; svcRender(); } catch(_){} finally{ svcReceiving=false; }
+});
+svcRender();
 /* サンプル(架空の事例)の選択欄 */
 if(window.cmMountSamples) cmMountSamples();
 </script>

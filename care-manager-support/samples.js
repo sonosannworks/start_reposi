@@ -158,7 +158,7 @@ window.CM_SAMPLES=[
     box.hidden=false;
     box.innerHTML='';
     const h=document.createElement('div'); h.className='sw-head';
-    h.innerHTML='<b>サンプルの意向(例)</b><span class="sw-tag">架空の事例</span>';
+    h.innerHTML='<b>ペルソナの意向(例)</b><span class="sw-tag">架空の事例</span>';
     const p=document.createElement('pre'); p.textContent=s.wish;
     const note=document.createElement('p'); note.className='sw-note';
     note.textContent='この意向を上の「本人・家族の意向」欄に貼り付けると、様式の意向欄に反映されます(貼り付けないと、意向欄は空欄のままです)。';
@@ -174,28 +174,31 @@ window.CM_SAMPLES=[
     if(!list.length){ sel.style.display='none'; return; }
     if(btn) btn.style.display='none';
     sel.innerHTML='';
-    const first=document.createElement('option'); first.value=''; first.textContent='サンプルを読み込む(架空の事例 '+list.length+'件)';
+    /* ペルソナ番号(認定情報ビューアの番号と同じ):v3-01〜10 → 01〜10、v2-01〜05 → 11〜15 */
+    const noOf=s=>{ const m=/^v(\d)-(\d+)$/.exec(s.id||''); return m ? (+m[2])+(m[1]==='2'?10:0) : 99; };
+    const tag=(OWN_KEY==='issue')?'[issue-summary-v1]':'[careplan-v1]';
+    const first=document.createElement('option'); first.value=''; first.textContent=(OWN_KEY==='issue')?'ペルソナを入力':'ペルソナの見本プランを見る';
     sel.appendChild(first);
-    LEVELS.forEach(lv=>{
-      const items=list.filter(s=>s.level===lv); if(!items.length) return;
-      const g=document.createElement('optgroup'); g.label=lv;
-      items.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.level+'|'+s.label; g.appendChild(o); });
-      sel.appendChild(g);
+    list.slice().sort((a,b)=>noOf(a)-noOf(b)).forEach(s=>{
+      const o=document.createElement('option'); o.value=s.id;
+      o.textContent=String(noOf(s)).padStart(2,'0')+' '+s.name+'さん('+s.level+')|'+s.label;
+      sel.appendChild(o);
     });
+    sel.setAttribute('aria-label','ペルソナ(架空の事例)の'+tag+'を選んで入力');
+    window.cmPickSample=function(id){ sel.value=id; sel.dispatchEvent(new Event('change')); };
     sel.addEventListener('change',()=>{
       const s=list.find(x=>x.id===sel.value); sel.value='';
       if(!s) return;
-      const own=(OWN_KEY==='issue')?s.issue:s.plan, other=(OWN_KEY==='issue')?s.plan:s.issue;
+      const own=(OWN_KEY==='issue')?s.issue:s.plan;   // 選んだタブの分だけ入れる(もう一方のタブには送らない)
       const cur=byId('src').value.trim();
-      if(cur && cur!==lastSampleText.trim() && !confirm('「2」の欄の内容を、サンプルで置き換えますか？')) return;
+      if(cur && cur!==lastSampleText.trim() && !confirm('貼り付け欄の内容を、ペルソナの内容で置き換えますか？')) return;
+      window.cmSyncPaused=(OWN_KEY==='plan');   // 見本プランを見るだけなら、総括表のタブの名前・意向は変えない
       setField('userName',s.name);
       setField('wishText','');
+      window.cmSyncPaused=false;
       byId('src').value=own; lastSampleText=own;
       byId('btnParse').click();
       window.cmShowSampleWish(s);
-      if(window.parent!==window){
-        window.parent.postMessage({cmTool:OWN_KEY,type:'route-paste',text:other,sample:true,wish:s.wish,name:s.name},'*');
-      }
     });
   };
   /* もう一方のタブから届いたサンプルを、置き換え確認なしで受け取るための印 */
