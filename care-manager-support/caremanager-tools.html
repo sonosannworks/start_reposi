@@ -23,11 +23,26 @@
   .tab.has-new .new{display:inline;}
   .hint{margin-left:auto; font-size:12px; color:#777; padding-bottom:9px;}
   .badge{font-size:12px; background:#E1F5EE; color:var(--teal-deep); border:1px solid #BFE3D6; border-radius:999px; padding:3px 12px; margin-bottom:8px; white-space:nowrap;}
+  /* 上の段：アプリ名(左)と外部リンク(右)。タブ・説明・バッジは下の段 */
+  .brand{order:-3;}
+  .ext-links{order:-2; margin-left:auto; display:flex; gap:6px; margin-bottom:8px;}
+  .tabbar::before{content:""; order:-1; flex-basis:100%; height:0;}
+  .ext-btn{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; line-height:1.2; text-decoration:none;
+           padding:6px 12px; border-radius:999px; white-space:nowrap;}
+  .ext-site{border:1px solid var(--line); color:#666; background:#fff;}
+  .ext-site:hover{border-color:var(--teal); color:var(--teal-deep);}
+  .ext-line{background:#06C755; color:#fff; border:1px solid #06C755;}
+  .ext-line:hover{background:#05A847; border-color:#05A847;}
+  .ext-line svg{width:14px; height:14px; stroke:currentColor; stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  .ext-btn .short{display:none;}
   .frames{flex:1; position:relative;}
   iframe{position:absolute; inset:0; width:100%; height:100%; border:0; background:var(--paper);}
   iframe[hidden]{display:none;}
-  @media (max-width:700px){ .hint{display:none;} .tab{padding:8px 12px; font-size:14px;} .badge{margin-left:auto; white-space:normal;} }
-  @media print{ .tabbar{display:none;} }
+  @media (max-width:700px){ .hint{display:none;} .tab{padding:8px 12px; font-size:14px;} .badge{margin-left:auto; white-space:normal;}
+    .brand{order:0;} .tabbar::before{display:none;}
+    .ext-links{order:-1; flex-basis:100%; justify-content:flex-end; margin-bottom:6px;}
+    .ext-btn .full{display:none;} .ext-btn .short{display:inline;} }
+  @media print{ .tabbar, .ext-links{display:none;} }
 </style>
 </head>
 <body>
@@ -37,6 +52,10 @@
     <button class="tab" role="tab" id="tab-plan" aria-controls="f-plan" aria-selected="false"><span class="num">2</span>ケアプラン(第1・2表)<span class="new">結果が届きました</span></button>
     <span class="hint">タブを切り替えても入力内容は消えません(ページを閉じる・再読み込みすると消えます)</span>
     <span class="badge">ブラウザ内で処理 ・ データは送信・保存されません</span>
+    <span class="ext-links">
+      <a class="ext-btn ext-site" href="https://sonosann-webai.net/" target="_blank" rel="noopener"><span class="full">Web&amp;AIサポートへ</span><span class="short">Web&amp;AIへ</span></a>
+      <a class="ext-btn ext-line" href="https://s.lmes.jp/landing-qr/2011748533-BMQL04q5?uLand=X0xLFj" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4.4 3.3A.6.6 0 0 1 3.6 20V16H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg><span class="full">LINEで友だち追加</span><span class="short">LINE</span></a>
+    </span>
   </nav>
   <div class="frames">
     <iframe id="f-issue" src="caremanager-tools-issue.html" title="課題整理総括表 転記アシスト"></iframe>
