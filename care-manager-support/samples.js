@@ -1,4 +1,4 @@
-/* 転記アシストのサンプル(架空の事例)。_作業用/build_samples.py で自動生成。直接編集しないでください */
+/* 転記アシストのサンプル(架空の事例)。web-build/persona_pdf/update_samples.py で、samples_src/ のファイルから生成。直接編集しないでください */
 window.CM_SAMPLES=[
 {
 "id": "v3-05",
