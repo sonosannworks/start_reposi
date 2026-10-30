@@ -50,6 +50,9 @@
   #pvDlg .pv-bar a.primary{background:var(--teal,#0E6B5C); color:#fff; border-color:var(--teal,#0E6B5C); font-weight:600;}
   #pvDlg .pv-note{font-size:12px; color:var(--ink-2,#5C6B66); padding:6px 14px; background:#FAFAF6; border-bottom:1px solid var(--line,#DAD8CF);}
   #pvDlg iframe{flex:1; width:100%; border:0; background:#ECEAE2; position:static; inset:auto; height:auto;}
+  #pvDlg .pv-noinline{flex:1; display:flex; align-items:flex-start; justify-content:center; padding:24px 18px; background:#ECEAE2;}
+  #pvDlg .pv-noinline p{max-width:30em; margin:0; font-size:14px; line-height:1.8; color:var(--ink,#22302C); background:#fff; border:1px solid var(--line,#DAD8CF); border-radius:10px; padding:14px 16px;}
+  #pvDlg .pv-noinline[hidden]{display:none;}
   #pvDlg .pv-sel{display:none;}
   #pvDlg.pv-wide .pv-wrap{grid-template-columns:1fr;}
   #pvDlg.pv-wide .pv-head{grid-column:1;}
@@ -59,11 +62,20 @@
   @media (max-width:720px){
     #pvDlg{width:100vw; height:100vh; border-radius:0;}
     #pvDlg .pv-wrap{grid-template-columns:1fr;}
-    #pvDlg .pv-head{grid-column:1;}
+    #pvDlg .pv-head{grid-column:1; flex-wrap:wrap; row-gap:6px;}
+    #pvDlg .pv-head h2{white-space:nowrap;}
+    #pvDlg .pv-head::after{content:""; order:1; flex-basis:100%;}   /* ラベルを見出しの下の段へ(×は右上に残す) */
+    #pvDlg .pv-head .pv-tag{order:2; white-space:nowrap;}
+    #pvDlg .pv-head .pv-close{order:1;}
     #pvDlg .pv-list{display:none;}
     #pvDlg .pv-toggle{display:none;}
     #pvDlg .pv-sel{display:block; width:100%; font-size:14px; padding:8px; border-radius:8px; border:1px solid var(--line-2,#C4C2B8); margin:0 0 4px;}
   }`;
+
+  /* 開いたり保存したりするときのファイル名(氏名は入れない)。例:ペルソナ01_要介護1_架空事例.pdf */
+  function pubName(p){ return 'ペルソナ'+String(p.no).padStart(2,'0')+'_'+p.level+'_架空事例.pdf'; }
+  /* PDFを画面の中に表示できるか(AndroidのChromeなどは false) */
+  const CAN_INLINE = navigator.pdfViewerEnabled!==undefined ? navigator.pdfViewerEnabled : !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   function esc(t){ return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
@@ -99,9 +111,15 @@
       +'<div class="pv-note">このPDFをAIに添付して、課題整理総括表・ケアプランのSkillを試せます。ペルソナはすべて架空の人物で、実在の方とは関係ありません。</div>'
       +'<div class="pv-note" id="pvMsg" hidden></div>'
       +'<iframe id="pvFrame" title="認定情報PDF"></iframe>'
+      +'<div class="pv-noinline" id="pvNoInline" hidden><p>スマホでは、この画面の中にPDFを表示できません。『別タブで開く』から見るか、『PDFを保存』で保存してください。</p></div>'
       +'</div></div>';
     document.body.appendChild(dlg);
 
+    if(!CAN_INLINE){   // PDFを画面の中に表示できないブラウザ(AndroidのChromeなど)
+      document.getElementById('pvFrame').hidden=true;
+      document.getElementById('pvNoInline').hidden=false;
+      document.getElementById('pvOpen').classList.add('primary');
+    }
     const items=[...dlg.querySelectorAll('.pv-item')];
     const sel=dlg.querySelector('.pv-sel');
     let cur=-1;
@@ -116,9 +134,9 @@
       setNote('読み込んでいます…');
       loadPdf(p).then(url=>{
         if(cur!==i) return;   // 読み込み中に別の人を選んだとき
-        fr.src=url+'#navpanes=0&pagemode=none&view=FitH';
+        if(CAN_INLINE) fr.src=url+'#navpanes=0&pagemode=none&view=FitH';
         op.href=url;
-        dl.href=url; dl.setAttribute('download', p.file);
+        dl.href=url; dl.setAttribute('download', pubName(p));
         setNote('');
       }).catch(()=>{ if(cur===i) setNote('PDFを読み込めませんでした。personas フォルダが、このHTMLと同じ場所にあるか確認してください。',true); });
       try{ localStorage.setItem('cmPersonaLast', String(i)); }catch(e){}
@@ -127,6 +145,8 @@
        パソコン上のファイルを直接開いた場合(file://)でも、窓の中・別タブで表示できるようにするため */
     const blobUrls={};
     function loadPdf(p){
+      // サイトで公開しているときは、意味の分かる名前のPDFファイルをそのまま使う(別タブ・保存でもこの名前になる)
+      if(/^https?:$/.test(location.protocol)) return Promise.resolve(DIR+encodeURIComponent(pubName(p)));
       if(blobUrls[p.file]) return Promise.resolve(blobUrls[p.file]);
       const make=()=>{
         const b64=(window.cmPersonaPdf||{})[p.file]; if(!b64) throw new Error('no data');
