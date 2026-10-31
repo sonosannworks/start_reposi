@@ -6,7 +6,9 @@
 <title>ケアマネ転記アシスト(AI貼り付け版) | sonosann Web&amp;AIサポート</title>
 <style>
   :root{ --teal:#0E6B5C; --teal-deep:#0A5044; --teal-pale:#E4F0EC; --paper:#F7F6F2; --line:#D8D4CA; --ink:#2B2B28;
-         --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif; }
+         --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+         /* ケアプラン(第1・2表)タブの配色。色味の微調整はここだけで行う */
+         --plan-bg:#EAF3FB; --plan-pale:#CFE3F5; --plan-accent:#2F6EA8; }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
   body{display:flex; flex-direction:column; background:var(--paper); color:var(--ink); font-family:var(--gothic);}
@@ -38,14 +40,20 @@
   .frames{flex:1; position:relative;}
   iframe{position:absolute; inset:0; width:100%; height:100%; border:0; background:var(--paper);}
   iframe[hidden]{display:none;}
+  /* ケアプランタブを開いているときは薄いブルー(課題整理総括表タブは従来の色のまま) */
+  body[data-active="plan"]{background:var(--plan-bg);}
+  body[data-active="plan"] .tabbar{border-bottom-color:var(--plan-accent);}
+  #tab-plan:hover{background:var(--plan-pale);}
+  #tab-plan[aria-selected="true"]{background:var(--plan-accent); border-color:var(--plan-accent); color:#fff;}
+  #f-plan{background:var(--plan-bg);}
   @media (max-width:700px){ .hint{display:none;} .tab{padding:8px 12px; font-size:14px;} .badge{margin-left:auto; white-space:normal;}
     .brand{order:0;} .tabbar::before{display:none;}
     .ext-links{order:-1; flex-basis:100%; justify-content:flex-end; margin-bottom:6px;}
     .ext-btn .full{display:none;} .ext-btn .short{display:inline;} }
-  @media print{ .tabbar, .ext-links{display:none;} }
+  @media print{ .tabbar, .ext-links{display:none;} body, iframe{background:#fff !important;} }
 </style>
 </head>
-<body>
+<body data-active="issue">
   <nav class="tabbar" role="tablist" aria-label="ツールの切り替え">
     <span class="brand">ケアマネ転記アシスト(AI貼り付け版)</span>
     <button class="tab" role="tab" id="tab-issue" aria-controls="f-issue" aria-selected="true"><span class="num">1</span>課題整理総括表<span class="new">結果が届きました</span></button>
@@ -66,6 +74,7 @@ const tabs={issue:{tab:document.getElementById('tab-issue'),fr:document.getEleme
             plan:{tab:document.getElementById('tab-plan'),fr:document.getElementById('f-plan')}};
 function show(key){
   Object.entries(tabs).forEach(([k,o])=>{ const on=k===key; o.tab.setAttribute('aria-selected',on); o.fr.hidden=!on; });
+  document.body.dataset.active=key;
   tabs[key].tab.classList.remove('has-new');
   // 意向などの入力直後でも、切り替え先のタブの様式をすぐ最新にする
   Object.values(tabs).forEach(o=>{ try{ o.fr.contentWindow.postMessage({cmTool:'hub',type:'flush'},'*'); }catch(e){} });

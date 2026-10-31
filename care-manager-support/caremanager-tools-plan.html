@@ -6,7 +6,7 @@
 <title>ケアプラン転記アシスト(AI貼り付け版) | sonosann Web&AIサポート</title>
 <style>
   :root{
-    --paper:#F5F4EF; --card:#FFFFFF;
+    --paper:#EAF3FB; --card:#FFFFFF; /* 画面の背景は薄いブルー(課題整理総括表側と見分けるため。印刷時は白) */
     --ink:#22302C; --ink-2:#5C6B66; --ink-3:#8A968F;
     --teal:#0E6B5C; --teal-deep:#0A5044; --teal-pale:#E4F0EC;
     --form-green:#E7EDDA; --form-green-line:#B9C79B; --form-green-ink:#3E4A2C;
@@ -203,6 +203,20 @@
     .svc-row .svc-freq{grid-column:1; grid-row:2;}
     .svc-row .svc-st{grid-column:2 / 4; grid-row:2;}
     .svc-row .svc-memo{grid-column:1 / 4; grid-row:3;}
+  }
+
+  /* ケアプラン画面のアクセントカラー(ブルー系)。画面表示のときだけ緑から置き換え、印刷の見た目は従来のまま。
+     色味の微調整はこの変数だけで行う */
+  @media screen{
+    :root{
+      --teal:#3A7AB8; --teal-deep:#24598A; --teal-pale:#DDEBF7;
+      --done:#2F6EA8; --done-bg:#E6F0FA; --blue-line:#B5D2EC; --blue-wash:#F4F8FD;
+    }
+    .badge-local, .field.copied, .btn-copy.done{border-color:var(--blue-line);}
+    .field.copied .field-head{background:var(--teal-pale); border-color:var(--blue-line);}
+    .need-head{border-bottom-color:var(--blue-line);}
+    td.cell:hover{background:var(--blue-wash);}
+    .persona-row, .sample-wish{background:var(--blue-wash);}
   }
 </style>
 </head>
