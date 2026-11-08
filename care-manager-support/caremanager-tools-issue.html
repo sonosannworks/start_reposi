@@ -138,6 +138,9 @@
   #printBox .note{font-size:12px; color:var(--ink-2); margin-top:8px;}
   @media print{ #printBox{display:none !important;} }
 
+  .wish-warn{margin:12px 16px 0; padding:10px 14px; border:1px solid #E8B4AD; border-left:4px solid #C0392B; border-radius:6px; background:#FDF2F0; color:#C0392B; font-weight:600; font-size:13px; line-height:1.7;}
+  @media print{ .wish-warn{display:none !important;} }
+
   .howto .privacy{margin-top:12px; border:1px solid #E5C9A8; background:#FFF8EF; border-radius:8px; padding:10px 14px; font-size:13px; line-height:1.7;}
   .howto .privacy ul{margin:6px 0 0 1.2em;}
   .howto .privacy p{margin-top:4px;}
@@ -617,7 +620,12 @@ function applyWishInput(data){
 /* Skillの出力に無い「見通し・ニーズ・優先順位」欄(面談後にケアマネジャーが記入) */
 function pendingNeedsEl(){
   const sec=document.createElement('section'); sec.className='sheet';
+  /* ①に意向を入力しているのに見通し・ニーズが無いときは、意向をAIにも送る必要があることを知らせる(画面のみ) */
+  const wishWarn = $('wishText').value.trim()
+    ? '<div class="wish-warn" role="note">⚠ ①に本人・家族の意向が入力されていますが、AIの出力に見通し・ニーズがありません。①の欄は様式への表示用のため、ここに入力するだけでは見通し・ニーズは作成されません。同じAIの会話で意向を送ると見通し・ニーズ【案】まで作成されるので、その出力をもう一度②に貼り付けてください。</div>'
+    : '';
   sec.innerHTML='<div class="sheet-head"><span class="tno">面談後</span><h3>見通し・生活全般の解決すべき課題(ニーズ)・優先順位</h3></div>'
+    +wishWarn
     +'<div class="sheet-body"><div class="svc"><div class="svc-scroll"><table class="svc-tbl">'
     +'<tr><th>優先順位 ※6</th><th>生活全般の解決すべき課題(ニーズ)</th><th>見通し ※5</th></tr>'
     +'<tr><td class="pending">面談後に記入</td><td class="pending">面談後に記入</td><td class="pending">面談後に記入</td></tr>'
