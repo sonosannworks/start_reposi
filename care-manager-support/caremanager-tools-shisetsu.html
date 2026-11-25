@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>施設ケアプラン 転記アシスト(AI貼り付け版) | sonosann Web&AIサポート</title>
+<style id="sc-style">
+/* ===== 施設プランタブ：すべて #shisetsu-app 配下に限定（居宅版と衝突しないため） ===== */
+body{margin:0;background:#F6F1E7}
+#shisetsu-app{--sc-main:#0E6B5C;--sc-deep:#0A5044;--sc-main-l:#E4F0EC;--sc-accent:#9A5B0B;--sc-line:#DAD8CF;--sc-text:#22302C;--sc-sub:#5C6B66;--sc-warn:#9A5B0B;--sc-mincho:"Yu Mincho","YuMincho","Hiragino Mincho ProN",serif;
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;color:var(--sc-text);font-size:14.5px;line-height:1.7;max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+#shisetsu-app *{box-sizing:border-box}
+#shisetsu-app header.sc-app{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;padding:6px 2px 14px;border-bottom:2px solid var(--sc-main);margin-bottom:12px}
+#shisetsu-app h1{font-family:var(--sc-mincho);font-size:24px;font-weight:600;margin:0;color:var(--sc-deep);letter-spacing:.04em}
+#shisetsu-app .sc-ver{font-size:12px;color:#8A968F;letter-spacing:.06em}
+#shisetsu-app details.sc-howto{background:#fff;border:1px solid var(--sc-line);border-radius:10px;margin-bottom:12px}
+#shisetsu-app details.sc-howto summary{padding:12px 18px;font-weight:600;color:var(--sc-deep);cursor:pointer}
+#shisetsu-app details.sc-howto .b{padding:0 18px 16px;font-size:13.5px;color:var(--sc-sub)}
+#shisetsu-app details.sc-howto ol,#shisetsu-app details.sc-howto ul{padding-left:1.4em;margin:4px 0}
+#shisetsu-app .sc-privacy{margin-top:10px;border:1px solid #E5C9A8;background:#FFF8EF;border-radius:8px;padding:10px 14px}
+#shisetsu-app footer.sc-foot{margin-top:40px;text-align:center;font-size:12px;color:#8A968F;line-height:2}
+#shisetsu-app .sc-lead{color:var(--sc-sub);font-size:13px;margin:0 0 12px}
+#shisetsu-app .sc-badge{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--sc-main);color:#fff;font-size:12px;margin-left:8px;vertical-align:middle}
+#shisetsu-app .sc-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:2px solid var(--sc-main);margin:12px 0 16px}
+#shisetsu-app .sc-tab{border:1px solid var(--sc-line);border-bottom:none;background:#f5f7f6;padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;font-size:14px;color:var(--sc-text)}
+#shisetsu-app .sc-tab.is-active{background:var(--sc-main);color:#fff;border-color:var(--sc-main);font-weight:bold}
+#shisetsu-app .sc-panel{display:none}
+#shisetsu-app .sc-panel.is-active{display:block}
+#shisetsu-app .sc-card{background:#fff;border:1px solid var(--sc-line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+#shisetsu-app .sc-card h2{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--sc-deep)}
+#shisetsu-app .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px 14px}
+#shisetsu-app label{display:block;font-size:12px;color:var(--sc-sub);margin-bottom:2px}
+#shisetsu-app input[type=text],#shisetsu-app input[type=date],#shisetsu-app input[type=time],#shisetsu-app select,#shisetsu-app textarea{width:100%;padding:7px 9px;border:1px solid var(--sc-line);border-radius:6px;font:inherit;background:#fff}
+#shisetsu-app textarea{resize:vertical}
+#shisetsu-app .sc-seg{display:inline-flex;border:2px solid var(--sc-main);border-radius:8px;overflow:hidden}
+#shisetsu-app .sc-seg button{border:none;background:#fff;padding:8px 22px;font:inherit;cursor:pointer;color:var(--sc-main);font-weight:bold}
+#shisetsu-app .sc-seg button.is-on{background:var(--sc-main);color:#fff}
+#shisetsu-app .sc-btn{display:inline-block;border:1px solid var(--sc-main);background:#fff;color:var(--sc-main);padding:7px 14px;border-radius:6px;cursor:pointer;font:inherit;font-size:13px;margin:2px 4px 2px 0}
+#shisetsu-app .sc-btn.is-primary{background:var(--sc-main);color:#fff}
+#shisetsu-app .sc-btn.is-small{padding:3px 9px;font-size:12px}
+#shisetsu-app .sc-btn.is-danger{border-color:var(--sc-warn);color:var(--sc-warn)}
+#shisetsu-app .sc-note{font-size:12px;color:var(--sc-sub)}
+#shisetsu-app .sc-warnbox{background:#FBF1DC;border:1px solid #E4C077;color:var(--sc-warn);padding:8px 12px;border-radius:6px;font-size:13px;margin:8px 0}
+#shisetsu-app .sc-okbox{background:var(--sc-main-l);border:1px solid #b9d8cd;padding:8px 12px;border-radius:6px;font-size:13px;margin:8px 0}
+#shisetsu-app .sc-family-row{display:grid;grid-template-columns:150px 1fr 36px;gap:8px;margin-bottom:8px;align-items:start}
+#shisetsu-app .sc-need{border:1px solid var(--sc-line);border-radius:8px;padding:10px 12px;margin-bottom:12px;background:#fbfcfb}
+#shisetsu-app .sc-need-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:bold;color:var(--sc-main)}
+#shisetsu-app .sc-svc{display:grid;grid-template-columns:2.2fr 1.2fr 1fr 1fr 1.2fr 30px;gap:6px;margin-bottom:6px}
+#shisetsu-app .sc-svc-head{font-size:11px;color:var(--sc-sub)}
+#shisetsu-app .sc-ref{white-space:pre-wrap;font-size:12.5px;background:#f7f8f7;border:1px dashed var(--sc-line);border-radius:6px;padding:10px;max-height:320px;overflow:auto}
+#shisetsu-app .sc-master-row{display:grid;grid-template-columns:110px 1fr 1.4fr 1fr;gap:6px;margin-bottom:6px;align-items:center}
+#shisetsu-app .sc-days label{display:inline-flex;align-items:center;gap:3px;margin-right:10px;font-size:14px;color:var(--sc-text)}
+#shisetsu-app .sc-toolbar{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:10px}
+#shisetsu-app .sc-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--sc-text);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:50}
+#shisetsu-app .sc-toast.is-show{opacity:.95}
+
+/* ===== 帳票（画面表示・印刷共通） ===== */
+#shisetsu-app .sc-sheet{background:#fff;border:1px solid #999;padding:14px 16px;margin-bottom:18px;font-size:11.5px;line-height:1.45;color:#000;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif}
+#shisetsu-app .sc-sheet-title{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}
+#shisetsu-app .sc-sheet-title .t{font-size:16px;font-weight:bold;letter-spacing:.2em}
+#shisetsu-app .sc-sheet-title .no{border:1px solid #000;padding:1px 8px;font-size:11px}
+#shisetsu-app table.sc-f{width:100%;border-collapse:collapse;table-layout:fixed}
+#shisetsu-app table.sc-f th,#shisetsu-app table.sc-f td{border:1px solid #000;padding:4px 5px;vertical-align:top;word-break:break-all;white-space:pre-wrap}
+#shisetsu-app table.sc-f th{background:#f1f1f1;font-weight:normal;text-align:center;vertical-align:middle}
+#shisetsu-app table.sc-f td[contenteditable]:focus{outline:2px solid var(--sc-accent);background:#fffaf2}
+#shisetsu-app .sc-meta{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;margin-bottom:6px;font-size:11.5px}
+#shisetsu-app .sc-meta div{border-bottom:1px solid #000;padding:2px 0;min-height:20px}
+#shisetsu-app .sc-meta span.k{color:#333;margin-right:6px}
+#shisetsu-app .sc-vlabel{writing-mode:vertical-rl;text-align:center;letter-spacing:.3em}
+#shisetsu-app .sc-sign{margin-top:8px;font-size:11px;text-align:right}
+
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  #shisetsu-app{padding:0;max-width:none}
+  #shisetsu-app .sc-sheet{border:none;padding:0;margin:0;page-break-after:always;font-size:10.5px;line-height:1.35}
+  #shisetsu-app .sc-sheet:last-child{page-break-after:auto}
+  #shisetsu-app .sc-note{color:#333}
+}
+</style>
+</head>
+<body>
+
+<div id="shisetsu-app">
+  <header class="sc-app">
+    <h1>施設ケアプラン 転記アシスト</h1>
+    <span class="sc-badge" id="sc-type-badge">特養</span>
+    <span class="sc-ver">施設サービス計画書 第1表〜第4表（特養・老健）</span>
+  </header>
+  <details class="sc-howto">
+    <summary>はじめての方へ(使い方)</summary>
+    <div class="b">
+      <ol>
+        <li>認定情報(認定調査票・主治医意見書)の<b>個人情報をすべてマスキング</b>し、AIに添付して「施設ケアプランを作成して」と送ります。施設ケアプランのSkillが発動して、医療情報の整理表・第1表・第2表・要確認リストの下書きが作られます。特養か老健かも一緒に伝えてください。</li>
+        <li>返ってきた出力を全文コピーし、「① 入力」の貼り付け欄に貼り付けて「読み込む」を押します。</li>
+        <li>利用者名と、面談で確認した本人・家族の意向を入力します。AI出力の「※参考：認定調査時の主訴」は入所前の困りごとなので、施設での生活への意向に書き換えてください。</li>
+        <li>「③ 施設マスタ」に施設名・標準の日課・入浴曜日を一度登録しておくと、第4表(日課計画表)・第3表(週間サービス計画表)が自動で組み立てられます。</li>
+        <li>「④ 帳票」で内容を確認し、マス目を直接直してから、介護ソフトへコピーするか、標準様式で印刷・PDF保存します。</li>
+      </ol>
+      <div class="sc-privacy">
+        <b>個人情報の取り扱いについて</b>
+        <ul>
+          <li>このページは、入力・貼り付けた内容をブラウザの中だけで処理し、インターネットに送ることはありません。AIに渡した内容は、そのAIのサービスに送られます。</li>
+          <li>AIに渡す認定情報は、<b>氏名・住所・生年月日・電話番号・被保険者番号・医療機関名などをマスキングしてから</b>渡してください。</li>
+          <li>利用者名・意向は<b>保存されません</b>(ページを閉じると消えます)。このブラウザに保存されるのは施設マスタ(施設名・日課など)だけです。</li>
+        </ul>
+      </div>
+    </div>
+  </details>
+
+  <div class="sc-tabs" role="tablist">
+    <button class="sc-tab is-active" data-sc-tab="input">① 入力</button>
+    <button class="sc-tab" data-sc-tab="plan2">② 第2表の編集</button>
+    <button class="sc-tab" data-sc-tab="master">③ 施設マスタ</button>
+    <button class="sc-tab" data-sc-tab="sheets">④ 帳票（第1〜4表）</button>
+  </div>
+
+  <!-- ========== ① 入力 ========== -->
+  <section class="sc-panel is-active" data-sc-panel="input">
+    <div class="sc-card">
+      <h2>施設種別</h2>
+      <div class="sc-seg" id="sc-type-seg">
+        <button data-type="tokuyo" class="is-on">特養（介護老人福祉施設）</button>
+        <button data-type="roken">老健（介護老人保健施設）</button>
+      </div>
+      <p class="sc-note">切り替えると、担当職種の候補（配置医師⇔施設医師、生活相談員⇔支援相談員 など）が変わります。</p>
+      <button class="sc-btn is-small" id="sc-type-replace">貼り付け済みの担当職種を、この施設種別の呼び方に置き換える</button>
+    </div>
+
+    <div class="sc-card">
+      <h2>AIの出力を貼り付け</h2>
+      <p class="sc-note">施設ケアプランSkillの出力（医療情報の整理表〜要確認リストまで）をそのまま貼り付けて「読み込む」を押してください。</p>
+      <textarea id="sc-paste" rows="9" placeholder="━━━━━━━━━━━━━━━━━━&#10;■ 医療情報の整理表&#10;…&#10;■ 第1表 施設サービス計画書（1）&#10;…"></textarea>
+      <div style="margin-top:8px">
+        <button class="sc-btn is-primary" id="sc-parse">読み込む</button>
+        <button class="sc-btn" id="sc-sample">サンプル（テスト用架空事例）を入れる</button>
+        <button class="sc-btn is-danger" id="sc-clear">入力をすべて消す</button>
+      </div>
+      <div id="sc-parse-msg"></div>
+    </div>
+
+    <div class="sc-card">
+      <h2>基本情報</h2>
+      <div class="sc-grid">
+        <div><label>利用者名（保存されません）</label><input type="text" id="f-name" placeholder="例：西川 正弘"></div>
+        <div><label>生年月日</label><input type="text" id="f-birth" placeholder="例：昭和26年11月3日"></div>
+        <div><label>住所</label><input type="text" id="f-addr" placeholder="空欄でも可"></div>
+        <div><label>要介護状態区分</label>
+          <select id="f-care"><option value="">選択</option><option>要介護1</option><option>要介護2</option><option>要介護3</option><option>要介護4</option><option>要介護5</option></select></div>
+        <div><label>認定日</label><input type="text" id="f-nintei" placeholder="例：令和8年7月15日"></div>
+        <div><label>認定の有効期間</label><input type="text" id="f-kikan" placeholder="例：令和8年6月10日〜令和9年6月30日"></div>
+        <div><label>作成区分</label><select id="f-kubun"><option>初回</option><option>紹介</option><option>継続</option></select></div>
+        <div><label>認定状況</label><select id="f-ninteijo"><option>認定済</option><option>申請中</option></select></div>
+        <div><label>計画作成者 氏名</label><input type="text" id="f-author"></div>
+        <div><label>計画作成者 職種</label><input type="text" id="f-author-job" value="介護支援専門員"></div>
+        <div><label>施設サービス計画作成（変更）日</label><input type="text" id="f-date" placeholder="例：令和8年12月1日"></div>
+        <div><label>初回施設サービス計画作成日</label><input type="text" id="f-first" placeholder="例：令和8年12月1日"></div>
+      </div>
+      <p class="sc-note">施設名・所在地は「③ 施設マスタ」で一度登録すれば、毎回自動で入ります。</p>
+    </div>
+
+    <div class="sc-card">
+      <h2>本人・家族の意向（第1表）</h2>
+      <p class="sc-note">面談で聞き取った内容を入力してください。AI出力の「※参考：認定調査時の主訴」は入所前の困りごとなので、必要に応じて書き換えてください。</p>
+      <label>本人の意向</label>
+      <textarea id="f-ikou-self" rows="3"></textarea>
+      <div style="margin-top:10px">
+        <label>家族の意向（続柄ごと）</label>
+        <div id="sc-family"></div>
+        <button class="sc-btn is-small" id="sc-family-add">＋ 家族を追加</button>
+      </div>
+      <div class="sc-grid" style="margin-top:10px">
+        <div style="grid-column:1/-1"><label>課題分析の結果（任意：意向を踏まえた課題分析の結果）</label><textarea id="f-bunseki" rows="2" placeholder="空欄の場合、第1表は意向のみ表示します"></textarea></div>
+        <div style="grid-column:1/-1"><label>介護認定審査会の意見及びサービスの種類の指定</label><textarea id="f-shinsa" rows="2"></textarea></div>
+        <div style="grid-column:1/-1"><label>総合的な援助の方針</label><textarea id="f-houshin" rows="5"></textarea></div>
+      </div>
+    </div>
+
+    <div class="sc-card">
+      <h2>参考情報（AI出力より・帳票には載りません）</h2>
+      <div class="sc-grid">
+        <div><label>医療情報の整理表</label><div class="sc-ref" id="sc-ref-iryo">（読み込むと表示されます）</div></div>
+        <div><label>要確認リスト</label><div class="sc-ref" id="sc-ref-kakunin">（読み込むと表示されます）</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ② 第2表の編集 ========== -->
+  <section class="sc-panel" data-sc-panel="plan2">
+    <div class="sc-card">
+      <h2>期間の初期値</h2>
+      <div class="sc-grid">
+        <div><label>長期目標の期間（各ニーズで空欄のときに使用）</label><input type="text" id="f-long-def" placeholder="例：R8.12.1〜R9.6.30"></div>
+        <div><label>短期目標の期間（同上）</label><input type="text" id="f-short-def" placeholder="例：R8.12.1〜R9.2.28"></div>
+      </div>
+      <p class="sc-note">「日課連携」は第3表・第4表に自動で振り分けるための時間帯です。例：起床／朝食／午前／昼食／午後／夕食／就寝／夜間／入浴日／随時／月単位（「・」区切りで複数可）</p>
+    </div>
+    <div id="sc-needs"></div>
+    <button class="sc-btn" id="sc-need-add">＋ ニーズを追加</button>
+    <datalist id="sc-staff-list"></datalist>
+    <datalist id="sc-tag-list"><option>起床</option><option>朝食</option><option>午前</option><option>昼食</option><option>午後</option><option>夕食</option><option>就寝</option><option>夜間</option><option>入浴日</option><option>随時</option><option>月単位</option></datalist>
+  </section>
+
+  <!-- ========== ③ 施設マスタ ========== -->
+  <section class="sc-panel" data-sc-panel="master">
+    <div class="sc-card">
+      <h2>施設の情報</h2>
+      <div class="sc-grid">
+        <div><label>施設名</label><input type="text" id="m-facility" data-master></div>
+        <div><label>所在地</label><input type="text" id="m-address" data-master></div>
+      </div>
+    </div>
+    <div class="sc-card">
+      <h2>標準の日課（第4表の行になります）</h2>
+      <div class="sc-master-row sc-svc-head"><div>日課連携</div><div>時刻 ／ 主な日常生活上の活動</div><div>共通サービス</div><div>担当者</div></div>
+      <div id="sc-master-rows"></div>
+      <p class="sc-note">共通サービス＝他の入所者と共通して日常業務として行うサービスです（第4表の「共通サービス」欄）。</p>
+    </div>
+    <div class="sc-card">
+      <h2>入浴</h2>
+      <div class="sc-days" id="sc-bath-days"></div>
+      <div class="sc-grid" style="margin-top:8px">
+        <div><label>入浴の時間帯</label><select id="m-bath-slot" data-master><option value="午前">午前</option><option value="午後">午後</option></select></div>
+      </div>
+    </div>
+    <div class="sc-card">
+      <h2>随時・その他の共通サービス</h2>
+      <div class="sc-grid">
+        <div><label>随時実施する共通サービス</label><textarea id="m-zuiji" rows="2" data-master></textarea></div>
+        <div><label>その他のサービス（月単位など）</label><textarea id="m-sonota" rows="2" data-master></textarea></div>
+      </div>
+      <button class="sc-btn is-primary" id="sc-master-save">施設マスタを保存</button>
+      <button class="sc-btn" id="sc-master-reset">初期値に戻す</button>
+      <span class="sc-note">（個人情報は含めないでください）</span>
+    </div>
+  </section>
+
+  <!-- ========== ④ 帳票 ========== -->
+  <section class="sc-panel" data-sc-panel="sheets">
+    <div class="sc-toolbar sc-screen-only">
+      <button class="sc-btn is-primary" id="sc-build">入力内容から帳票を作り直す</button>
+      <span class="sc-note">表示形式：</span>
+      <select id="sc-week-or-day" style="width:auto">
+        <option value="day">第4表 日課計画表を使う</option>
+        <option value="week">第3表 週間サービス計画表を使う</option>
+        <option value="both">両方表示する</option>
+      </select>
+      <button class="sc-btn" data-print="all">すべて印刷</button>
+      <button class="sc-btn" data-print="s1">第1表を印刷</button>
+      <button class="sc-btn" data-print="s2">第2表を印刷</button>
+      <button class="sc-btn" data-print="s3">第3表を印刷</button>
+      <button class="sc-btn" data-print="s4">第4表を印刷</button>
+    </div>
+    <div class="sc-toolbar sc-screen-only">
+      <span class="sc-note">介護ソフトへのコピー：</span>
+      <button class="sc-btn is-small" data-copy="s1">第1表</button>
+      <button class="sc-btn is-small" data-copy="s2">第2表</button>
+      <button class="sc-btn is-small" data-copy="s3">第3表</button>
+      <button class="sc-btn is-small" data-copy="s4">第4表</button>
+    </div>
+    <div id="sc-check"></div>
+    <p class="sc-note sc-screen-only">帳票のマス目はクリックして直接書き換えられます（「作り直す」を押すと入力内容から作り直されます）。第3表と第4表は、どちらか一方を選んで使えます。</p>
+    <div class="sc-print-area" id="sc-print-area"></div>
+  </section>
+
+  <footer class="sc-foot">
+    施設ケアプラン 転記アシスト v1.0(AI貼り付け版) ｜ sonosann Web&amp;AIサポート<br>
+    AIは情報、動くのは人。下書きの確定・本人家族への説明と同意は、必ずケアマネジャーご自身が行ってください。
+  </footer>
+  <div class="sc-toast" id="sc-toast"></div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var root = document.getElementById('shisetsu-app');
+  var $ = function(s){ return root.querySelector(s); };
+  var $$ = function(s){ return Array.prototype.slice.call(root.querySelectorAll(s)); };
+  var MASTER_KEY = 'shisetsuCareplanMaster_v1';
+  var WEEK = ['月','火','水','木','金','土','日'];
+
+  /* ---------- 状態 ---------- */
+  var state = { type:'tokuyo', needs:[], family:[{rel:'',text:''}] };
+
+  var STAFF = {
+    tokuyo:['介護職員','看護職員','生活相談員','管理栄養士','機能訓練指導員','配置医師','歯科医師・歯科衛生士','介護支援専門員','家族','全職員','地域ボランティア'],
+    roken:['介護職員','看護職員','支援相談員','管理栄養士','理学療法士・作業療法士・言語聴覚士','施設医師','歯科医師・歯科衛生士','介護支援専門員','家族','全職員','地域ボランティア']
+  };
+  var REPLACE = {
+    roken:[['配置医師','施設医師'],['配置医','施設医師'],['嘱託医','施設医師'],['生活相談員','支援相談員'],['機能訓練指導員','理学療法士・作業療法士']],
+    tokuyo:[['施設医師','配置医師'],['支援相談員','生活相談員'],['理学療法士・作業療法士・言語聴覚士','機能訓練指導員'],['理学療法士・作業療法士','機能訓練指導員']]
+  };
+
+  var DEFAULT_MASTER = {
+    facility:'', address:'',
+    rows:[
+      {tag:'起床', time:'6:30', act:'起床・整容', common:'起床の声かけ、洗面・整容の介助', staff:'介護職員'},
+      {tag:'朝食', time:'7:30', act:'朝食・服薬・口腔ケア', common:'配膳・下膳、食事の見守り、口腔ケア', staff:'介護職員'},
+      {tag:'午前', time:'10:00', act:'水分補給・体操', common:'水分補給、健康チェック、集団体操', staff:'介護職員・看護職員'},
+      {tag:'昼食', time:'12:00', act:'昼食・服薬・口腔ケア', common:'配膳・下膳、食事の見守り、口腔ケア', staff:'介護職員'},
+      {tag:'午後', time:'14:00', act:'レクリエーション・おやつ', common:'レクリエーション、おやつ・水分補給', staff:'介護職員・生活相談員'},
+      {tag:'夕食', time:'18:00', act:'夕食・服薬・口腔ケア', common:'配膳・下膳、食事の見守り、口腔ケア', staff:'介護職員'},
+      {tag:'就寝', time:'21:00', act:'就寝', common:'更衣・就寝の介助', staff:'介護職員'},
+      {tag:'夜間', time:'0:00', act:'睡眠', common:'定時の巡視・排泄介助', staff:'介護職員'}
+    ],
+    bathDays:['火','金'], bathSlot:'午前',
+    zuiji:'体調不良時の対応、ナースコール対応', sonota:'理美容（月1回）、配置医師の回診（月○回）'
+  };
+  var master = loadMaster();
+
+  /* ---------- 共通 ---------- */
+  function toast(msg){ var t=$('#sc-toast'); t.textContent=msg; t.classList.add('is-show'); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove('is-show');},2200); }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function val(id){ var el=$('#'+id); return el?el.value:''; }
+  function setVal(id,v){ var el=$('#'+id); if(el) el.value=v==null?'':v; }
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function loadMaster(){
+    try{ var s=localStorage.getItem(MASTER_KEY); if(s){ var m=JSON.parse(s); return Object.assign(clone(DEFAULT_MASTER),m); } }catch(e){}
+    return clone(DEFAULT_MASTER);
+  }
+  function saveMaster(){
+    try{ localStorage.setItem(MASTER_KEY, JSON.stringify(master)); toast('施設マスタを保存しました'); }
+    catch(e){ toast('このブラウザでは保存できませんでした（表示中は使えます）'); }
+  }
+
+  /* ---------- タブ ---------- */
+  $$('.sc-tab').forEach(function(b){
+    b.addEventListener('click',function(){
+      var k=b.getAttribute('data-sc-tab');
+      $$('.sc-tab').forEach(function(x){x.classList.toggle('is-active',x===b);});
+      $$('.sc-panel').forEach(function(p){p.classList.toggle('is-active',p.getAttribute('data-sc-panel')===k);});
+      if(k==='plan2'){ collectNeedsSilently(); renderNeeds(); }
+      if(k==='sheets'){ collectNeedsSilently(); buildSheets(); }
+    });
+  });
+  function gotoTab(k){ var b=root.querySelector('.sc-tab[data-sc-tab="'+k+'"]'); if(b) b.click(); }
+
+  /* ---------- 施設種別 ---------- */
+  function setType(t){
+    state.type=t;
+    $$('#sc-type-seg button').forEach(function(b){ b.classList.toggle('is-on', b.getAttribute('data-type')===t); });
+    $('#sc-type-badge').textContent = t==='roken'?'老健':'特養';
+    $('#sc-staff-list').innerHTML = STAFF[t].map(function(s){return '<option>'+esc(s)+'</option>';}).join('');
+  }
+  $$('#sc-type-seg button').forEach(function(b){ b.addEventListener('click',function(){ setType(b.getAttribute('data-type')); }); });
+  $('#sc-type-replace').addEventListener('click',function(){
+    collectNeedsSilently();
+    var n=0;
+    state.needs.forEach(function(nd){ nd.services.forEach(function(s){
+      REPLACE[state.type].forEach(function(p){ if(s.staff.indexOf(p[0])>-1 && s.staff.indexOf(p[1])===-1){ s.staff=s.staff.split(p[0]).join(p[1]); n++; } });
+    });});
+    var h=val('f-houshin'); REPLACE[state.type].forEach(function(p){ if(h.indexOf(p[1])===-1) h=h.split(p[0]).join(p[1]); }); setVal('f-houshin',h);
+    renderNeeds();
+    toast(n?('担当職種を'+n+'か所置き換えました'):'置き換える職種はありませんでした');
+  });
+
+  /* ---------- 家族の意向 ---------- */
+  function renderFamily(){
+    $('#sc-family').innerHTML = state.family.map(function(f,i){
+      return '<div class="sc-family-row"><input type="text" data-fam-rel="'+i+'" placeholder="続柄（例：妻）" value="'+esc(f.rel)+'">'+
+             '<textarea rows="2" data-fam-text="'+i+'">'+esc(f.text)+'</textarea>'+
+             '<button class="sc-btn is-small is-danger" data-fam-del="'+i+'" title="削除">×</button></div>';
+    }).join('');
+  }
+  function collectFamily(){
+    state.family = $$('[data-fam-rel]').map(function(el){ var i=el.getAttribute('data-fam-rel'); return {rel:el.value, text:root.querySelector('[data-fam-text="'+i+'"]').value}; });
+  }
+  $('#sc-family-add').addEventListener('click',function(){ collectFamily(); state.family.push({rel:'',text:''}); renderFamily(); });
+  $('#sc-family').addEventListener('click',function(e){
+    var i=e.target.getAttribute('data-fam-del'); if(i===null) return;
+    collectFamily(); state.family.splice(+i,1); if(!state.family.length) state.family.push({rel:'',text:''}); renderFamily();
+  });
+
+  /* ---------- 貼り付けの解析 ---------- */
+  function norm(s){ return s.replace(/\r/g,'').replace(/[ 　\t]+$/gm,''); }
+  function section(text, startRe, endRe){
+    var m=text.match(startRe); if(!m) return '';
+    var rest=text.slice(m.index+m[0].length);
+    var e=rest.search(endRe); return (e>=0?rest.slice(0,e):rest).trim();
+  }
+  var HEAD_END = /\n\s*(━{3,}|■)/;
+  function bracketBlock(text, keyRe){
+    var re=new RegExp('【'+keyRe+'】([\\s\\S]*?)(?=\\n\\s*【|\\n\\s*▼|\\n\\s*━{3,}|\\n\\s*■|$)');
+    var m=text.match(re); return m?m[1].trim():null;
+  }
+  function splitPeriod(s){
+    s=(s||'').trim();
+    var m=s.match(/[（(]\s*期間\s*[：:]\s*([^）)]*)[）)]\s*$/);
+    if(m) return {text:s.slice(0,m.index).trim(), period:m[1].trim()};
+    return {text:s, period:''};
+  }
+  function parseFields(line){
+    var o={};
+    line.split(/[／\/]/).forEach(function(part){
+      var m=part.match(/^\s*([^：:]+?)\s*[：:]\s*(.*)$/);
+      if(m) o[m[1].trim()]=m[2].trim();
+    });
+    return o;
+  }
+  function parseNeeds(t){
+    var p2 = section(t, /■\s*第2表[^\n]*\n/, /\n\s*━{3,}\s*\n\s*■/);
+    if(!p2) p2=t;
+    var blocks = p2.split(/\n\s*▼\s*ニーズ\s*\d*\s*\n/).slice(1);
+    return blocks.map(function(b){
+      b='\n'+b;
+      var need = bracketBlock(b,'(?:生活全般の解決すべき課題（ニーズ）|生活全般の解決すべき課題\\(ニーズ\\)|ニーズ)')||'';
+      var L = splitPeriod(bracketBlock(b,'長期目標')||'');
+      var S = splitPeriod(bracketBlock(b,'短期目標')||'');
+      var svcPart = b.split(/【援助内容】/)[1]||'';
+      var services=[], cur=null;
+      svcPart.split('\n').forEach(function(line){
+        var ln=line.trim(); if(!ln) return;
+        if(/^[・･]/.test(ln) && !/担当者\s*[：:]/.test(ln)){ cur={content:ln.replace(/^[・･]\s*/,''),staff:'',freq:'',period:'',tags:''}; services.push(cur); }
+        else if(/担当者\s*[：:]/.test(ln)){
+          if(!cur){ cur={content:'',staff:'',freq:'',period:'',tags:''}; services.push(cur); }
+          var f=parseFields(ln.replace(/^[・･]\s*/,''));
+          cur.staff=f['担当者']||''; cur.freq=f['頻度']||''; cur.period=f['期間']||''; cur.tags=f['日課連携']||'';
+          if(/^[・･]/.test(ln)&&!cur.content){ }
+        }
+        else if(cur && !cur.staff){ cur.content+=ln; }
+      });
+      services.forEach(function(s){ if(!s.period || /短期目標に同じ|同上/.test(s.period)) s.period=S.period||''; });
+      return {need:need.replace(/\n+/g,''), longGoal:L.text, longPeriod:L.period, shortGoal:S.text, shortPeriod:S.period, services:services};
+    }).filter(function(n){ return n.need||n.services.length; });
+  }
+  function parseAll(raw){
+    var t=norm(raw);
+    var res={};
+    res.iryo = section(t, /■\s*医療情報の整理表[^\n]*\n/, /\n\s*━{3,}\s*\n\s*■/);
+    res.kakunin = section(t, /■\s*要確認リスト[^\n]*\n/, /\n\s*(━{3,}|この内容は認定情報)/).replace(/^━+\s*/,'');
+    var p1 = section(t, /■\s*第1表[^\n]*\n/, /\n\s*━{3,}\s*\n\s*■/) || t;
+    p1 = '\n'+p1.replace(/^━+\s*/,'');
+    res.self = bracketBlock(p1,'(?:利用者の意向|本人の意向)');
+    res.family=[];
+    var fre=/【家族の意向[（(]([^）)]*)[）)]】([\s\S]*?)(?=\n\s*【|\n\s*━{3,}|\n\s*■|$)/g, m;
+    while((m=fre.exec(p1))){ res.family.push({rel:m[1].trim(), text:m[2].trim()}); }
+    res.shinsa = bracketBlock(p1,'介護認定審査会の意見(?:及びサービスの種類の指定)?');
+    res.houshin = bracketBlock(p1,'総合的な援助の方針');
+    res.needs = parseNeeds(t);
+    var lm=t.match(/長期目標は\s*([^、,，\n）)]+?)\s*[、,，]/); res.longDef = lm?lm[1].replace(/（.*$/,'').trim():'';
+    var tm=t.match(/施設種別[^\n]*?(特養|老健)と仮定/) || t.match(/(老健)への新規入所/);
+    res.type = tm?tm[1]:'';
+    return res;
+  }
+  /* 個人情報らしき記載の検出(課題整理総括表のタブと同じルール。操作は止めず注意だけ出す) */
+  var PII_RULES = [
+    {kind:'電話番号', re:/(?<![0-9０-９])(?:0[0-9０-９]{1,4}[-－ー‐(（)）\s]{1,2}[0-9０-９]{1,4}[-－ー‐)）\s]{1,2}[0-9０-９]{3,4}|0[0-9０-９]{9,10})(?![0-9０-９])/g},
+    {kind:'郵便番号', re:/(?:〒\s*)?(?<![0-9０-９])[0-9０-９]{3}[-－ー‐][0-9０-９]{4}(?![0-9０-９])/g},
+    {kind:'住所', re:/(?:現住所|住所|所在地)[:：]\s*(?![＊*〇○●×✕伏(（]|なし|不明)[^\n]{2,}/g},
+    {kind:'生年月日', re:/(?:明治|大正|昭和)\s*[0-9０-９元]{1,2}年\s*[0-9０-９]{1,2}月\s*[0-9０-９]{1,2}日(?:生まれ|生)?/g},
+    {kind:'番号(被保険者番号など)', re:/(?<![0-9０-９])[0-9０-９]{10,12}(?![0-9０-９])/g},
+    {kind:'氏名', re:/(?:対象者氏名|被保険者氏名|利用者氏名|氏名|申請者)[:：]\s*(?![＊*〇○●×伏(（]|なし|不明)[^\s\n(（:：0-9]{1,6}(?:[ 　][^\s\n(（:：0-9]{1,6})?/g}
+  ];
+  function checkPrivacy(t){
+    var kinds=[];
+    PII_RULES.forEach(function(r){ r.re.lastIndex=0; var m=r.re.exec(t); if(m && m[0].replace(/[\s\-－ー‐()（）]/g,'').length>=3 && kinds.indexOf(r.kind)<0) kinds.push(r.kind); });
+    return kinds;
+  }
+  /* 居宅版の出力を間違えて貼った場合の案内 */
+  function wrongTool(t){
+    if(t.indexOf('[careplan-v1]')>-1) return '居宅のケアプラン([careplan-v1])の出力';
+    if(t.indexOf('[issue-summary-v1]')>-1) return '課題整理総括表([issue-summary-v1])の出力';
+    return '';
+  }
+  $('#sc-parse').addEventListener('click',function(){
+    var raw=val('sc-paste'); var box=$('#sc-parse-msg');
+    if(!raw.trim()){ box.innerHTML='<div class="sc-warnbox">貼り付け欄が空です。</div>'; return; }
+    var wt=wrongTool(raw);
+    if(wt && raw.indexOf('▼ニーズ')<0){ box.innerHTML='<div class="sc-warnbox">貼り付けた内容は'+wt+'です。居宅のタブに貼り付けてください。施設ケアプランは、施設ケアプランのSkillの出力を貼り付けます。</div>'; return; }
+    var r=parseAll(raw);
+    if(r.self!=null) setVal('f-ikou-self', r.self);
+    if(r.family.length) { state.family=r.family; renderFamily(); }
+    if(r.shinsa!=null) setVal('f-shinsa', r.shinsa);
+    if(r.houshin!=null) setVal('f-houshin', r.houshin);
+    if(r.needs.length) state.needs=r.needs;
+    $('#sc-ref-iryo').textContent = r.iryo||'（見つかりませんでした）';
+    $('#sc-ref-kakunin').textContent = r.kakunin||'（見つかりませんでした）';
+    if(r.type==='老健') setType('roken'); else if(r.type==='特養') setType('tokuyo');
+    var svcN=r.needs.reduce(function(a,n){return a+n.services.length;},0);
+    var warn=checkPrivacy(raw);
+    box.innerHTML = '<div class="sc-okbox">読み込みました：ニーズ '+r.needs.length+'件／援助内容 '+svcN+'件'+(r.type?('（AI出力では「'+r.type+'」と仮定）'):'')+'。「② 第2表の編集」で確認できます。</div>'+
+      (warn.length?'<div class="sc-warnbox">個人情報が含まれている可能性があります（'+warn.join('、')+'）。マスキングを確認してください。※誤検出のこともあります。</div>':'')+
+      (r.needs.length?'':'<div class="sc-warnbox">第2表（▼ニーズ）が見つかりませんでした。Skillの出力形式を確認してください。</div>');
+    renderNeeds();
+  });
+  $('#sc-clear').addEventListener('click',function(){
+    if(!confirm('入力内容をすべて消します。よろしいですか？（施設マスタは消えません）')) return;
+    ['sc-paste','f-name','f-birth','f-addr','f-nintei','f-kikan','f-author','f-date','f-first','f-ikou-self','f-bunseki','f-shinsa','f-houshin','f-long-def','f-short-def'].forEach(function(id){setVal(id,'');});
+    setVal('f-care',''); state.needs=[]; state.family=[{rel:'',text:''}]; renderFamily(); renderNeeds();
+    $('#sc-ref-iryo').textContent='（読み込むと表示されます）'; $('#sc-ref-kakunin').textContent='（読み込むと表示されます）'; $('#sc-parse-msg').innerHTML='';
+    $('#sc-print-area').innerHTML=''; toast('入力を消しました');
+  });
+
+  /* ---------- 第2表の編集 ---------- */
+  function svcRow(ni,si,s){
+    return '<div class="sc-svc" data-svc="'+ni+'-'+si+'">'+
+      '<textarea rows="2" data-k="content" placeholder="サービス内容">'+esc(s.content)+'</textarea>'+
+      '<input type="text" data-k="staff" list="sc-staff-list" placeholder="担当者" value="'+esc(s.staff)+'">'+
+      '<input type="text" data-k="freq" placeholder="頻度" value="'+esc(s.freq)+'">'+
+      '<input type="text" data-k="period" placeholder="期間" value="'+esc(s.period)+'">'+
+      '<input type="text" data-k="tags" list="sc-tag-list" placeholder="日課連携" value="'+esc(s.tags)+'">'+
+      '<button class="sc-btn is-small is-danger" data-svc-del="'+ni+'-'+si+'" title="削除">×</button></div>';
+  }
+  function renderNeeds(){
+    var box=$('#sc-needs');
+    if(!state.needs.length){ box.innerHTML='<div class="sc-card sc-note">まだニーズがありません。「① 入力」でAIの出力を読み込むか、「＋ ニーズを追加」から入力してください。</div>'; return; }
+    box.innerHTML = state.needs.map(function(n,ni){
+      return '<div class="sc-need" data-need="'+ni+'">'+
+        '<div class="sc-need-head"><span>ニーズ '+(ni+1)+'</span><span>'+
+          (ni>0?'<button class="sc-btn is-small" data-need-up="'+ni+'">↑上へ</button>':'')+
+          '<button class="sc-btn is-small is-danger" data-need-del="'+ni+'">このニーズを削除</button></span></div>'+
+        '<label>生活全般の解決すべき課題（ニーズ）</label><textarea rows="2" data-nk="need">'+esc(n.need)+'</textarea>'+
+        '<div class="sc-grid" style="margin-top:6px">'+
+          '<div><label>長期目標</label><textarea rows="2" data-nk="longGoal">'+esc(n.longGoal)+'</textarea><input type="text" data-nk="longPeriod" placeholder="期間（空欄なら初期値）" value="'+esc(n.longPeriod)+'" style="margin-top:4px"></div>'+
+          '<div><label>短期目標</label><textarea rows="2" data-nk="shortGoal">'+esc(n.shortGoal)+'</textarea><input type="text" data-nk="shortPeriod" placeholder="期間（空欄なら初期値）" value="'+esc(n.shortPeriod)+'" style="margin-top:4px"></div>'+
+        '</div>'+
+        '<div style="margin-top:8px" class="sc-svc sc-svc-head"><div>サービス内容</div><div>担当者</div><div>頻度</div><div>期間</div><div>日課連携</div><div></div></div>'+
+        n.services.map(function(s,si){return svcRow(ni,si,s);}).join('')+
+        '<button class="sc-btn is-small" data-svc-add="'+ni+'">＋ 援助内容を追加</button>'+
+      '</div>';
+    }).join('');
+  }
+  function collectNeedsSilently(){
+    var nodes=$$('#sc-needs .sc-need'); if(!nodes.length) return;
+    state.needs = nodes.map(function(nd){
+      var o={services:[]};
+      Array.prototype.forEach.call(nd.querySelectorAll('[data-nk]'),function(el){ o[el.getAttribute('data-nk')]=el.value; });
+      Array.prototype.forEach.call(nd.querySelectorAll('.sc-svc[data-svc]'),function(r){
+        var s={}; Array.prototype.forEach.call(r.querySelectorAll('[data-k]'),function(el){ s[el.getAttribute('data-k')]=el.value; }); o.services.push(s);
+      });
+      return o;
+    });
+  }
+  $('#sc-needs').addEventListener('click',function(e){
+    var t=e.target, a;
+    if((a=t.getAttribute('data-svc-add'))!==null){ collectNeedsSilently(); state.needs[+a].services.push({content:'',staff:'',freq:'',period:'',tags:''}); renderNeeds(); }
+    else if((a=t.getAttribute('data-svc-del'))!==null){ collectNeedsSilently(); var p=a.split('-'); state.needs[+p[0]].services.splice(+p[1],1); renderNeeds(); }
+    else if((a=t.getAttribute('data-need-del'))!==null){ if(!confirm('このニーズを削除しますか？'))return; collectNeedsSilently(); state.needs.splice(+a,1); renderNeeds(); }
+    else if((a=t.getAttribute('data-need-up'))!==null){ collectNeedsSilently(); var i=+a, x=state.needs[i]; state.needs[i]=state.needs[i-1]; state.needs[i-1]=x; renderNeeds(); }
+  });
+  $('#sc-need-add').addEventListener('click',function(){ collectNeedsSilently(); state.needs.push({need:'',longGoal:'',longPeriod:'',shortGoal:'',shortPeriod:'',services:[{content:'',staff:'',freq:'',period:'',tags:''}]}); renderNeeds(); });
+
+  /* ---------- 施設マスタ ---------- */
+  function renderMaster(){
+    setVal('m-facility',master.facility); setVal('m-address',master.address);
+    setVal('m-bath-slot',master.bathSlot); setVal('m-zuiji',master.zuiji); setVal('m-sonota',master.sonota);
+    $('#sc-master-rows').innerHTML = master.rows.map(function(r,i){
+      return '<div class="sc-master-row" data-mrow="'+i+'"><div><b>'+esc(r.tag)+'</b></div>'+
+        '<div style="display:flex;gap:4px"><input type="text" data-mk="time" value="'+esc(r.time)+'" style="width:72px"><input type="text" data-mk="act" value="'+esc(r.act)+'"></div>'+
+        '<input type="text" data-mk="common" value="'+esc(r.common)+'"><input type="text" data-mk="staff" list="sc-staff-list" value="'+esc(r.staff)+'"></div>';
+    }).join('');
+    $('#sc-bath-days').innerHTML = '入浴曜日：'+WEEK.map(function(d){ return '<label><input type="checkbox" value="'+d+'"'+(master.bathDays.indexOf(d)>-1?' checked':'')+'>'+d+'</label>'; }).join('');
+  }
+  function collectMaster(){
+    master.facility=val('m-facility'); master.address=val('m-address'); master.bathSlot=val('m-bath-slot');
+    master.zuiji=val('m-zuiji'); master.sonota=val('m-sonota');
+    $$('#sc-master-rows [data-mrow]').forEach(function(r){ var i=+r.getAttribute('data-mrow');
+      Array.prototype.forEach.call(r.querySelectorAll('[data-mk]'),function(el){ master.rows[i][el.getAttribute('data-mk')]=el.value; }); });
+    master.bathDays=$$('#sc-bath-days input:checked').map(function(c){return c.value;});
+  }
+  $('#sc-master-save').addEventListener('click',function(){ collectMaster(); saveMaster(); });
+  $('#sc-master-reset').addEventListener('click',function(){ if(!confirm('施設マスタを初期値に戻しますか？'))return; master=clone(DEFAULT_MASTER); renderMaster(); saveMaster(); });
+
+  /* ---------- 帳票の作成 ---------- */
+  function splitTags(s){
+    return (s||'').replace(/[（(][^）)]*[）)]/g,'').split(/[・、,，\/／]|または/).map(function(x){return x.trim();}).filter(Boolean);
+  }
+  function td(text,attrs){ return '<td contenteditable="true"'+(attrs||'')+'>'+esc(text)+'</td>'; }
+  function headerMeta(){
+    return '<div class="sc-meta">'+
+      '<div><span class="k">利用者名</span>'+esc(val('f-name'))+' 殿</div>'+
+      '<div><span class="k">生年月日</span>'+esc(val('f-birth'))+'</div>'+
+      '<div><span class="k">住所</span>'+esc(val('f-addr'))+'</div>'+
+      '<div><span class="k">作成年月日</span>'+esc(val('f-date'))+'</div></div>';
+  }
+  function sheet1(){
+    collectFamily();
+    var fam = state.family.filter(function(f){return f.rel||f.text;}).map(function(f){ return '【家族（'+(f.rel||'続柄')+'）】\n'+f.text; }).join('\n');
+    var ikou = '【本人】\n'+val('f-ikou-self')+(fam?'\n'+fam:'');
+    var bunseki = val('f-bunseki');
+    var kub=val('f-kubun'), nj=val('f-ninteijo');
+    function mark(opts,sel){ return opts.map(function(o){return o===sel?'〔'+o+'〕':o;}).join('・'); }
+    return '<div class="sc-sheet" data-sheet="s1">'+
+      '<div class="sc-sheet-title"><span class="no">第1表</span><span class="t">施設サービス計画書（１）</span><span>作成年月日　'+esc(val('f-date'))+'</span></div>'+
+      '<div style="text-align:right;margin-bottom:4px">'+mark(['初回','紹介','継続'],kub)+'　　'+mark(['認定済','申請中'],nj)+'</div>'+
+      '<div class="sc-meta">'+
+        '<div><span class="k">利用者名</span>'+esc(val('f-name'))+' 殿　<span class="k">生年月日</span>'+esc(val('f-birth'))+'</div>'+
+        '<div><span class="k">住所</span>'+esc(val('f-addr'))+'</div>'+
+        '<div><span class="k">施設サービス計画作成者氏名及び職種</span>'+esc(val('f-author'))+'（'+esc(val('f-author-job'))+'）</div>'+
+        '<div><span class="k">施設サービス計画作成介護保険施設名及び所在地</span>'+esc(master.facility)+'　'+esc(master.address)+'</div>'+
+        '<div><span class="k">施設サービス計画作成（変更）日</span>'+esc(val('f-date'))+'</div>'+
+        '<div><span class="k">初回施設サービス計画作成日</span>'+esc(val('f-first'))+'</div>'+
+        '<div><span class="k">認定日</span>'+esc(val('f-nintei'))+'</div>'+
+        '<div><span class="k">認定の有効期間</span>'+esc(val('f-kikan'))+'</div>'+
+      '</div>'+
+      '<table class="sc-f"><colgroup><col style="width:17%"><col></colgroup>'+
+        '<tr><th>要介護状態区分</th><td>'+['要介護1','要介護2','要介護3','要介護4','要介護5'].map(function(c){return c===val('f-care')?'〔'+c+'〕':c;}).join('・')+'</td></tr>'+
+        '<tr><th>利用者及び家族の<br>生活に対する意向を<br>踏まえた課題分析の結果</th>'+td(ikou+(bunseki?'\n\n【課題分析の結果】\n'+bunseki:''),' style="height:150px" data-copyk="意向"')+'</tr>'+
+        '<tr><th>介護認定審査会の<br>意見及びサービスの<br>種類の指定</th>'+td(val('f-shinsa'),' style="height:50px" data-copyk="審査会"')+'</tr>'+
+        '<tr><th>総合的な援助の<br>方針</th>'+td(val('f-houshin'),' style="height:130px" data-copyk="方針"')+'</tr>'+
+      '</table>'+
+      '<div class="sc-sign">上記計画について説明を受け、内容に同意し交付を受けました。　　年　　月　　日　　利用者同意欄　　　　　　　　印</div>'+
+    '</div>';
+  }
+  function sheet2(){
+    var ld=val('f-long-def'), sd=val('f-short-def');
+    var rows='';
+    state.needs.forEach(function(n){
+      var svcs=n.services.length?n.services:[{content:'',staff:'',freq:'',period:''}];
+      svcs.forEach(function(s,i){
+        rows+='<tr>';
+        if(i===0){ var rs=' rowspan="'+svcs.length+'"';
+          rows+=td(n.need,rs)+td(n.longGoal,rs)+td(n.longPeriod||ld,rs)+td(n.shortGoal,rs)+td(n.shortPeriod||sd,rs); }
+        rows+=td(s.content)+td(s.staff)+td(s.freq)+td(s.period||n.shortPeriod||sd)+'</tr>';
+      });
+    });
+    return '<div class="sc-sheet" data-sheet="s2">'+
+      '<div class="sc-sheet-title"><span class="no">第2表</span><span class="t">施設サービス計画書（２）</span><span>作成年月日　'+esc(val('f-date'))+'</span></div>'+
+      '<div class="sc-meta"><div><span class="k">利用者名</span>'+esc(val('f-name'))+' 殿</div><div></div></div>'+
+      '<table class="sc-f"><colgroup><col style="width:13%"><col style="width:12%"><col style="width:7%"><col style="width:12%"><col style="width:7%"><col style="width:25%"><col style="width:9%"><col style="width:8%"><col style="width:7%"></colgroup>'+
+      '<tr><th rowspan="2">生活全般の解決す<br>べき課題（ニーズ）</th><th colspan="4">目標</th><th colspan="4">援助内容</th></tr>'+
+      '<tr><th>長期目標</th><th>（期間）</th><th>短期目標</th><th>（期間）</th><th>サービス内容</th><th>担当者</th><th>頻度</th><th>期間</th></tr>'+
+      (rows||'<tr><td colspan="9" style="height:80px">（第2表のデータがありません）</td></tr>')+
+      '</table></div>';
+  }
+  function assignByTag(){
+    var slots={}; master.rows.forEach(function(r){ slots[r.tag]=[]; });
+    var zuiji=[], sonota=[], bath=[], untagged=[], weekly=[];
+    state.needs.forEach(function(n){ n.services.forEach(function(s){
+      if(!s.content) return;
+      var tags=splitTags(s.tags), placed=false;
+      var label=s.content.replace(/。$/,'');
+      tags.forEach(function(t){
+        if(slots[t]){ slots[t].push({c:label,s:s.staff}); placed=true; }
+        else if(t==='随時'){ zuiji.push({c:label,s:s.staff}); placed=true; }
+        else if(t==='月単位'){ sonota.push({c:label+(s.freq?'（'+s.freq+'）':''),s:s.staff}); placed=true; }
+        else if(t==='入浴日'){ bath.push({c:label,s:s.staff}); placed=true; }
+      });
+      if(!placed) untagged.push(label);
+      if(/週\s*[○〇\d０-９]+\s*回/.test(s.freq) && tags.indexOf('入浴日')<0) weekly.push(label+'（'+s.freq+'）');
+    });});
+    return {slots:slots,zuiji:zuiji,sonota:sonota,bath:bath,untagged:untagged,weekly:weekly};
+  }
+  function joinC(arr){ return arr.map(function(x){return '・'+x.c;}).join('\n'); }
+  function joinS(arr){ var u=[]; arr.forEach(function(x){ (x.s||'').split(/[・、]/).forEach(function(p){ p=p.trim(); if(p&&u.indexOf(p)<0)u.push(p); }); }); return u.join('・'); }
+  function zone(time){
+    var h=parseInt(String(time).split(':')[0],10); if(isNaN(h)) return '';
+    if(h>=4&&h<8) return '早朝'; if(h>=8&&h<12) return '午前'; if(h>=12&&h<18) return '午後'; if(h>=18&&h<22) return '夜間'; return '深夜';
+  }
+  function sheet4(a){
+    var rows='', prevZone=null, zoneCount={};
+    var list=master.rows.map(function(r){ return {r:r,z:zone(r.time)}; });
+    var bathRow={r:{tag:'入浴日',time:master.bathSlot==='午後'?'14:30':'10:30',act:'入浴（'+master.bathDays.join('・')+'曜）',common:'入浴の準備・誘導',staff:'介護職員'},z:master.bathSlot};
+    var idx=list.findIndex(function(x){return x.r.tag===master.bathSlot;});
+    list.splice(idx>=0?idx+1:list.length,0,bathRow);
+    var order=['早朝','午前','午後','夜間','深夜'];
+    list.sort(function(x,y){ return order.indexOf(x.z)-order.indexOf(y.z); });
+    list.forEach(function(x){ zoneCount[x.z]=(zoneCount[x.z]||0)+1; });
+    list.forEach(function(x){
+      var ind = x.r.tag==='入浴日'? a.bath : (a.slots[x.r.tag]||[]);
+      rows+='<tr>';
+      if(x.z!==prevZone){ rows+='<th rowspan="'+zoneCount[x.z]+'"><span class="sc-vlabel">'+esc(x.z)+'</span></th>'; prevZone=x.z; }
+      rows+='<td contenteditable="true" style="text-align:center">'+esc(x.r.time)+'</td>'+td(x.r.common)+td(x.r.staff)+td(joinC(ind))+td(joinS(ind))+td(x.r.act)+'</tr>';
+    });
+    return '<div class="sc-sheet" data-sheet="s4">'+
+      '<div class="sc-sheet-title"><span class="no">第4表</span><span class="t">日課計画表</span><span>作成年月日　'+esc(val('f-date'))+'</span></div>'+
+      '<div class="sc-meta"><div><span class="k">利用者名</span>'+esc(val('f-name'))+' 殿</div><div></div></div>'+
+      '<table class="sc-f"><colgroup><col style="width:4%"><col style="width:6%"><col style="width:20%"><col style="width:10%"><col style="width:32%"><col style="width:12%"><col style="width:16%"></colgroup>'+
+      '<tr><th></th><th>時刻</th><th>共通サービス</th><th>担当者</th><th>個別サービス</th><th>担当者</th><th>主な日常生活上の活動</th></tr>'+
+      rows+
+      '<tr><th colspan="2">随時実施する<br>サービス</th>'+td(master.zuiji)+td('')+td(joinC(a.zuiji))+td(joinS(a.zuiji))+td('')+'</tr>'+
+      '<tr><th colspan="2">その他の<br>サービス</th>'+td(master.sonota)+td('')+td(joinC(a.sonota))+td(joinS(a.sonota))+td('')+'</tr>'+
+      '</table><p class="sc-note" style="font-size:10px;margin:4px 0 0">※「週間サービス計画表」との選定による使用可</p></div>';
+  }
+  function sheet3(a){
+    var zones=['深夜','早朝','午前','午後','夜間','深夜 '];
+    var actByZone={}; master.rows.forEach(function(r){ var z=zone(r.time); actByZone[z]=(actByZone[z]?actByZone[z]+'\n':'')+r.time+' '+r.act; });
+    var rows='';
+    zones.forEach(function(zz){
+      var z=zz.trim(); rows+='<tr><th>'+esc(z)+'</th>';
+      WEEK.forEach(function(d){
+        var c=''; if(z===master.bathSlot && master.bathDays.indexOf(d)>-1) c='入浴';
+        rows+=td(c);
+      });
+      rows+=td(zz===' 深夜'||zz==='深夜 '?'':(actByZone[z]||''))+'</tr>';
+    });
+    var other = a.sonota.map(function(x){return x.c;}).concat(a.weekly.length?['（曜日を決めて上の表に記入）'].concat(a.weekly):[]).join('\n');
+    return '<div class="sc-sheet" data-sheet="s3">'+
+      '<div class="sc-sheet-title"><span class="no">第3表</span><span class="t">週間サービス計画表</span><span>作成年月日　'+esc(val('f-date'))+'</span></div>'+
+      '<div class="sc-meta"><div><span class="k">利用者名</span>'+esc(val('f-name'))+' 殿</div><div></div></div>'+
+      '<table class="sc-f"><colgroup><col style="width:6%">'+WEEK.map(function(){return '<col style="width:9%">';}).join('')+'<col style="width:31%"></colgroup>'+
+      '<tr><th></th>'+WEEK.map(function(d){return '<th>'+d+'</th>';}).join('')+'<th>主な日常生活上の活動</th></tr>'+rows+
+      '<tr><th>週単位以外<br>のサービス</th>'+td(other,' colspan="8" style="height:60px"')+'</tr>'+
+      '</table><p class="sc-note" style="font-size:10px;margin:4px 0 0">※「日課計画表」との選定による使用可</p></div>';
+  }
+  function buildSheets(){
+    collectFamily(); collectMaster();
+    var a=assignByTag(), mode=val('sc-week-or-day');
+    var html=sheet1()+sheet2();
+    if(mode==='week'||mode==='both') html+=sheet3(a);
+    if(mode==='day'||mode==='both') html+=sheet4(a);
+    $('#sc-print-area').innerHTML=html;
+    var msgs=[];
+    if(!state.needs.length) msgs.push('第2表のデータがありません。');
+    if(a.untagged.length) msgs.push('日課連携が空欄のため第3表・第4表に載っていない援助内容が '+a.untagged.length+' 件あります：'+a.untagged.slice(0,5).join('／')+(a.untagged.length>5?' …':''));
+    if(!val('f-ikou-self').trim()||/面談で聞き取り/.test(val('f-ikou-self'))) msgs.push('本人の意向がまだ入力されていません（面談後に入力してください）。');
+    if(!master.facility) msgs.push('施設名が未登録です（③ 施設マスタ）。');
+    $('#sc-check').innerHTML = msgs.length? '<div class="sc-warnbox">'+msgs.map(esc).join('<br>')+'</div>' : '<div class="sc-okbox">第2表の援助内容は、すべて第3表・第4表に振り分けられています。</div>';
+  }
+  $('#sc-build').addEventListener('click',function(){ collectNeedsSilently(); buildSheets(); toast('帳票を作り直しました'); });
+  $('#sc-week-or-day').addEventListener('change',function(){ buildSheets(); });
+
+  /* ---------- 印刷・コピー ---------- */
+  /* 印刷は専用の見えないiframeで行う（居宅版など他のタブの内容が混ざらないように） */
+  function printSheets(sheets){
+    var css=(document.getElementById('sc-style')||{}).textContent||'';
+    var html='<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>施設サービス計画書</title><style>'+css+
+      ' body{margin:0;background:#fff} #shisetsu-app [contenteditable]{outline:none}</style></head><body><div id="shisetsu-app">'+
+      sheets.map(function(x){return x.outerHTML;}).join('')+'</div></body></html>';
+    var f=document.createElement('iframe');
+    f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+    document.body.appendChild(f);
+    var d=f.contentWindow.document; d.open(); d.write(html); d.close();
+    setTimeout(function(){ f.contentWindow.focus(); f.contentWindow.print(); setTimeout(function(){ document.body.removeChild(f); },1000); },300);
+  }
+  $$('[data-print]').forEach(function(b){ b.addEventListener('click',function(){
+    var k=b.getAttribute('data-print'); var sh=$$('#sc-print-area .sc-sheet');
+    if(!sh.length){ buildSheets(); sh=$$('#sc-print-area .sc-sheet'); }
+    var target = k==='all'? sh : sh.filter(function(s){ return s.getAttribute('data-sheet')===k; });
+    if(!target.length){ toast('その表は表示されていません（表示形式を切り替えてください）'); return; }
+    printSheets(target);
+  });});
+  function tableToText(sheet){
+    var out=[];
+    Array.prototype.forEach.call(sheet.querySelectorAll('tr'),function(tr){
+      var cells=Array.prototype.map.call(tr.children,function(c){ return c.innerText.replace(/\t/g,' ').trim(); });
+      out.push(cells.join('\t'));
+    });
+    return out.join('\n');
+  }
+  function copyText(t){
+    if(navigator.clipboard&&navigator.clipboard.writeText){ return navigator.clipboard.writeText(t); }
+    return new Promise(function(res,rej){ var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');res();}catch(e){rej(e);} document.body.removeChild(ta); });
+  }
+  $$('[data-copy]').forEach(function(b){ b.addEventListener('click',function(){
+    var k=b.getAttribute('data-copy'); var sh=root.querySelector('#sc-print-area [data-sheet="'+k+'"]');
+    if(!sh){ toast('その表は表示されていません'); return; }
+    var text;
+    if(k==='s1'){ text=['【利用者及び家族の生活に対する意向を踏まえた課題分析の結果】','意向','審査会','方針'].map(function(x,i){
+        if(i===0) return x; var c=sh.querySelector('[data-copyk="'+x+'"]'); var h={意向:'',審査会:'【介護認定審査会の意見及びサービスの種類の指定】',方針:'【総合的な援助の方針】'}[x];
+        return (h?h+'\n':'')+(c?c.innerText.trim():''); }).join('\n'); }
+    else text=tableToText(sh);
+    copyText(text).then(function(){ toast('コピーしました（介護ソフトに貼り付けてください）'); },function(){ toast('コピーできませんでした'); });
+  });});
+
+  /* ---------- サンプル（テスト用架空事例） ---------- */
+  var SAMPLE = [
+'━━━━━━━━━━━━━━━━━━','■ 医療情報の整理表','━━━━━━━━━━━━━━━━━━',
+'| 傷病名 | 診療科 | 入所前の医療機関 | 入所後の方針（案） | 確認事項 |',
+'| パーキンソン病（ホーン・ヤール3度） | 脳神経内科と思われる（記載なし） | 主治医（＊＊＊＊） | 専門医への受診を継続し、配置医と連携する想定（要相談） | 受診頻度・同行者、処方と服薬時刻表の引き継ぎ |',
+'| 便秘（下剤服用中） | 同上 | 同上 | 配置医での管理へ移行を検討 | 下剤調整の指示 |',
+'','━━━━━━━━━━━━━━━━━━','■ 第1表 施設サービス計画書（1）','━━━━━━━━━━━━━━━━━━',
+'【利用者の意向】','（入所に関する意向は面談で聞き取り）','※参考：認定調査時の主訴「薬が切れると体が固まって動けなくなるのがつらい。」','',
+'【家族の意向（妻）】','（入所に関する意向は面談で聞き取り）','※参考：認定調査時の主訴「動ける時間と動けない時間の差が大きく、夜中のトイレの介助で眠れない。」','',
+'【家族の意向（長女）】','（面談で聞き取り）','',
+'【介護認定審査会の意見及びサービスの種類の指定】','被保険者証を確認','',
+'【総合的な援助の方針】','パーキンソン病による症状の日内変動（オン・オフ）が大きく、決まった時間に服薬することが生活全体の土台になります。1日5回の服薬を時間どおりに行い、オンの時間には歩行器での移動や身の回りのことをできるだけご自身で行えるよう支援します。オフの時間は転倒を防ぐため、移動・排泄を介助します。症状の変化や急変時には配置医・協力医療機関・専門医と連携し、ご家族へ速やかに連絡します。','',
+'━━━━━━━━━━━━━━━━━━','■ 第2表 施設サービス計画書（2）','━━━━━━━━━━━━━━━━━━','（優先順位：要確認／以下は仮の並び）','',
+'▼ニーズ1','【生活全般の解決すべき課題（ニーズ）】','決まった時間に薬を飲んで、動ける時間を保ちたい',
+'【長期目標】服薬時間が守られ、オンの時間に自分のペースで生活できる（期間：○年○月〜令和9年6月30日）',
+'【短期目標】1日5回の服薬が時間どおりに行われ、オフの時間が増えずに過ごせる（期間：○年○月〜○年○月）','【援助内容】',
+'・処方の服薬時刻表に沿って、時間どおりに薬を手渡し、服薬を確認する',' 担当者：看護職員・介護職員 ／ 頻度：1日5回 ／ 期間：短期目標に同じ ／ 日課連携：朝食・午前・昼食・午後・夕食（処方時刻に合わせる）',
+'・オン・オフの時間帯、すくみ足や震えの様子を記録する',' 担当者：介護職員・看護職員 ／ 頻度：毎日 ／ 期間：同上 ／ 日課連携：随時',
+'・専門医を受診し、服薬調整の内容を施設内で共有する',' 担当者：家族・看護職員 ／ 頻度：月○回（要確認） ／ 期間：同上 ／ 日課連携：月単位','',
+'▼ニーズ2','【ニーズ】転ばずに、歩行器で施設の中を歩きたい','【長期目標】転倒による骨折をせず、施設内の移動を続けられる','【短期目標】オンの時間は、居室からトイレ・食堂まで歩行器で見守りのもと移動できる','【援助内容】',
+'・オンの時間は歩行器での歩行を見守り、方向転換の際は声をかけてすくみ足に対応する',' 担当者：介護職員 ／ 頻度：移動時 ／ 日課連携：随時',
+'・オンの時間に合わせて、歩行・立ち上がり・姿勢保持の機能訓練を行う',' 担当者：機能訓練指導員 ／ 頻度：週○回（要確認） ／ 日課連携：午前または午後',
+'・ベッドの高さと手すりの位置を整え、動線上の障害物をなくす',' 担当者：介護職員 ／ 頻度：毎日 ／ 日課連携：起床・就寝','',
+'▼ニーズ3','【ニーズ】夜中もトイレで排泄したい','【長期目標】夜間も転倒せず、トイレでの排泄を続けられる','【短期目標】夜間のトイレ（2〜3回）に職員の付き添いを受け、安全に排泄できる','【援助内容】',
+'・ナースコールを手の届く位置に置き、呼ばれたらトイレへ付き添う',' 担当者：介護職員 ／ 頻度：夜間2〜3回 ／ 日課連携：夜間','',
+'▼ニーズ4','【ニーズ】むせずに、安心して食事を楽しみたい','【長期目標】誤嚥性肺炎を起こさず、口から食べることを続けられる','【短期目標】見守りのもと、むせ込みが少なく食事を食べきれる','【援助内容】',
+'・前に傾く姿勢を整え、食事中はそばで見守る',' 担当者：介護職員 ／ 頻度：毎食時 ／ 日課連携：朝食・昼食・夕食',
+'・体重を測り、栄養状態を確認する',' 担当者：看護職員・管理栄養士 ／ 頻度：月1回 ／ 日課連携：月単位','',
+'▼ニーズ5','【ニーズ】さっぱりと清潔に過ごしたい','【長期目標】入浴と身だしなみを続け、清潔に過ごせる','【短期目標】入浴日に、洗えるところは自分で洗い、背中や足先は介助を受けて入浴できる','【援助内容】',
+'・入浴の時間帯をオンの時間に合わせ、洗身を一部介助する',' 担当者：介護職員・看護職員 ／ 頻度：週2回 ／ 日課連携：入浴日','',
+'▼ニーズ6','【ニーズ】囲碁や散歩など、好きなことを続けたい','【長期目標】施設での生活に楽しみと役割を持って過ごせる','【短期目標】週○回、囲碁や散歩の時間を持てる','【援助内容】',
+'・囲碁の相手（他の入居者・ボランティア・職員）を調整する',' 担当者：生活相談員・介護職員・地域ボランティア ／ 頻度：週○回 ／ 日課連携：午後','',
+'━━━━━━━━━━━━━━━━━━','■ 要確認リスト','━━━━━━━━━━━━━━━━━━',
+'・施設種別（特養と仮定して作成）と入所日','・入所に関する意向（本人・妻・長女）','・パーキンソン病の受診先、受診頻度、同行者','・ニーズの優先順位','',
+'この内容は認定情報をもとにした下書きです。'
+  ].join('\n');
+  $('#sc-sample').addEventListener('click',function(){
+    setVal('sc-paste',SAMPLE);
+    if(!val('f-name')) setVal('f-name','西川 正弘（テスト）');
+    setVal('f-care','要介護3'); setVal('f-nintei','令和8年7月15日'); setVal('f-kikan','令和8年6月10日〜令和9年6月30日');
+    toast('サンプルを入れました。「読み込む」を押してください');
+  });
+
+  /* ---------- タブの入れ物(caremanager-tools.html)との連携 ---------- */
+  $('#sc-paste').addEventListener('paste',function(){ setTimeout(function(){ $('#sc-parse').click(); },0); });
+  window.addEventListener('message',function(e){
+    if(e.source!==window.parent) return;
+    var d=e.data; if(!d||d.cmTool!=='hub') return;
+    if(d.type==='flush'){ collectNeedsSilently(); }   // タブ切り替え時:編集中の内容を確定するだけ
+  });
+
+  /* ---------- 初期化 ---------- */
+  setType('tokuyo'); renderFamily(); renderNeeds(); renderMaster();
+})();
+</script>
+</body>
+</html>
